@@ -2,50 +2,53 @@
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
         <v-container>
-            <v-card outlined>
-                <v-toolbar color="primary" flat dark>
-                    <v-toolbar-title>Buildings</v-toolbar-title>
-                </v-toolbar>
-                <v-container>
-                    <v-row align="center" justify="end">
-                        <v-col cols="12" md="4">
-                            <v-text-field
-                                label="Search"
-                                append-icon="mdi-magnify"
-                                hide-details
-                                outlined
-                                dense
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-divider class="mt-4"></v-divider>
-                    <v-data-table
-                        :headers="headers" 
-                        :items="buildings"
-                        :loading="loading"
-                        :search="searchTable"
-                        :page.sync="page"
-                        loading-text="Loading Data. . .Please Wait"
-                        @page-count="pageCount = $event"
-                        hide-default-footer
-                    >
-                        <template v-slot:[`item.actions`]="{ item }">
-                            <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
-                        </template>
-                    </v-data-table>
-                    <v-pagination
-                        v-model="page"
-                        :length="pageCount"
-                        :total-visible="10"
-                        color="primary"
-                    ></v-pagination>
-                </v-container>
-            </v-card>
+            <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
+                <v-card outlined>
+                    <v-toolbar color="primary" flat dark>
+                        <v-toolbar-title>Buildings</v-toolbar-title>
+                    </v-toolbar>
+                    <v-container>
+                        <v-row align="center" justify="end">
+                            <v-col cols="12" md="4">
+                                <v-text-field
+                                    v-model="searchTable"
+                                    placeholder="Search Name or Address"
+                                    append-icon="mdi-magnify"
+                                    hide-details
+                                    outlined
+                                    dense
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-divider class="mt-4"></v-divider>
+                        <v-data-table
+                            :headers="headers" 
+                            :items="buildings"
+                            :loading="loading"
+                            :search="searchTable"
+                            :page.sync="page"
+                            loading-text="Loading Data. . .Please Wait"
+                            @page-count="pageCount = $event"
+                            hide-default-footer
+                        >
+                            <template v-slot:[`item.actions`]="{ item }">
+                                <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                            </template>
+                        </v-data-table>
+                        <v-pagination
+                            v-model="page"
+                            :length="pageCount"
+                            :total-visible="10"
+                            color="primary"
+                        ></v-pagination>
+                    </v-container>
+                </v-card>
+            </v-lazy>
         </v-container>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card outlines>
                 <v-toolbar color="primary" dark>
-                    <v-toolbar-title>Create New</v-toolbar-title>
+                    <v-toolbar-title>{{editMode ? 'Edit Record' : 'Create New'}}</v-toolbar-title>
                 </v-toolbar>
                 <v-form>
                     <v-container>
@@ -60,20 +63,20 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="12">
-                                <v-text-field
+                                <v-textarea
                                     v-model="editBuildings.BuildingAddress"
                                     label='Building Address'
                                     hide-details
                                     outlined
                                     dense
-                                ></v-text-field>
+                                ></v-textarea>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="dialog = !dialog" text>Cancel</v-btn>
+                    <v-btn @click="clearVariables()" text>Cancel</v-btn>
                     <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
@@ -102,6 +105,7 @@ export default {
         return {
             dialog: false,
             loading: true,
+            editMode: false,
             searchTable: '',
             pageCount: 0,
             page: 1,
@@ -132,7 +136,7 @@ export default {
             this.loading = true
             let body = {
                 procedureName: 'ProcSelectQuery',
-                values: ['buldings']
+                values: ['buildings']
             }
             this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
                 if(res.data) {
@@ -143,23 +147,33 @@ export default {
         },
         editRecord(data) {
             Object.assign(this.editBuildings, data)
+            this.editMode = true
             this.dialog = !this.dialog
         },
         saveRecord() {
-            let data = this.editRecord
+            let data = this.editBuildings
             let body = {
-                procedureName: 'ProcSelectQuery',
+                procedureName: 'ProcBuildings',
                 values: [
                     data.BuildingId,
                     data.BuildingDesc,
                     data.BuildingAddress,
-                    this.hrisUserInfo.EMPLCODE,
+                    this.hrisUserInfo.USERACCT,
                     1
                 ]
             }
             this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            this.dialog = !this.dialog
+            this.clearVariables()
             this.loadBuildings()
+        },
+        clearVariables() {
+            this.editMode = false
+            this.dialog = !this.dialog
+            this.editBuildings = {
+                BuildingId: '',
+                BuildingDesc: '',
+                BuildingAddress: ''
+            }
         }
     }
 }

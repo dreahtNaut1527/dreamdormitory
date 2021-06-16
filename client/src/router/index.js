@@ -21,6 +21,21 @@ const routes = [
     component: () => import('@/views/buildings'),
   },
   {
+    path: '/floors',
+    name: 'floors',
+    component: () => import('@/views/floors'),
+  },
+  {
+    path: '/rooms',
+    name: 'rooms',
+    component: () => import('@/views/rooms'),
+  },
+  {
+    path: '/beds',
+    name: 'beds',
+    component: () => import('@/views/beds'),
+  },
+  {
     path: '*',
     name: 'error',
     component: () => import('@/views/error'),
