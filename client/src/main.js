@@ -37,5 +37,15 @@ new Vue({
   router,
   store,
   vuetify,
+  sockets: {
+       connect() {
+            store.commit('CHANGE_CONNECTION', true)
+       },
+       // disconnect() {
+       //      this.checkAppVersion()
+       //      // store.commit('CHANGE_CONNECTION', false)
+       //      // this.$router.push('*')
+       // }
+  },
   render: h => h(App)
 }).$mount('#app')

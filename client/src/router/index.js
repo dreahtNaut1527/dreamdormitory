@@ -8,8 +8,23 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: () => import('../views/login.vue')
-  }
+    component: () => import('@/views/login'),
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/views/dashboard'),
+  },
+  {
+    path: '/buildings',
+    name: 'buildings',
+    component: () => import('@/views/buildings'),
+  },
+  {
+    path: '*',
+    name: 'error',
+    component: () => import('@/views/error'),
+  },
 ]
 
 const router = new VueRouter({

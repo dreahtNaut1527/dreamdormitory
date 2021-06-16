@@ -1,0 +1,166 @@
+<template>
+    <v-main>
+        <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
+        <v-container>
+            <v-card outlined>
+                <v-toolbar color="primary" flat dark>
+                    <v-toolbar-title>Buildings</v-toolbar-title>
+                </v-toolbar>
+                <v-container>
+                    <v-row align="center" justify="end">
+                        <v-col cols="12" md="4">
+                            <v-text-field
+                                label="Search"
+                                append-icon="mdi-magnify"
+                                hide-details
+                                outlined
+                                dense
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-divider class="mt-4"></v-divider>
+                    <v-data-table
+                        :headers="headers" 
+                        :items="buildings"
+                        :loading="loading"
+                        :search="searchTable"
+                        :page.sync="page"
+                        loading-text="Loading Data. . .Please Wait"
+                        @page-count="pageCount = $event"
+                        hide-default-footer
+                    >
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                        </template>
+                    </v-data-table>
+                    <v-pagination
+                        v-model="page"
+                        :length="pageCount"
+                        :total-visible="10"
+                        color="primary"
+                    ></v-pagination>
+                </v-container>
+            </v-card>
+        </v-container>
+        <v-dialog v-model="dialog" width="500" persistent>
+            <v-card outlines>
+                <v-toolbar color="primary" dark>
+                    <v-toolbar-title>Create New</v-toolbar-title>
+                </v-toolbar>
+                <v-form>
+                    <v-container>
+                        <v-row align="center" justify="center">
+                            <v-col cols="12" md="12">
+                                <v-text-field
+                                    v-model="editBuildings.BuildingDesc"
+                                    label='Building Name'
+                                    hide-details
+                                    outlined
+                                    dense
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="12">
+                                <v-text-field
+                                    v-model="editBuildings.BuildingAddress"
+                                    label='Building Address'
+                                    hide-details
+                                    outlined
+                                    dense
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-form>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="dialog = !dialog" text>Cancel</v-btn>
+                    <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-fab-transition>
+            <v-btn
+                class="mb-12"
+                color="primary"
+                @click="dialog = !dialog"
+                absolute
+                bottom
+                right
+                large
+                dark
+                fab
+            >
+                <v-icon>mdi-plus</v-icon>
+            </v-btn>
+        </v-fab-transition>
+    </v-main>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            dialog: false,
+            loading: true,
+            searchTable: '',
+            pageCount: 0,
+            page: 1,
+            buildings: [],
+            editBuildings: {
+                BuildingId: '',
+                BuildingDesc: '',
+                BuildingAddress: ''
+            },
+            headers: [
+                {text: 'Building', value: 'BuildingDesc'},
+                {text: 'Address', value: 'BuildingAddress'},
+                {text: 'Created', value: 'CreatedDate'},
+                {text: 'Updated', value: 'UpdatedDate'},
+                {text: 'Actions', value: 'actions'},
+            ],
+            breadCrumbsItems: [ 
+                {text: 'Maintenance', disabled: false, href: '#'},
+                {text: 'Buildings', disabled: true, href: '#'}
+            ]
+        }
+    },
+    created() {
+        this.loadBuildings()
+    },
+    methods: {
+        loadBuildings() {
+            this.loading = true
+            let body = {
+                procedureName: 'ProcSelectQuery',
+                values: ['buldings']
+            }
+            this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
+                if(res.data) {
+                    this.buildings = res.data
+                }
+                this.loading = false
+            })
+        },
+        editRecord(data) {
+            Object.assign(this.editBuildings, data)
+            this.dialog = !this.dialog
+        },
+        saveRecord() {
+            let data = this.editRecord
+            let body = {
+                procedureName: 'ProcSelectQuery',
+                values: [
+                    data.BuildingId,
+                    data.BuildingDesc,
+                    data.BuildingAddress,
+                    this.hrisUserInfo.EMPLCODE,
+                    1
+                ]
+            }
+            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+            this.dialog = !this.dialog
+            this.loadBuildings()
+        }
+    }
+}
+</script>

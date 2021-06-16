@@ -7,6 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     hrisUserInfo: {},
+    isConnect: true,
+    isLoggedIn: false,
   },
   plugins: [
     createPersistedState() 
@@ -14,6 +16,12 @@ export default new Vuex.Store({
   mutations: {
     CHANGE_USER_INFO: (state, data) => {
       state.hrisUserInfo = data
+    },
+    CHANGE_CONNECTION: (state, data) => {
+      state.isConnect = data
+    },
+    CHANGE_LOGGING: (state, data) => {
+      state.isLoggedIn = data
     },
   },
   actions: {

@@ -54,7 +54,3 @@ socketio.on('connection', (socket) => {
 
 // app.use('/api', auth, query)
 app.use('/api', query)
-
-app.get('/appversion', (req, res) => {
-    res.send(JSON.stringify(require('./package.json').version))
-})

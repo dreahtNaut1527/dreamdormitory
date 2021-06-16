@@ -1,8 +1,22 @@
 const express = require('express')
 const mssql = require('mssql')
+const readINI = require('read-ini-file')
 const config = require('../config/db.config')()
 
 const router = express.Router()
+
+// get current version
+router.get('/appversion', (req, res) => {
+    res.send(JSON.stringify(require('./package.json').version))
+})
+
+// Get HRConfig.ini
+router.get('/config', (req, res) => {
+    let iniFilePath = 'P:\HRConfig.INI'
+    let iniContents = readINI.sync(iniFilePath)
+    res.send(JSON.stringify(iniContents))
+})
+
 // ======================== MSSQL Procedure API ========================
 // =====================================================================
 // ======================= Select Query (MSSQL)=========================

@@ -5,20 +5,27 @@ const plugins = {
     install(Vue) {
         Vue.mixin({
             data: () => ({
-                
+                api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL
             }),
             created() {
 
             },
             computed: {
                 ...mapState([
-                    'hrisUserInfo'
+                    'hrisUserInfo',
+                    'isConnect',
+                    'isLoggedIn'
                 ])
             },
             methods: {
                 ...mapMutations([
-                    'CHANGE_USER_INFO'
-                ])
+                    'CHANGE_USER_INFO',
+                    'CHANGE_CONNECTION',
+                    'CHANGE_LOGGING'
+                ]),
+                readINIFile() {
+                    return this.axios.get(`${this.api}/config`)
+                }
             }
         })
     }
