@@ -77,16 +77,15 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn @click="clearVariables()" text>Cancel</v-btn>
-                    <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
+                    <v-btn @click="saveRecord(editBuildings)" color="primary" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <v-fab-transition>
             <v-btn
-                class="mb-12"
                 color="primary"
                 @click="dialog = !dialog"
-                absolute
+                fixed
                 bottom
                 right
                 large
@@ -150,8 +149,7 @@ export default {
             this.editMode = true
             this.dialog = !this.dialog
         },
-        saveRecord() {
-            let data = this.editBuildings
+        saveRecord(data) {
             let body = {
                 procedureName: 'ProcBuildings',
                 values: [

@@ -5,7 +5,9 @@ const plugins = {
     install(Vue) {
         Vue.mixin({
             data: () => ({
-                api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL
+                api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL,
+                api_HRIS: 'http://localhost:8080/server/api',
+                photo: process.env.VUE_APP_PHOTO
             }),
             created() {
 
@@ -45,7 +47,12 @@ const plugins = {
                         values: [tablename]
                     }
                     return this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)})
-                }
+                },
+
+                // HRIS station search
+                stationSearch(code) {
+                    return this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: code})
+                },
 
             }
         })

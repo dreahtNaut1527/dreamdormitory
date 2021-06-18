@@ -23,8 +23,8 @@
                         <v-subheader>Floor {{floor.FloorNo}}</v-subheader>
                     </v-container>
                     <v-col cols="12" md="2" v-for="(room, i) in listOfRoomsPerFloor(floor.FloorNo)" :key="i">
-                        <v-hover v-slot="{ hover }">
-                            <v-card @click="assignRoom(room)" :elevation="hover ? 8 : 2" v-if="room.FloorNo == floor.FloorNo" outlined>
+                        <v-hover v-slot="{ hover }" open-delay="200">
+                            <v-card class="rounded-lg" @click="assignRoom(room)" :elevation="hover ? 8 : 2" v-if="room.FloorNo == floor.FloorNo" outlined>
                                 <v-subheader class="font-weight-bold">
                                     {{room.RoomDesc}}  
                                     <!-- <v-spacer></v-spacer>
@@ -32,10 +32,13 @@
                                 </v-subheader>
                                 <v-container>
                                     <v-row align="center" justify="center" dense>
-                                        <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="6">
-                                            <v-card outlined>
+                                        <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="6">
+                                            <!-- <v-card outlined>
                                                 <v-card-text class="text-center">{{item.BedNo}}</v-card-text>
-                                            </v-card>
+                                            </v-card> -->
+                                            <v-avatar class="text-center" size="20">
+                                                <v-img src="../assets/NoPic.jpg" />
+                                            </v-avatar>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -115,13 +118,11 @@
                 </v-form>
             </v-card>
         </v-dialog>
-        <assignroom :dialog="assignDialog" :roomDetails="roomDetails" />
         <v-fab-transition>
             <v-btn
-                class="mb-12"
                 color="primary"
                 @click="dialog = !dialog"
-                absolute
+                fixed
                 bottom
                 right
                 large
@@ -135,13 +136,10 @@
 </template>
 
 <script>
-import assignroom from '@/components/assignroom'
-
 export default {
     data() {
         return {
             dialog: false,
-            assignDialog: false,
             buildings: '',
             selectedBeds: '',
             selectedRoom: '',
@@ -209,7 +207,7 @@ export default {
             Object.assign(this.roomDetails, {
                 BuildingId: this.buildings
             })
-            this.assignDialog = !this.assignDialog
+            this.$router.push({name: 'assignroom', query: this.roomDetails})
         },
         saveRecord() {
             this.beds.forEach(rec => {
@@ -236,9 +234,6 @@ export default {
             this.selectedBuildings = ''
             this.dialog = !this.dialog
         }
-    },
-    components: {
-        assignroom
     },
     watch: {
         floorLists(val) {
