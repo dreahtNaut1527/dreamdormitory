@@ -22,7 +22,7 @@
                                 <v-row dense>
                                     <v-col cols="12" md="2" sm="2">
                                         <v-avatar class="mt-5" size="80">
-                                            <v-img :src="getStationPhoto(item.EmployeeCode)" />
+                                            <img :src="`${photo}/${item.EmployeeCode}.jpg`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
                                         </v-avatar>
                                     </v-col>
                                     <v-col cols="12" md="10" sm="10">
@@ -149,13 +149,6 @@ export default {
         viewTenantDetails(data) {
             data.Dialog = !data.Dialog
             this.$forceUpdate()
-        },
-        getStationPhoto(code) {
-            if(code) {
-                return `${this.photo}/${code}.jpg`
-            } else {
-                return require('../assets/NoPic.jpg')
-            }
         },
         loadOccupants() {
             this.loadMasterMaintenance('roomrelations').then(res => {

@@ -1,5 +1,5 @@
 <template>
-    <v-app id="inspire">
+    <v-app id="inspire" style="background-color: #F5F5F5;">
         <navdrawer v-if="hrisUserInfo.USERACCT != undefined" />
         <router-view />
     </v-app>

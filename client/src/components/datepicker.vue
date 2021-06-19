@@ -12,16 +12,16 @@
                <v-text-field
                     v-model="date"
                     :label="label"
-                    :filled="isEmpEdit == true"
-                    :color="themeColor == '' ? 'primary' : themeColor"
+                    color="primary"
                     @click:append="menuDialog = true"
                     append-icon="mdi-calendar"
                     v-bind="attrs"
                     v-on="on"
-                    readonly
+                    hide-details
                     clearable
-                    dense
                     outlined
+                    readonly
+                    dense
                ></v-text-field>
           </template>
           <v-date-picker
@@ -30,7 +30,7 @@
                scrollable
                :events="events"
                event-color="#ED6351"
-               :color="themeColor == '' ? 'primary' : themeColor"
+               color="primary"
                @change="$refs.menu.save(date)"
           >
           </v-date-picker>
@@ -57,10 +57,7 @@ export default {
      },
      methods: {
           loadEvents() {
-               let data = {
-                    server: this.userInfo.UserLevel == 5 ? `HRIS${this.userInfo.Comp_Name.toLowerCase()}` : `HRIS${this.userInfo.ShortName.toLowerCase()}`
-               }
-               this.axios.post(`${this.asd_sql}/timeholidays.php`, data).then(res => {
+               this.axios.get(`${this.api_HRIS}/timeholidays.php`).then(res => {
                     res.data.forEach(rec => {
                          this.events.push(this.moment(rec.HOLDATE).format('YYYY-MM-DD'))
                     })
