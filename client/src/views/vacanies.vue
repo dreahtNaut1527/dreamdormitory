@@ -12,8 +12,8 @@
                 </v-tab>
             </v-tabs>
             <v-row v-for="(floor, i) in floors" :key="i" dense>
-                <v-container class="mb-n5 overline">
-                    <v-subheader>Floor {{floor.FloorNo}}</v-subheader>
+                <v-container class="mb-n2 overline">
+                    <v-chip outlined>Floor {{floor.FloorNo}}</v-chip>
                 </v-container>
                 <v-col cols="12" md="2" sm="4" v-for="(room, i) in listOfRoomsPerFloor(floor.FloorNo)" :key="i">
                     <v-hover v-slot="{ hover }" open-delay="200">
@@ -21,7 +21,7 @@
                             <v-subheader class="font-weight-bold">
                                 {{ room.RoomDesc }}  
                                 <v-spacer></v-spacer>
-                                <v-sheet v-if="getTotalOccupants(room.Beds) > 0" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
+                                <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
                                     {{ getTotalOccupants(room.Beds) }}
                                 </v-sheet>
                             </v-subheader>
@@ -199,7 +199,7 @@ export default {
         getTotalOccupants(data) {
             let total = 0
             data.forEach(rec => {
-                if(rec.EmployeeCode) {
+                if(!rec.EmployeeCode) {
                     total++
                 }
             })
@@ -208,7 +208,6 @@ export default {
         loadMasters() {
             this.loadMasterMaintenance('buildings').then(res => {
                 this.buildingMasters = res.data
-                console.log(res.data);
                 this.getBuilding()
             })
             this.loadMasterMaintenance('floors').then(res => this.floorMasters = res.data)

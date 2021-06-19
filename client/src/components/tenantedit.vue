@@ -1,7 +1,7 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-toolbar flat>
+        <v-toolbar color="transparent" flat>
             <v-spacer></v-spacer>
             <v-toolbar-title class="font-weight-bold display-1">
                  {{ isEditMode ? 'Edit' : 'New' }}<v-icon right>mdi-pencil</v-icon>
@@ -13,7 +13,7 @@
                     <v-avatar size="126">
                         <img :src="`${ isEditMode ? `${photo}/${emplcode}.jpg` : '../assets/NoPic'}`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
                     </v-avatar>
-                    <v-list dense>
+                    <v-list color="transparent" dense>
                         <v-list-item three-line>
                             <v-list-item-content>
                                 <v-list-item-title class="font-weight-bold subtitle-1">{{ !isEditMode ? 'N/A' : editTenantDetails.EmployeeCode }} </v-list-item-title>
