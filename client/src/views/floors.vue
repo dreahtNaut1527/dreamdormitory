@@ -1,6 +1,101 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
+        <v-container>
+            <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
+                <v-card outlined>
+                    <v-toolbar color="primary" flat dark>
+                        <v-toolbar-title>Pisos</v-toolbar-title>
+                    </v-toolbar>
+                    <v-container>
+                        <v-row align="center" justify="end">
+                            <v-col cols="12" md="4">
+                                <v-text-field
+                                    v-model="searchTable"
+                                    placeholder="Search Floors"
+                                    append-icon="mdi-magnify"
+                                    hide-details
+                                    outlined
+                                    dense
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-divider class="mt-4" ></v-divider>
+                        <v-data-table
+                            :headers="headers"
+                            :items="floors"
+                            :loading="loading"
+                            :search="searchTable"
+                            :page.sync="page"
+                            loading-text="Loading Data...Please Wait Outside"
+                            hide-default-footer
+                        >  
+                            <template v-slot:[`item.actions`]="{ item }">
+                                <v-btn @click="editRecord(item)" icon>
+                                    <v-icon>mdi-pencil</v-icon>
+                                </v-btn>
+                            </template>                   
+                        </v-data-table>
+                        <v-pagination
+                            v-model="page"
+                            :length="pageCount"
+                            :total-visible="10"
+                            color="primary"
+                        ></v-pagination>
+                    </v-container>
+                </v-card>
+            </v-lazy>
+        </v-container>
+        <v-dialog v-model="dialog" width="500" persistent>
+            <v-card>
+                <v-toolbar color="primary" dark>
+                    <v-toolbar-title>
+                            <span>{{editMode ? 'Edit Record' : 'Create New'}}</span>
+                    </v-toolbar-title>
+                </v-toolbar>
+                <v-form>
+                    <v-container>
+                        <v-row align="center" justify="center">
+                            <v-col cols="12" md="12">
+                                <v-text-field
+                                    v-model="editFloors.FloorDesc"
+                                    outlined
+                                    dense
+                                    hide-details
+                                    label="Floor Description"
+                                >
+                                </v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-form>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="saveRecord(editFloors)">
+                        {{editMode? 'Update' : 'Save'}}
+                    </v-btn>
+                    <v-btn @click="clearVariables()">
+                        Cancel
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-fab-transition>
+            <v-btn
+                color="primary"
+                @click="dialog = !dialog"
+                fixed
+                bottom
+                right
+                large
+                dark
+                fab                
+            >
+                <v-icon>
+                    mdi-plus
+                </v-icon>
+            </v-btn>
+        </v-fab-transition>
     </v-main>
 </template>
 
@@ -11,14 +106,78 @@ export default {
             breadCrumbsItems: [ 
                 {text: 'Maintenance', disabled: false, href: '#'},
                 {text: 'Floors', disabled: true, href: '#'}
-            ]
+            ],
+            headers:[
+                {text:"Floor NO",value:"FloorNo"},
+                {text:"Floor Description",value:"FloorDesc"},
+                {text:"Created",value:"CreatedDate"},
+                {text:"Updated",value:"UpdatedDate"},
+                {text:"Actions",value:"actions"},
+            ],
+            numSuffix:{1:'st',2:'nd',3:'rd',th:'th'},
+            editFloors:{
+                FloorNo:"",
+                FloorDesc:"",
+            },
+            floors:[],
+            searchTable:"",
+            loading:false,
+            dialog:false,
+            editMode:false,
+            pageCount:0,
+            page:1,
+            floorno:0,
         }
     },
     created() {
-
+        this.loadFloors()
     },
     methods: {
-        
+        loadFloors(){
+            this.loading= true
+            let url=`${this.api}/executeselect`
+            let body = {
+                procedureName: 'ProcSelectQuery',
+                values: ['floors']
+            }
+            this.axios.post(url,{data: JSON.stringify(body)}).then(res => {
+                this.floors=res.data
+            })
+            this.loading=false
+        },
+        editRecord(data){
+            this.editMode =true
+            this.dialog=!this.dialog
+            Object.assign(this.editFloors,data)
+        },
+        createNew(){
+            this.clearVariables()
+            this.dialog=!this.dialog
+            
+        },
+        saveRecord(data) {
+            let body = {
+                procedureName: 'ProcFloors',
+                values: [
+                    data.FloorNo,
+                    data.FloorDesc,
+                    this.hrisUserInfo.USERACCT,
+                    1
+                ]
+            }
+            console.log(body);
+            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+            this.clearVariables()
+            this.loadFloors()
+        },
+        clearVariables() {
+            this.editMode = false
+            this.dialog = !this.dialog
+            this.editFloors = {
+                FloorNo: '',
+                FloorDesc: '',
+            }
+        }
     }
 }
 </script>

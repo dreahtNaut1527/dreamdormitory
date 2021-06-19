@@ -79,7 +79,7 @@
                     <v-btn @click="clearVariables()" text>Cancel</v-btn>
                     <v-btn @click="saveRecord(editBuildings)" color="primary" dark>Save</v-btn>
                 </v-card-actions>
-            </v-card>
+            </v-card>   
         </v-dialog>
         <v-fab-transition>
             <v-btn

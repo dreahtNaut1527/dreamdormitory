@@ -60,6 +60,7 @@ export default {
             this.readINIFile().then(res => this.cocode = res.data.HRIS.Code)
             let url = 'http://localhost:8080/server/api/ora_getusercontrol.php'
             this.axios.post(url, {username: this.username}).then(res => {
+                console.log(res.data);
                 this.userInfo = res.data[0]
                 Object.assign(this.userInfo, {
                     CODE: this.cocode
