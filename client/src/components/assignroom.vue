@@ -18,87 +18,90 @@
                                     {{item.IsAvailable ? 'Occupied' : 'Available'}}
                                 </v-chip>
                             </v-subheader>
-                            <v-form>
-                                <v-container>
-                                    <v-row dense>
-                                        <v-col cols="12" md="2" sm="2">
-                                            <v-avatar class="mt-5" size="80">
-                                                <img :src="`${photo}/${item.EmployeeCode}.jpg`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
-                                            </v-avatar>
-                                        </v-col>
-                                        <v-col cols="12" md="10" sm="10">
-                                            <v-row class="mt-4" dense>
-                                                <v-col cols="12" md="3" sm="3">
-                                                    <v-text-field
-                                                        class="caption"
-                                                        v-model="item.EmployeeCode"
-                                                        label="Code"
-                                                        @keypress.enter="assignVacant(item)"
-                                                        @blur="assignVacant(item)"
-                                                        :readonly="item.IsAvailable"
-                                                        :clearable="!item.IsAvailable"
-                                                        hide-details
-                                                        outlined
-                                                        dense
-                                                    ></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="9" sm="9">
-                                                    <v-text-field
-                                                        class="caption"
-                                                        v-model="item.EmployeeName"
-                                                        label="Name"
-                                                        hide-details
-                                                        readonly
-                                                        outlined
-                                                        filled
-                                                        dense
-                                                    ></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="12" sm="12">
-                                                    <v-text-field
-                                                        class="caption"
-                                                        v-model="item.Department"
-                                                        label="Department"
-                                                        hide-details
-                                                        readonly
-                                                        outlined
-                                                        filled
-                                                        dense
-                                                    ></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="12" sm="12">
-                                                    <v-text-field
-                                                        class="caption"
-                                                        v-model="item.Section"
-                                                        label="Section"
-                                                        hide-details
-                                                        readonly
-                                                        outlined
-                                                        filled
-                                                        dense
-                                                    ></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="12" sm="12">
-                                                    <v-text-field
-                                                        class="caption"
-                                                        v-model="item.Team"
-                                                        label="Team"
-                                                        hide-details
-                                                        readonly
-                                                        outlined
-                                                        filled
-                                                        dense
-                                                    ></v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-form>
+                            <v-row dense>
+                                <v-col cols="12" md="2" sm="2">
+                                    <v-avatar class="mt-5" size="80">
+                                        <img :src="`${photo}/${item.EmployeeCode}.jpg`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
+                                    </v-avatar>
+                                </v-col>
+                                <v-col cols="12" md="10" sm="10">
+                                <v-form ref="form" v-model="valid" lazy-validation>
+                                    <v-container>
+                                        <v-row class="mt-4" dense>
+                                            <v-col cols="12" md="3" sm="3">
+                                                <v-text-field
+                                                    class="caption"
+                                                    v-model="item.EmployeeCode"
+                                                    label="Code"
+                                                    :rules="[v => !!v || 'field is required']"
+                                                    @keypress.enter="assignVacant(item)"
+                                                    @blur="assignVacant(item)"
+                                                    :readonly="item.IsAvailable"
+                                                    :clearable="!item.IsAvailable"
+                                                    hide-details
+                                                    outlined
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="9" sm="9">
+                                                <v-text-field
+                                                    class="caption"
+                                                    v-model="item.EmployeeName"
+                                                    label="Name"
+                                                    hide-details
+                                                    readonly
+                                                    outlined
+                                                    filled
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="12" sm="12">
+                                                <v-text-field
+                                                    class="caption"
+                                                    v-model="item.Department"
+                                                    label="Department"
+                                                    hide-details
+                                                    readonly
+                                                    outlined
+                                                    filled
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="12" sm="12">
+                                                <v-text-field
+                                                    class="caption"
+                                                    v-model="item.Section"
+                                                    label="Section"
+                                                    hide-details
+                                                    readonly
+                                                    outlined
+                                                    filled
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="12" sm="12">
+                                                <v-text-field
+                                                    class="caption"
+                                                    v-model="item.Team"
+                                                    label="Team"
+                                                    hide-details
+                                                    readonly
+                                                    outlined
+                                                    filled
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                        </v-container>
+                                    </v-form>
+                                </v-col>
+                            </v-row>
                             <v-card-actions>
-                                <v-btn v-if="item.IsAvailable" @click="viewTenantDetails(item)" class="text-xs-caption" color="primary" x-small text>View More...</v-btn>
+                                <v-btn v-if="item.IsAvailable" @click="viewTenantDetails(item)" class="text-xs-caption" color="primary" small text>View More...</v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn @click="saveRecord(item)" color="primary" dark>Save</v-btn>
+                                <v-btn v-if="!item.IsAvailable" @click="saveRecord(item, i)" color="primary" small dark>
+                                    <v-icon left>mdi-content-save</v-icon>Save
+                                </v-btn>
                             </v-card-actions>
                         </v-container>
                     </v-card>
@@ -106,6 +109,9 @@
                 </v-col>
             </v-row>
         </v-container>
+        <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
+            {{ alertText }}
+        </v-snackbar>
     </v-main>
 </template>
 
@@ -115,8 +121,11 @@ import tenantdetails from './tenantdetails'
 export default {
     data() {
         return {
+            alert: false,
+            valid: true,
             assignDialog: false,
             tenantDearchDialog: false,
+            alertText: '',
             stationImg: '',
             occupants: [],
             availableTenants: [],
@@ -124,7 +133,7 @@ export default {
             roomDetails: [],
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
-                {text: 'Vacanies', disabled: false, href: '/dreamdormitory/vacanies'},
+                {text: 'Vacancies', disabled: false, href: '/dreamdormitory/vacancies'},
                 {text: 'Assign Rooms', disabled: true, href: '#'}
             ]
         }
@@ -217,7 +226,7 @@ export default {
                 this.$forceUpdate()
             })
         },
-        saveRecord(data) {
+        saveRecord(data, index) {
             let body = {
                 procedureName: 'ProcAssignTenants',
                 values: [
@@ -230,11 +239,15 @@ export default {
                     0
                 ]
             }
-            // console.log(body);
-            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            setTimeout(() => {
-                this.clearVariables()
-            }, 2000);
+            if(this.$refs.form[index].validate()) {
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                setTimeout(() => {
+                    this.clearVariables()
+                }, 2000);
+            } else {
+                this.alert = true
+                this.alertText = 'Employee Code is required'
+            }
         },
         clearVariables() {
             this.occupants = []
@@ -242,6 +255,7 @@ export default {
             this.availableTenants = []
             this.loadOccupants()
             this.loadMasterMaintenance('availabletenants').then(res => this.availableTenants = res.data)
+            this.$refs.form.resetValidation()
         }
 
     },

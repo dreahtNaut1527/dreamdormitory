@@ -6,12 +6,12 @@
                     <v-card elevation="12">
                         <v-row justify="center" no-gutters>
                             <v-col class="hidden-md-and-down" cols="12" md="7">
-                                <v-img src="../assets/5433.jpg">
+                                <v-img src="../assets/5433.jpg">                                    
                                     <v-container style="position:absolute;bottom:0px">
                                         <v-list-item two-line>
-                                            <v-list-item-content class="font-weight-bold">
-                                                <v-list-item-title>House Technology Industries Pte., Ltd.</v-list-item-title>
-                                                <v-list-item-subtitle>Dream Dormitory</v-list-item-subtitle>
+                                            <v-list-item-content>
+                                                <v-list-item-title class="title font-weight-bold">House Technology Industries Pte., Ltd.</v-list-item-title>
+                                                <v-list-item-subtitle class="font-weight-bold">Dream Dormitory</v-list-item-subtitle>
                                             </v-list-item-content>
                                         </v-list-item>
                                     </v-container>
@@ -44,6 +44,7 @@
                                         <v-col cols="12" md="12">
                                             <v-text-field
                                                 v-model="password"
+                                                @keypress.enter="userLoggedIn()"
                                                 placeholder="Enter your password"
                                                 type="password"
                                                 append-icon="mdi-lock"
@@ -66,6 +67,9 @@
                 </v-col>
             </v-row>
         </v-container>
+        <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
+            {{ alertText }}
+        </v-snackbar>
     </v-main>
 </template>
 
@@ -73,9 +77,11 @@
 export default {
     data() {
         return {
+            alert: false,
             cocode: '',
             username: '',
             password: '',
+            alertText: '',
             userInfo: {}
         }
     },
@@ -88,13 +94,23 @@ export default {
             this.readINIFile().then(res => this.cocode = res.data.HRIS.Code)
             this.axios.post(`${this.api_HRIS}/ora_getusercontrol.php`, {username: this.username}).then(res => {
                 this.userInfo = res.data[0]
-                Object.assign(this.userInfo, {
-                    CODE: this.cocode
-                })
-                if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
-                    this.$store.commit('CHANGE_USER_INFO', this.userInfo)
-                    this.$store.commit('CHANGE_LOGGING', true)
-                    this.$router.push('/dashboard')
+                if(this.userInfo) {
+                    Object.assign(this.userInfo, {
+                        CODE: this.cocode
+                    })
+                    if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
+                        this.$store.commit('CHANGE_USER_INFO', this.userInfo)
+                        this.$store.commit('CHANGE_LOGGING', true)
+                        this.$router.push('/dashboard')
+                    } else {
+                        this.alert = true
+                        this.alertText = 'Username or Password do not match'
+                    }
+                } else {
+                    this.alert = true
+                    this.alertText = 'Account does not exists'
+                    this.username = ''
+                    this.password = ''
                 }
             })
         }

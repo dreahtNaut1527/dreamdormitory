@@ -50,14 +50,15 @@
                 <v-toolbar color="primary" dark>
                     <v-toolbar-title>{{editMode ? 'Edit Record' : 'Create New'}}</v-toolbar-title>
                 </v-toolbar>
-                <v-form>
+                <v-form ref="form" v-model="valid" lazy-validation>
                     <v-container>
-                        <v-row align="center" justify="center">
+                        <v-row align="center" justify="center" no-gutters dense>
                             <v-col cols="12" md="12">
                                 <v-text-field
                                     v-model="editBuildings.BuildingDesc"
+                                    :rules="[v => !!v || 'field is required']"
+                                    @keypress.enter="saveRecord(editBuildings)"
                                     label='Building Name'
-                                    hide-details
                                     outlined
                                     dense
                                 ></v-text-field>
@@ -65,11 +66,12 @@
                             <v-col cols="12" md="12">
                                 <v-textarea
                                     v-model="editBuildings.BuildingAddress"
+                                    :rules="[v => !!v || 'field is required']"
+                                    @keypress.enter="saveRecord(editBuildings)"
                                     label='Building Address'
-                                    hide-details
                                     outlined
                                     dense
-                                ></v-textarea>
+                                ></v-textarea>  
                             </v-col>
                         </v-row>
                     </v-container>
@@ -102,6 +104,7 @@
 export default {
     data() {
         return {
+            valid: true,
             dialog: false,
             loading: true,
             editMode: false,
@@ -160,9 +163,11 @@ export default {
                     1
                 ]
             }
-            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            this.clearVariables()
-            this.loadBuildings()
+            if(this.$refs.form.validate()) {
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                this.clearVariables()
+                this.loadBuildings()
+            }
         },
         clearVariables() {
             this.editMode = false
@@ -172,6 +177,7 @@ export default {
                 BuildingDesc: '',
                 BuildingAddress: ''
             }
+            this.$refs.form.resetValidation()
         }
     }
 }

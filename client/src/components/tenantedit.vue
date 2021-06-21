@@ -52,122 +52,126 @@
                 </v-col>
                 <v-col cols="12" md="9">
                     <v-card outlined>
-                        <v-container fluid>
-                            <v-row dense>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Employee Code:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.EmployeeCode"
-                                        @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
-                                        @blur="getStationSearch(editTenantDetails.EmployeeCode)"
-                                        @click:clear="newRecord()"
-                                        placeholder="Code"
-                                        hide-details
-                                        :clearable="!isEditMode"
-                                        :readonly="isEditMode"
-                                        outlined
-                                        dense   
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Employee Name:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.EmployeeName"
-                                        placeholder="Name"
-                                        hide-details
-                                        outlined
-                                        readonly
-                                        dense
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Department:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.Department"
-                                        placeholder="Department"
-                                        hide-details
-                                        outlined
-                                        readonly
-                                        dense
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Section:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.Section"
-                                        placeholder="Section"
-                                        hide-details
-                                        outlined
-                                        readonly
-                                        dense
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Team:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.Team"
-                                        placeholder="Team"
-                                        hide-details
-                                        outlined
-                                        readonly
-                                        dense
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>MoveIn:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="9">
-                                    <datepicker :menu="moveInDialog" :dateValue.sync=editTenantDetails.MoveInDate dateLabel="Move-In" />
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>MoveOut:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="9">
-                                    <datepicker :menu="moveOutDialog" :dateValue.sync=editTenantDetails.MoveOutDate dateLabel="Move-Out" />
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Rental Fee:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-text-field
-                                        v-model="editTenantDetails.RentalFee"
-                                        placeholder="Team"
-                                        hide-details
-                                        outlined
-                                        dense
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-subheader>Remarks:</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9" sm="9">
-                                    <v-textarea
-                                        v-model="editTenantDetails.Remarks"
-                                        placeholder="Remarks"
-                                        hide-details
-                                        outlined
-                                        dense
-                                    ></v-textarea>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <v-form ref="form" v-model="valid" lazy-validation>
+                            <v-container fluid>
+                                <v-row dense>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Employee Code:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.EmployeeCode"
+                                            @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
+                                            @blur="getStationSearch(editTenantDetails.EmployeeCode)"
+                                            :rules="[v => !!v || 'field is required']"
+                                            @click:clear="newRecord()"
+                                            placeholder="Code"
+                                            type="number"
+                                            :clearable="!isEditMode"
+                                            :readonly="isEditMode"
+                                            hide-details
+                                            outlined
+                                            dense   
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Employee Name:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.EmployeeName"
+                                            placeholder="Name"
+                                            hide-details
+                                            outlined
+                                            readonly
+                                            dense
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Department:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.Department"
+                                            placeholder="Department"
+                                            hide-details
+                                            outlined
+                                            readonly
+                                            dense
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Section:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.Section"
+                                            placeholder="Section"
+                                            hide-details
+                                            outlined
+                                            readonly
+                                            dense
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Team:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.Team"
+                                            placeholder="Team"
+                                            hide-details
+                                            outlined
+                                            readonly
+                                            dense
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>MoveIn:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="9">
+                                        <datepicker :menu="moveInDialog" :dateValue.sync=editTenantDetails.MoveInDate dateLabel="Move-In" />
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>MoveOut:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="9">
+                                        <datepicker :menu="moveOutDialog" :dateValue.sync=editTenantDetails.MoveOutDate dateLabel="Move-Out" />
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Rental Fee:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-text-field
+                                            v-model="editTenantDetails.RentalFee"
+                                            placeholder="Team"
+                                            hide-details
+                                            outlined
+                                            dense
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3">
+                                        <v-subheader>Remarks:</v-subheader>
+                                    </v-col>
+                                    <v-col cols="12" md="9" sm="9">
+                                        <v-textarea
+                                            v-model="editTenantDetails.Remarks"
+                                            placeholder="Remarks"
+                                            hide-details
+                                            outlined
+                                            dense
+                                        ></v-textarea>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-form>
                     </v-card>
                 </v-col>
             </v-row>
         </v-container>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn to="/vacanies" class="mx-3" text>Cancel</v-btn>
+            <v-btn to="/vacancies" class="mx-3" text>Cancel</v-btn>
             <v-btn @click="saveRecord(editTenantDetails)" color="primary" dark>Save</v-btn>
         </v-card-actions>
     </v-main>
@@ -179,6 +183,7 @@ import datepicker from './datepicker'
 export default {
     data() {
         return {
+            valid: true,
             emplcode: null,
             isEditMode: false,
             moveInDialog: false,
@@ -242,29 +247,28 @@ export default {
                     1
                 ]
             }
-            console.log(body);
-            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            this.$router.push('/tenants')
-            // setTimeout(() => {
-            //     this.clearVariables()
-            // }, 2000);
+            if(this.$refs.form.validate()) {
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                this.$router.push('/tenants')
+            }
         },
         getStationSearch(emplcode) {
-            if(this.isEditMode) return;
+            if(this.isEditMode || !emplcode) return;
             this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: emplcode}).then(res => {
-                Object.assign(this.editTenantDetails, {
-                    CompanyCode: this.hrisUserInfo.CODE,
-                    MoveInDate: null,
-                    MoveOutDate: null,
-                    Remarks: null,
-                    EmployeeName: res.data[0].EMPNAME || null,
-                    Department: res.data[0].DEPTDESC || null,
-                    Section: res.data[0].SECTIONDESC || null,
-                    Team: res.data[0].TEAMDESC || null,
-                    Designation: res.data[0].DESIGDESC || null,
-                    RentalFee: 1500.00
-                })
-                this.$forceUpdate()
+                
+                    Object.assign(this.editTenantDetails, {
+                        CompanyCode: this.hrisUserInfo.CODE,
+                        MoveInDate: null,
+                        MoveOutDate: null,
+                        Remarks: null,
+                        EmployeeName: res.data[0].EMPNAME || null,
+                        Department: res.data[0].DEPTDESC || null,
+                        Section: res.data[0].SECTIONDESC || null,
+                        Team: res.data[0].TEAMDESC || null,
+                        Designation: res.data[0].DESIGDESC || null,
+                        RentalFee: 1500.00
+                    })
+                    this.$forceUpdate()
             })
         }
     },

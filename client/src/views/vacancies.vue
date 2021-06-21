@@ -145,7 +145,7 @@ export default {
             roomRelations: [],
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
-                {text: 'Vacanies', disabled: true, href: '#'}
+                {text: 'Vacancies', disabled: true, href: '#'}
             ]
         }
     },
