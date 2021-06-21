@@ -125,8 +125,8 @@ export default {
                     items: [
                         {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacancies'},
                         {text: 'Tenants', icon: 'mdi-account-tie', to: '/tenants'},
-                        {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
                         {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
+                        {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
                         {text: 'Dorm Pass', icon: 'mdi-card-account-details', to: '/dormpass'},
                         {text: 'History', icon: 'mdi-history', to: '/history'}
                     ],

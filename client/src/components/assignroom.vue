@@ -109,6 +109,12 @@
                 </v-col>
             </v-row>
         </v-container>
+        <v-overlay :value="loading">
+            <v-progress-circular
+                indeterminate
+                size="64"
+            ></v-progress-circular>
+        </v-overlay>
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
             {{ alertText }}
         </v-snackbar>
@@ -123,6 +129,7 @@ export default {
         return {
             alert: false,
             valid: true,
+            loading: false,
             assignDialog: false,
             tenantDearchDialog: false,
             alertText: '',
@@ -174,7 +181,8 @@ export default {
         },
         loadCurrentOccupants(val) {
             let employee = []
-            val.forEach(rec => {
+            val.forEach((rec, index) => {
+                this.loading = true
                 if(rec.EmployeeCode != undefined) {
                     this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: rec.EmployeeCode}).then(res => {
                         employee = res.data[0]
@@ -186,6 +194,7 @@ export default {
                             Designation: employee.DESIGDESC || null,
                             Dialog: false
                         })
+                        if(index + 1 == val.length) this.loading = false
                         this.currentOccupants.unshift(rec)
                     })
                 } else {
@@ -198,6 +207,7 @@ export default {
                         Dialog: false
                     })
                     this.currentOccupants.push(rec)
+                    if(index + 1 == val.length) this.loading = false
                 }
             })
         },

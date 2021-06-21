@@ -53,12 +53,12 @@
                 <v-col cols="12" md="9">
                     <v-card outlined>
                         <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-container fluid>
+                            <v-container class="my-4">
                                 <v-row dense>
                                     <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Employee Code:</v-subheader>
+                                        <v-subheader>Employee:</v-subheader>
                                     </v-col>
-                                    <v-col cols="12" md="8" sm="8">
+                                    <v-col cols="12" md="2" sm="2">
                                         <v-text-field
                                             v-model="editTenantDetails.EmployeeCode"
                                             @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
@@ -74,13 +74,7 @@
                                             dense   
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="1" sm="1">
-                                        <v-btn @click="stationDialog = !stationDialog" color="primary" icon><v-icon>mdi-magnify</v-icon></v-btn>
-                                    </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Employee Name:</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="9" sm="9">
+                                    <v-col cols="12" md="7" sm="7">
                                         <v-text-field
                                             v-model="editTenantDetails.EmployeeName"
                                             placeholder="Name"
@@ -177,26 +171,30 @@
             <v-btn to="/vacancies" class="mx-3" text>Cancel</v-btn>
             <v-btn @click="saveRecord(editTenantDetails)" color="primary" dark>Save</v-btn>
         </v-card-actions>
+        <v-overlay :value="loading">
+            <v-progress-circular
+                indeterminate
+                size="64"
+            ></v-progress-circular>
+        </v-overlay>
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
             {{ alertText }}
         </v-snackbar>
-        <stationsearch :dialog="stationDialog" :emplcode.sync="editTenantDetails.EmployeeCode" />
     </v-main>
 </template>
 
 <script>
 import datepicker from './datepicker'
-import stationsearch from './stationsearch'
 
 export default {
     data() {
         return {
             alert: false,
             valid: true,
+            loading: false,
             emplcode: null,
             isEditMode: false,
             moveInDialog: false,
-            stationDialog: false,
             moveOutDialog: false,
             alertText: '',
             tenantsLists: [],
@@ -214,6 +212,7 @@ export default {
     },
     mounted() {
         this.loadMasterMaintenance('tenants').then(res => {
+            this.loading = true
             this.tenantsLists = res.data
             if(this.filterTenants[0] != undefined) {
                 this.stationSearch(this.filterTenants[0].EmployeeCode).then(res => {
@@ -225,8 +224,11 @@ export default {
                         Team: res.data[0].TEAMDESC || null,
                         Designation: res.data[0].DESIGDESC || null
                     })
+                    this.loading = false
                     this.$forceUpdate()
                 })
+            } else {
+                this.loading = false
             }
         })
     },
@@ -288,8 +290,7 @@ export default {
         }
     },
     components: {
-        datepicker,
-        stationsearch
+        datepicker
     }
 }
 </script>

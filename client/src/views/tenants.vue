@@ -36,10 +36,8 @@
                         <v-data-table
                             :headers="headers" 
                             :items="filterTenants"
-                            :loading="loading"
                             :search="searchTable"
                             :page.sync="page"
-                            loading-text="Loading Data. . .Please Wait"
                             @page-count="pageCount = $event"
                             hide-default-footer
                         >
@@ -57,6 +55,12 @@
                 </v-card>
             </v-lazy>
         </v-container>
+        <v-overlay :value="loading">
+            <v-progress-circular
+                indeterminate
+                size="64"
+            ></v-progress-circular>
+        </v-overlay>
         <v-fab-transition>
             <v-btn
                 color="primary"
@@ -78,7 +82,7 @@
 export default {
     data() {
         return {
-            loading: true,
+            loading: false,
             company: '',
             searchTable: '',
             pageCount: 0,
@@ -105,7 +109,8 @@ export default {
         this.loadMasterMaintenance('tenants').then(res => {
             this.tenants = res.data
             if(this.tenants != []) {
-                this.tenants.forEach(rec => {
+                this.tenants.forEach((rec, index) => {
+                    this.loading = true
                     this.stationSearch(rec.EmployeeCode).then(res => {
                         Object.assign(rec, {
                             EmployeeName: res.data[0].EMPNAME || null,
@@ -115,9 +120,9 @@ export default {
                             Designation: res.data[0].DESIGDESC || null
                         })
                         this.$forceUpdate()
+                        if(index + 1 == this.tenants.length) this.loading = false
                     })
                 })
-                this.loading = false
             }
         })
     },
