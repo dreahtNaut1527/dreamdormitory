@@ -263,6 +263,9 @@ export default {
             if(this.$refs.form.validate()) {
                 this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                 this.$router.push('/tenants')
+            } else {
+                this.alert = true
+                this.alertText = 'Employee Code is required'
             }
         },
         getStationSearch(emplcode) {

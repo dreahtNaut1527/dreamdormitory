@@ -8,7 +8,68 @@
                     <v-icon>mdi-domain</v-icon>
                 </v-tab>
             </v-tabs>
-            <v-row v-for="(floor, i) in floors" :key="i" dense>
+            <v-container>
+                <v-radio-group v-model="floor" row>
+                    <v-radio
+                        v-for="(item, i) in floorMasters"
+                        :key="i"
+                        :value="item.FloorNo"
+                        :label="item.FloorDesc"
+                    ></v-radio>
+                </v-radio-group>
+                <v-data-iterator
+                    :items="listOfRoomsPerFloor(floor)"
+                    :items-per-page="30"
+                    :page.sync="page"
+                    @page-count="pageCount = $event"
+                    hide-default-footer
+                >
+                    <template v-slot:default="props">
+                        <v-row dense>
+                            <v-col cols="12" md="2" sm="4" v-for="(room, i) in props.items" :key="i">
+                                <v-hover v-slot="{ hover }" open-delay="200">
+                                    <v-card class="rounded-lg" :elevation="hover ? 8 : 2" @click="assignRoom(room)" outlined>
+                                        <v-subheader class="font-weight-bold">
+                                            {{ room.RoomDesc }}  
+                                            <v-spacer></v-spacer>
+                                            <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
+                                                {{ getTotalOccupants(room.Beds) }}
+                                            </v-sheet>
+                                        </v-subheader>
+                                        <v-container>
+                                            <v-row justify="end" dense>
+                                                <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="3">
+                                                    <v-avatar class="text-center" size="35">
+                                                        <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
+                                                    </v-avatar>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
+                                    </v-card>
+                                </v-hover>
+                            </v-col>
+                        </v-row>
+                    </template>
+                    <template v-slot:no-data>
+                        <v-row align="center" justify="center">
+                            <v-col cols="12" md="12">
+                                <v-sheet color="transparent" height="500">
+                                    <v-container class="fill-height">
+                                        <v-card-text class="font-weight-bold text-center grey--text display-1">No data found</v-card-text>
+                                    </v-container>
+                                </v-sheet>
+                            </v-col>
+                        </v-row>
+                    </template>
+                </v-data-iterator>
+            </v-container>
+            <v-pagination
+                v-model="page"
+                :length="pageCount"
+                :total-visible="10"
+                color="primary"
+            ></v-pagination>
+            <!-- <v-row v-for="(floor, i) in floors" :key="i" dense>
                 <v-container class="mb-n2 overline">
                     <v-chip outlined>Floor {{floor.FloorNo}}</v-chip>
                 </v-container>
@@ -34,7 +95,7 @@
                         </v-card>
                     </v-hover>
                 </v-col>
-            </v-row>
+            </v-row> -->
         </v-container>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card>
@@ -130,6 +191,9 @@ export default {
             hover: false,
             dialog: false,
             tab: 0,
+            page: 1,
+            floor: 1,
+            pageCount: 0,
             buildings: '',
             selectedBeds: '',
             selectedRoom: '',
