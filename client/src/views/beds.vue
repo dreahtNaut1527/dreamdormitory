@@ -16,7 +16,7 @@
                                     hide-details
                                     outlined
                                     dense
-                                    place-holder="Bed search input"
+                                    placeholder="Search Beds"
                                     append-icon="mdi-magnify"
                                 ></v-text-field>
                             </v-col>

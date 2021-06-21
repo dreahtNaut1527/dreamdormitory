@@ -12,7 +12,7 @@
                             <v-col cols="12" md="4">
                                 <v-text-field
                                     v-model="searchTable"
-                                    placeholder="Search Floors"
+                                    placeholder="Search Rooms"
                                     append-icon="mdi-magnify"
                                     hide-details
                                     outlined
