@@ -133,7 +133,10 @@ export default {
     },
     created() {
         // Load Floors
-        this.clearVariables()
+        this.loadMasterMaintenance('floors').then(res => {
+            this.floors=[]
+            this.floors = res.data                  
+        })
     },
     methods: {
         editRecord(data){

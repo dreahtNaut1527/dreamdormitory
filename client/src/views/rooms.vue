@@ -128,8 +128,10 @@ export default {
     },
     created() {
         // Load Rooms
-
-        this.clearVariables()
+        this.loadMasterMaintenance('rooms').then(res => {
+            this.rooms=[]
+            this.rooms = res.data
+        })
 
     },
     methods: {
