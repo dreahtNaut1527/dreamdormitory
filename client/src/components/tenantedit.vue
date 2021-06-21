@@ -58,7 +58,7 @@
                                     <v-col cols="12" md="3" sm="3">
                                         <v-subheader>Employee Code:</v-subheader>
                                     </v-col>
-                                    <v-col cols="12" md="9" sm="9">
+                                    <v-col cols="12" md="8" sm="8">
                                         <v-text-field
                                             v-model="editTenantDetails.EmployeeCode"
                                             @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
@@ -73,6 +73,9 @@
                                             outlined
                                             dense   
                                         ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="1" sm="1">
+                                        <v-btn @click="stationDialog = !stationDialog" color="primary" icon><v-icon>mdi-magnify</v-icon></v-btn>
                                     </v-col>
                                     <v-col cols="12" md="3" sm="3">
                                         <v-subheader>Employee Name:</v-subheader>
@@ -174,20 +177,28 @@
             <v-btn to="/vacancies" class="mx-3" text>Cancel</v-btn>
             <v-btn @click="saveRecord(editTenantDetails)" color="primary" dark>Save</v-btn>
         </v-card-actions>
+        <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
+            {{ alertText }}
+        </v-snackbar>
+        <stationsearch :dialog="stationDialog" :emplcode.sync="editTenantDetails.EmployeeCode" />
     </v-main>
 </template>
 
 <script>
 import datepicker from './datepicker'
+import stationsearch from './stationsearch'
 
 export default {
     data() {
         return {
+            alert: false,
             valid: true,
             emplcode: null,
             isEditMode: false,
             moveInDialog: false,
+            stationDialog: false,
             moveOutDialog: false,
+            alertText: '',
             tenantsLists: [],
             editTenantDetails: {},
             breadCrumbsItems: [ 
@@ -255,25 +266,30 @@ export default {
         getStationSearch(emplcode) {
             if(this.isEditMode || !emplcode) return;
             this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: emplcode}).then(res => {
-                
-                    Object.assign(this.editTenantDetails, {
-                        CompanyCode: this.hrisUserInfo.CODE,
-                        MoveInDate: null,
-                        MoveOutDate: null,
-                        Remarks: null,
-                        EmployeeName: res.data[0].EMPNAME || null,
-                        Department: res.data[0].DEPTDESC || null,
-                        Section: res.data[0].SECTIONDESC || null,
-                        Team: res.data[0].TEAMDESC || null,
-                        Designation: res.data[0].DESIGDESC || null,
-                        RentalFee: 1500.00
-                    })
-                    this.$forceUpdate()
+                    if(res.data[0]) {
+                        Object.assign(this.editTenantDetails, {
+                            CompanyCode: this.hrisUserInfo.CODE,
+                            MoveInDate: null,
+                            MoveOutDate: null,
+                            Remarks: null,
+                            EmployeeName: res.data[0].EMPNAME || null,
+                            Department: res.data[0].DEPTDESC || null,
+                            Section: res.data[0].SECTIONDESC || null,
+                            Team: res.data[0].TEAMDESC || null,
+                            Designation: res.data[0].DESIGDESC || null,
+                            RentalFee: 1500.00
+                        })
+                        this.$forceUpdate()
+                    } else {
+                        this.alert = true
+                        this.alertText = 'No record found'
+                    }
             })
         }
     },
     components: {
-        datepicker
+        datepicker,
+        stationsearch
     }
 }
 </script>
