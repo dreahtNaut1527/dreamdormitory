@@ -55,14 +55,15 @@
                         {{editMode ? 'Edit Record' : 'Create New'}}
                     </v-toolbar-title>
                 </v-toolbar>
-                <v-form>
+                <v-form ref="form" v-model="valid" lazy-validation>
                      <v-container>
                     <v-row align="center" justify="center">
                         <v-col cols="12" md="12">
                             <v-text-field
                                 outlined
                                 v-model="editBeds.BedDesc"
-                                hide-details
+                                dense
+                                :rules="[v => !!v || 'Bed Decription is required']"
                                 label="Bed Decription"
                             ></v-text-field>
                         </v-col>  
@@ -121,6 +122,7 @@ export default {
             loading:false,
             editMode:false,
             dialog:false,
+            valid:true,
         }
     },
     created() {
@@ -144,9 +146,10 @@ export default {
                     1
                 ]
             }
-            console.log(body);
-            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            this.clearVariables()
+            if (this.$refs.form.validate()) {
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                this.clearVariables()
+            }
         },
         clearVariables() {
             this.editMode = false
@@ -160,6 +163,7 @@ export default {
                 this.beds=[]
                 this.beds = res.data
             })
+            this.$refs.form.resetValidation()
         }
     }
 }

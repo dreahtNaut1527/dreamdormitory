@@ -54,7 +54,7 @@
                             <span>{{editMode ? 'Edit Record' : 'Create New'}}</span>
                     </v-toolbar-title>
                 </v-toolbar>
-                <v-form>
+                <v-form ref='form' v-model="valid" lazy-validation>
                     <v-container>
                         <v-row align="center" justify="center">
                             <v-col cols="12" md="12">
@@ -62,7 +62,7 @@
                                     v-model="editFloors.FloorDesc"
                                     outlined
                                     dense
-                                    hide-details
+                                    :rules="[v => !!v || 'Floor Description is required']"
                                     label="Floor Description"
                                 >
                                 </v-text-field>
@@ -128,6 +128,7 @@ export default {
             pageCount:0,
             page:1,
             floorno:0,
+            valid:true,
         }
     },
     created() {
@@ -150,10 +151,10 @@ export default {
                     1
                 ]
             }
-            console.log(body);
-            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            this.clearVariables()
-            this.loadFloors()
+            if (this.$refs.form.validate()) {
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                this.clearVariables()
+            }
         },
         clearVariables() {
             this.editMode = false
@@ -167,6 +168,7 @@ export default {
                 this.floors=[]
                 this.floors = res.data                  
             })
+            this.$refs.form.resetValidation()
         }
     }
 }

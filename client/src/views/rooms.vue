@@ -63,7 +63,6 @@
                                     v-model="editRooms.RoomDesc"
                                     dense
                                     outlined
-                                    hide-details
                                     label="Room Description"
                                     :rules="[v => !!v || 'Room Description is required']"
                                     @keypress.enter="saveRecord(editBeds)"
@@ -153,7 +152,6 @@ export default {
                 // console.log(body);
                 this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                 this.clearVariables()
-                this.loadRoams()
             }
         },
         clearVariables(){
