@@ -1,9 +1,6 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-toolbar color="transparent" flat>
-            <v-toolbar-title class="display-1 font-weight-bold">Rooms</v-toolbar-title>
-        </v-toolbar>
         <v-container>
             <v-tabs v-model="tab" background-color="primary" @change="getBuilding()" icons-and-text centered grow dark>
                 <v-tab v-for="(item, i) in buildingMasters" :key="i">

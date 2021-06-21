@@ -39,12 +39,59 @@
                     </v-list-item-action>
                 </v-list-item>
             </v-list>
+            <template v-slot:append>
+                <v-container>
+                    <v-btn icon><v-icon>mdi-cog</v-icon></v-btn>
+                </v-container>
+            </template>
         </v-navigation-drawer>
         <v-app-bar color="transparent" dense flat>
             <v-spacer></v-spacer>
             <v-btn class="mx-2" icon><v-icon>mdi-bell</v-icon></v-btn>
-            <v-btn class="mr-2" icon><v-icon>mdi-account</v-icon></v-btn>
+            <v-menu
+                v-model="menu"
+                transition="fade-transition"
+                :nudge-width="200"
+                :nudge-left="150"
+                offset-y
+            >
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn class="mr-2" v-on="on" v-bind="attrs" icon><v-icon>mdi-account</v-icon></v-btn>
+                </template>
+                <v-card>
+                    <v-subheader class="overline">User</v-subheader>
+                    <v-divider></v-divider>
+                    <v-list dense>
+                        <v-list-item two-list>
+                            <v-list-item-avatar>
+                                <v-img :src="`${photo}/${ hrisUserInfo.USERACCT.length <= 6 ? hrisUserInfo.USERACCT.substring(1, 6) : hrisUserInfo.USERACCT}.jpg`" />
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title class="font-weight-bold">{{ hrisUserInfo.USERACCT }}</v-list-item-title>
+                                <v-list-item-subtitle class="caption">{{ hrisUserInfo.FULLNAME }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn @click="overlay = !overlay" v-on="on" v-bind="attrs" icon><v-icon>mdi-logout</v-icon></v-btn>
+                                    </template>
+                                    <span>Log-out</span>
+                                </v-tooltip>
+                            </v-list-item-action>
+                        </v-list-item>
+                    </v-list>
+                </v-card>
+            </v-menu>
         </v-app-bar>
+        <v-overlay v-model="overlay">
+            <v-snackbar v-model="overlay" top app>
+                <v-card-title class="pa-0 caption">Do you want to logout?</v-card-title>
+                <template v-slot:action="{ attrs }">
+                    <v-btn class="mx-3" @click="overlay = !overlay" v-bind="attrs" color="primary" small dark>No</v-btn>
+                    <v-btn @click="userLoggedOut()" small text>Yes</v-btn>
+                </template>
+            </v-snackbar>
+        </v-overlay>
     </div>
 </template>
 
@@ -52,6 +99,8 @@
 export default {
     data() {
         return {
+            menu: false,
+            overlay: false,
             navDrawer: false,
             navDrawerLists: []
         }
@@ -74,7 +123,7 @@ export default {
                     title: 'Process',
                     icon: 'mdi-pencil-box',
                     items: [
-                        {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacanies'},
+                        {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacancies'},
                         {text: 'Tenants', icon: 'mdi-account-tie', to: '/tenants'},
                         {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
                         {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
@@ -103,6 +152,11 @@ export default {
                     active: false   
                 },
             ]
+        },
+        userLoggedOut() {
+            this.$store.commit('CHANGE_USER_INFO', {})
+            this.$store.commit('CHANGE_LOGGING', false)
+            this.$router.push('/')
         }
     }
 }
