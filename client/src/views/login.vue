@@ -3,7 +3,7 @@
         <v-container class="fill-height">
             <v-row align="center" justify="center">
                 <v-col cols="12" md="10">
-                    <v-card>
+                    <v-card elevation="12">
                         <v-row justify="center" no-gutters>
                             <v-col class="hidden-md-and-down" cols="12" md="7">
                                 <v-img src="../assets/5433.jpg">
