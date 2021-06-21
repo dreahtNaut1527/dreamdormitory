@@ -5,7 +5,7 @@
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
                     <v-toolbar color="primary" flat dark>
-                        <v-toolbar-title>Pisos</v-toolbar-title>
+                        <v-toolbar-title>Floors</v-toolbar-title>
                     </v-toolbar>
                     <v-container>
                         <v-row align="center" justify="end">
@@ -27,6 +27,7 @@
                             :loading="loading"
                             :search="searchTable"
                             :page.sync="page"
+                            @page-count="pageCount = $event"
                             loading-text="Loading Data...Please Wait Outside"
                             hide-default-footer
                         >  
@@ -71,11 +72,11 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="saveRecord(editFloors)">
-                        {{editMode? 'Update' : 'Save'}}
-                    </v-btn>
                     <v-btn @click="clearVariables()">
                         Cancel
+                    </v-btn>
+                    <v-btn @click="saveRecord(editFloors)">
+                        {{editMode? 'Update' : 'Save'}}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -130,30 +131,14 @@ export default {
         }
     },
     created() {
-        this.loadFloors()
+        // Load Floors
+        this.clearVariables()
     },
     methods: {
-        loadFloors(){
-            this.loading= true
-            let url=`${this.api}/executeselect`
-            let body = {
-                procedureName: 'ProcSelectQuery',
-                values: ['floors']
-            }
-            this.axios.post(url,{data: JSON.stringify(body)}).then(res => {
-                this.floors=res.data
-            })
-            this.loading=false
-        },
         editRecord(data){
             this.editMode =true
             this.dialog=!this.dialog
             Object.assign(this.editFloors,data)
-        },
-        createNew(){
-            this.clearVariables()
-            this.dialog=!this.dialog
-            
         },
         saveRecord(data) {
             let body = {
@@ -172,11 +157,16 @@ export default {
         },
         clearVariables() {
             this.editMode = false
-            this.dialog = !this.dialog
+            this.dialog = false
+            this.loading=false
             this.editFloors = {
                 FloorNo: '',
                 FloorDesc: '',
             }
+            this.loadMasterMaintenance('floors').then(res => {
+                this.floors=[]
+                this.floors = res.data                  
+            })
         }
     }
 }
