@@ -1,5 +1,5 @@
 <template>
-    <v-app id="inspire" :style="`background-color: ${$route.path != '/' ? '#F5F5F5' : '#f4bd7d'};`">
+    <v-app id="inspire" :style="`background-color: ${$route.path != '/' ? '#F5F5F5' : '#5F80A3'};`">
         <navdrawer v-if="hrisUserInfo.USERACCT != undefined" />
         <router-view />
     </v-app>
