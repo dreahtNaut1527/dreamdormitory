@@ -127,7 +127,10 @@ export default {
     },
     created() {
         // Load Beds
-        this.clearVariables()
+        this.loadMasterMaintenance('beds').then(res => {
+            this.beds=[]
+            this.beds = res.data
+        })
     },
 
     methods: {
