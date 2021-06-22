@@ -28,7 +28,7 @@
                         <v-row dense>
                             <v-col cols="12" md="2" sm="4" v-for="(room, i) in props.items" :key="i">
                                 <v-hover v-slot="{ hover }" open-delay="200">
-                                    <v-card class="rounded-lg" :elevation="hover ? 8 : 2" @click="assignRoom(room)" outlined>
+                                    <v-card class="rounded-lg" :elevation="hover ? 12 : 2" @click="assignRoom(room)" outlined>
                                         <v-subheader class="font-weight-bold">
                                             {{ room.RoomDesc }}  
                                             <v-spacer></v-spacer>
