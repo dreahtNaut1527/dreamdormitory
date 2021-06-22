@@ -15,14 +15,19 @@
             <v-list>
                 <v-list-item v-for="(item, i) in navDrawerLists" :key="i">  
                     <v-list-item-action class="ml-n3">
-                        <v-menu content-class="elevation-0" transition="slide-x-transition" v-model="item.active" :nudge-right="15" :nudge-width="150" offset-x tile>
+                        <v-menu content-class="elevation-0" transition="slide-x-transition" v-model="item.active" :nudge-right="10" :nudge-width="150" offset-x tile>
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn @click="item.active" v-on="on" v-bind="attrs" large icon>
-                                    <v-icon>{{item.icon}}</v-icon>
+                                    <v-tooltip right>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-icon v-on="on" v-bind="attrs" >{{ item.icon }}</v-icon>
+                                        </template>
+                                        <span>{{ item.title }}</span>
+                                    </v-tooltip>
                                 </v-btn>
                             </template>
                             <v-card outlined flat>
-                                <v-subheader class="font-weight-bold">{{item.title}}</v-subheader>
+                                <v-subheader class="font-weight-bold">{{ item.title }}</v-subheader>
                                 <v-divider></v-divider>
                                 <v-list dense>
                                     <v-list-item v-for="(childItem, i) in item.items" :key="i" :to="childItem.to" link>

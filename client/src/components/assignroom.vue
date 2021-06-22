@@ -181,8 +181,8 @@ export default {
         },
         loadCurrentOccupants(val) {
             let employee = []
+            this.loading = true
             val.forEach((rec, index) => {
-                this.loading = true
                 if(rec.EmployeeCode != undefined) {
                     this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: rec.EmployeeCode}).then(res => {
                         employee = res.data[0]

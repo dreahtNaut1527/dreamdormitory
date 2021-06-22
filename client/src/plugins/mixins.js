@@ -52,7 +52,7 @@ const plugins = {
                 // HRIS station search
                 stationSearch(code) {
                     return this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: code})
-                },
+                }
 
             }
         })

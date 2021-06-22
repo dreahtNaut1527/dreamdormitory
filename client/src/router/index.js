@@ -61,6 +61,12 @@ const routes = [
     component: () => import('@/views/dormpass'),
   },
   {
+    path: '/dormpassedit',
+    name: 'dormpassedit',
+    component: () => import('@/components/dormpassedit'),
+    props: true
+  },
+  {
     path: '/assignroom',
     name: 'assignroom',
     component: () => import('@/components/assignroom'),
