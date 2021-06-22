@@ -82,7 +82,7 @@
 export default {
     data() {
         return {
-            loading: false,
+            loading: true,
             company: '',
             searchTable: '',
             pageCount: 0,
@@ -103,27 +103,28 @@ export default {
         }
     },
     created() {
-        
+
     },
     mounted() {
-        this.loadMasterMaintenance('tenants').then(res => {
-            this.tenants = res.data
-            if(this.tenants != []) {
-                this.tenants.forEach((rec, index) => {
-                    this.loading = true
-                    this.stationSearch(rec.EmployeeCode).then(res => {
+        this.stationSearch(null).then(res => {
+            let station = res.data
+            this.loadMasterMaintenance('tenants').then(res => {
+                this.tenants = res.data
+                if(this.tenants != []) {
+                    this.tenants.forEach(rec => {
+                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         Object.assign(rec, {
-                            EmployeeName: res.data[0].EMPNAME || null,
-                            Department: res.data[0].DEPTDESC || null,
-                            Section: res.data[0].SECTIONDESC || null,
-                            Team: res.data[0].TEAMDESC || null,
-                            Designation: res.data[0].DESIGDESC || null
+                            EmployeeName: employee[0].EMPNAME || null,
+                            Department: employee[0].DEPTDESC || null,
+                            Section: employee[0].SECTIONDESC || null,
+                            Team: employee[0].TEAMDESC || null,
+                            Designation: employee[0].DESIGDESC || null
                         })
                         this.$forceUpdate()
-                        if(index + 1 == this.tenants.length) this.loading = false
                     })
-                })
-            }
+                }
+            }) 
+            this.loading = false 
         })
     },
     computed: {

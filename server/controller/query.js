@@ -13,8 +13,12 @@ router.get('/appversion', (req, res) => {
 // Get HRConfig.ini
 router.get('/config', (req, res) => {
     let iniFilePath = 'P:\HRConfig.INI'
-    let iniContents = readINI.sync(iniFilePath)
-    res.send(JSON.stringify(iniContents))
+    try {
+          let iniContents = readINI.sync(iniFilePath)
+          res.send(JSON.stringify(iniContents))
+    } catch (error) {
+         res.send(error)
+    }
 })
 
 // ======================== MSSQL Procedure API ========================
