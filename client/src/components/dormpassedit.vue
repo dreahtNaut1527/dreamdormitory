@@ -136,7 +136,6 @@
                     <v-btn @click="clearVariables()" class="mx-3" text>Cancel</v-btn>
                     <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
                 </v-card-actions>
-                {{dormData}}
             </v-card>
         </v-dialog>
         <v-fab-transition>
