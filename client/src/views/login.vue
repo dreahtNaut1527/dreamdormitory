@@ -10,8 +10,8 @@
                                     <v-container style="position:absolute;bottom:0px">
                                         <v-list-item two-line>
                                             <v-list-item-content>
-                                                <v-list-item-title class="title font-weight-bold">House Technology Industries Pte., Ltd.</v-list-item-title>
-                                                <v-list-item-subtitle class="font-weight-bold">Dream Dormitory</v-list-item-subtitle>
+                                                <v-list-item-title class="title font-weight-bold">Dream Dormitory</v-list-item-title>
+                                                <v-list-item-subtitle class="font-weight-bold">House Technology Industries Pte., Ltd.</v-list-item-subtitle>
                                             </v-list-item-content>
                                         </v-list-item>
                                     </v-container>
@@ -91,13 +91,11 @@ export default {
     },
     methods: {
         userLoggedIn() {
-            this.readINIFile().then(res => this.cocode = res.data.HRIS.Code)
+            // this.readINIFile().then(res => this.cocode = res.data.HRIS.Code)
             this.axios.post(`${this.api_HRIS}/ora_getusercontrol.php`, {username: this.username}).then(res => {
                 this.userInfo = res.data[0]
+
                 if(this.userInfo) {
-                    Object.assign(this.userInfo, {
-                        CODE: this.cocode
-                    })
                     if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
                         this.$store.commit('CHANGE_USER_INFO', this.userInfo)
                         this.$store.commit('CHANGE_LOGGING', true)

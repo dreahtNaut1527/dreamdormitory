@@ -38,7 +38,7 @@
                                         </v-subheader>
                                         <v-container>
                                             <v-row justify="end" dense>
-                                                <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="3">
+                                                <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" cols="12" md="3" sm="3">
                                                     <v-avatar class="text-center" size="35">
                                                         <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
                                                     </v-avatar>
@@ -265,6 +265,11 @@ export default {
                 }
             })
             return total
+        },
+        sortOccupants(data) {
+            return data.filter(rec => {
+                return rec
+            }).sort((a, b) => b.EmployeeCode - a.EmployeeCode)
         },
         loadMasters() {
             this.loadMasterMaintenance('buildings').then(res => {
