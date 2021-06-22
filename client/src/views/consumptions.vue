@@ -11,7 +11,7 @@
             <v-card outlined>
                 <v-form>
                     <v-container fluid>
-                        <v-row dense justify="left">
+                        <v-row dense justify="center">
                                 <v-col cols="12" md="3" sm="3">
                                     <v-select                                     
                                     :items="itemstype"
@@ -54,6 +54,7 @@
 
                                 <v-col cols="12" md="3" sm="3">
                                     <v-text-field
+                                        
                                         outlined
                                         dense
                                         label="Previous Reading"
@@ -135,15 +136,18 @@
                         </v-row>
                     </v-container>
                 </v-form>
-                <v-card-actions dense>
+                <v-card-actions dense >
                     <v-spacer></v-spacer>
-                    <v-btn>Cancel</v-btn>
-                    <v-btn>Save</v-btn>
+                    <v-btn width="120"  >Cancel</v-btn>
+                    <v-btn width="120">Save</v-btn>
                 </v-card-actions>
             </v-card>            
         </v-container>
         <v-container>
-            <v-data-table hide-default-footer></v-data-table>
+            <v-data-table 
+                :headers="headers"
+                hide-default-footer
+            ></v-data-table>
         </v-container>
     </v-main>
 </template>
@@ -155,6 +159,16 @@ export default {
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
                 {text: 'Consumption', disabled: true, href: '#'}
+            ],
+            headers:[
+                {text:'Payroll Date',value:'PayrollDate'},
+                {text:'Previous Reading',value:'PrevReading'},
+                {text:'Latest Reading',value:'LatestReading'},
+                {text:'Payroll Date',value:'PayrollDate'},
+                {text:'Consumption',value:'TotalConsumption'},
+                {text:'Amount/Room',value:'TotalKWM3'},
+                {text:'Amount/Head',value:'TotalConsumption'},
+                {text:'Actions',value:'Actions'},
             ],
             itemstype:['Electricity','Water']
         }
