@@ -39,6 +39,12 @@ const plugins = {
                 readINIFile() {
                     return this.axios.get(`${this.api}/config`)
                 },
+                rightString(str, chr) {
+                    return str.slice(str.length - chr, str.length);
+                },
+                leftString(str, chr) {
+                    return str.slice(0, chr - str.length);
+                },
 
                 // Load Masters Maintenance
                 loadMasterMaintenance(tablename) {

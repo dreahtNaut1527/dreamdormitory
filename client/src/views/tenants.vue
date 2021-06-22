@@ -41,6 +41,10 @@
                             @page-count="pageCount = $event"
                             hide-default-footer
                         >
+                            <template v-slot:[`item.EmployeeCode`]="{ item }">
+                                <v-badge v-if="item.BuildingId == 0" content="new">{{item.EmployeeCode}}</v-badge>
+                                <div v-else>{{item.EmployeeCode}}</div>
+                            </template>
                             <template v-slot:[`item.actions`]="{ item }">
                                 <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
                             </template>

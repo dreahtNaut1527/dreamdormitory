@@ -19,6 +19,8 @@
                     </v-list>
                     <v-toolbar color="primary" dark>
                         <v-toolbar-title>Materials / Appliances</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon><v-icon large>mdi-file-find</v-icon></v-btn>
                     </v-toolbar>
                     <v-data-table
                         :headers="headers" 
@@ -30,9 +32,9 @@
                         hide-default-footer
                         show-select
                     >
-                        <!-- <template v-slot:[`item.actions`]="{ item }">
-                            <v-btn @click="editDormPass(item)" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
-                        </template> -->
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                        </template>
                         <template v-slot:no-data>
                             <v-row align="center" justify="center">
                                 <v-col cols="12" md="12">
@@ -165,6 +167,7 @@ export default {
             editMode: false,
             validDialog: false,
             encodeDialog: false,
+            dormPassCode: '',
             searchTable: '',
             destination: '',
             pageCount: 0,
@@ -176,6 +179,7 @@ export default {
                 {text: 'Outgoing', value: true}
             ],
             itemDetails: {
+                DetailNo: 0,
                 ItemName: null,
                 Specification: null,
                 Quantity: 0,
@@ -185,7 +189,8 @@ export default {
                 {text: 'Item Name', value:'ItemName'},
                 {text: 'Specification', value:'Specification'},
                 {text: 'Quantity', value:'Quantity'},
-                {text: 'Remarks', value:'Remarks'}
+                {text: 'Remarks', value:'Remarks'},
+                {text: 'Actions', value:'actions'}
             ],
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
@@ -199,12 +204,14 @@ export default {
         this.loadMasterMaintenance('dormpassdetails').then(res => {
             this.dormitoryPassDetails = res.data || []
             this.loading = false
+            this.dormPassCode =  `RNTR-${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
+            this.dormData.DormitoryPassCode = this.dormPassCode
         })
     },
     computed: {
         filterDormitoryPassDetails() {
             return this.dormitoryPassDetails.filter(rec => {
-                return rec.DormitoryPassCode.includes(this.dormData.DormitoryPassCode || '')
+                return rec.DormitoryPassCode.includes(this.dormData.DormitoryPassCode)
             })
         }
     },
@@ -213,25 +220,54 @@ export default {
             this.dialog = true
         },
         saveRecord() {
-            // let body = {
-            //     procedureName: 'ProcDormitoryPassHeader',
-            //     values: [
-            //         data.BuildingId,
-            //         data.BuildingDesc,
-            //         data.BuildingAddress,
-            //         this.hrisUserInfo.USERACCT,
-            //         1
-            //     ]
-            // }
-            // if(this.$refs.form.validate()) {
-            //     this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-            //     this.clearVariables()
-            //     this.loadBuildings()
-            // }
+            if(this.$refs.form.validate()) {
+                this.saveDormitoryPassHDetails()
+                this.saveDormitoryPassHeader()
+                this.clearVariables()
+            }
+        },
+        editRecord(data) {
+            Object.assign(this.itemDetails, data)
+            this.dialog = true
+        },
+        saveDormitoryPassHeader() {
+            let data = this.dormData
+            let body = {
+                procedureName: 'ProcDormitoryPassHeader',
+                values: [
+                    this.dormPassCode,
+                    data.EmployeeCode,
+                    data.EncodedDate,
+                    data.Category ? 1 : 0,
+                    data.Destination,
+                    data.ValidDate,
+                    this.hrisUserInfo.USERACCT,
+                    this.moment().format('YYYY-MM-DD'),
+                    this.hrisUserInfo.USERACCT,
+                ]
+            }
+            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+        },
+        saveDormitoryPassHDetails() {   
+            let data = this.itemDetails   
+            let body = {
+                procedureName: 'ProcDormitoryPassDetails',
+                values: [
+                    this.dormPassCode,
+                    data.DetailNo,
+                    data.ItemName,
+                    data.Specification,
+                    data.Quantity,
+                    data.Remarks,
+                    this.hrisUserInfo.USERACCT,
+                ]
+            }
+            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
         },
         clearVariables() {
             this.dialog = false
             this.itemDetails = {
+                DetailNo: 0,
                 ItemName: null,
                 Specification: null,
                 Quantity: 0,

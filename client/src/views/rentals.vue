@@ -1,7 +1,11 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        v-
+        <transition-group name="fade" appear>
+            <v-card v-for="i in 10" :key="i">
+                <v-card-text>{{i}}</v-card-text>
+            </v-card>
+        </transition-group>
     </v-main>
 </template>
 

@@ -68,8 +68,12 @@
                             @page-count="pageCount = $event"
                             hide-default-footer
                         >
+                            <template v-slot:[`item.EmployeeCode`]="{ item }">
+                                <v-badge v-if="!item.DormitoryPassCode" content="new">{{item.EmployeeCode}}</v-badge>
+                                <div v-else>{{item.EmployeeCode}}</div>
+                            </template>
                             <template v-slot:[`item.actions`]="{ item }">
-                                <v-btn @click="editDormPass(item)" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
+                                <v-btn class="mx-3" @click="editDormPass(item)" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
                             </template>
                         </v-data-table>
                         <v-pagination
@@ -163,6 +167,7 @@ export default {
                     this.dormitoryPassLists.forEach(rec => {
                         let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         Object.assign(rec, {
+                            EncodedDate: !rec.EncodedDate ? this.moment().format('YYYY-MM-DD') : rec.EncodedDate,
                             EmployeeName: employee[0].EMPNAME || null,
                             Department: employee[0].DEPTDESC || null,
                             Section: employee[0].SECTIONDESC || null,
