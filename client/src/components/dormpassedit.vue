@@ -1,7 +1,7 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container>
+        <v-container fluid>
             <v-card outlined>
                 <v-container>
                     <v-list>
@@ -39,7 +39,7 @@
                             <v-row align="center" justify="center">
                                 <v-col cols="12" md="12">
                                     <v-sheet color="transparent" height="450">
-                                        <v-container class="fill-height">
+                                        <v-container class="fill-height" fluid>
                                             <v-card-text class="font-weight-bold text-center grey--text display-1">No data found</v-card-text>
                                         </v-container>
                                     </v-sheet>
@@ -62,7 +62,7 @@
                     <v-toolbar-title>{{ editMode ? 'Edit Material' : 'New Material' }}</v-toolbar-title>
                 </v-toolbar>
                 <v-form ref="form" v-model="valid" lazy-validation>
-                    <v-container>
+                    <v-container fluid>
                         <v-row align="center" justify="center" dense>
                             <v-col cols="12" md="7">
                                 <v-text-field

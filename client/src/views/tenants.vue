@@ -1,13 +1,13 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container>
+        <v-container fluid>
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
                     <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Tenants</v-toolbar-title>
                     </v-toolbar>
-                    <v-container>
+                    <v-container fluid>
                         <v-row align="center" justify="center">
                             <v-col cols="12" md="3">
                                 <v-autocomplete
@@ -179,14 +179,13 @@ export default {
                 let station = res.data
                 this.value = 0
                 this.loadMasterMaintenance('tenants').then(res => {
-                    this.tenants = res.data
-                    console.log(this.filterTenants);
+                    this.tenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
                     if(this.tenants != []) {
-                        this.filterTenants.forEach(rec => {
+                        this.tenants.forEach(rec => {
                             let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
                             Object.assign(rec, {
-                                EmployeeName: employee[0].EMPNAME || null,
-                                Department: employee[0].DEPTDESC || null,
+                                EmployeeName: employee[0].EMPNAME || 'NONE',
+                                Department: employee[0].DEPTDESC || 'NONE',
                                 Section: employee[0].SECTIONDESC || 'NONE',
                                 Team: employee[0].TEAMDESC || 'NONE',
                                 Designation: employee[0].DESIGDESC || 'NONE'

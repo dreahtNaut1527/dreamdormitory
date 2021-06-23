@@ -1,14 +1,13 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container>
+        <v-container fluid>
             <v-tabs v-model="tab" :background-color="themeColor == '' ? '#1976d2' : themeColor" @change="getBuilding()" icons-and-text centered grow dark>
                 <v-tab v-for="(item, i) in buildingMasters" :key="i">
                     {{item.BuildingDesc}}
                     <v-icon>mdi-domain</v-icon>
                 </v-tab>
             </v-tabs>
-            <v-container>
                 <v-radio-group v-model="floor" row>
                     <v-radio
                         v-for="(item, i) in floorMasters"
@@ -63,7 +62,6 @@
                         </v-row>
                     </template>
                 </v-data-iterator>
-            </v-container>
             <v-pagination
                 v-model="page"
                 :length="pageCount"

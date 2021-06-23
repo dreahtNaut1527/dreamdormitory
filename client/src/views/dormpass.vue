@@ -1,13 +1,13 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container>
+        <v-container fluid>
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
                     <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Dormitory Pass</v-toolbar-title>
                     </v-toolbar>
-                    <v-container>
+                    <v-container fluid>
                         <v-row class="mb-2" align="center" justify="center" dense>
                             <v-col cols="12" md="3" sm="3">
                                 <v-select
@@ -79,7 +79,7 @@
                         >
                             <template v-slot:progress>
                                 <v-sheet height="400">
-                                    <v-container class="fill-height">
+                                    <v-container class="fill-height" fluid>
                                         <v-row class="text-center" align="center" justify="center">
                                             <v-col cols="12" md="12">
                                                 <v-progress-circular
@@ -154,6 +154,7 @@ export default {
         filterDormitoryPass() {
             return this.dormitoryPassLists.filter(rec => {
                 return (
+                    rec.CompanyCode.includes(this.hrisUserInfo.CODE) && 
                     rec.BuildingDesc.toLowerCase().includes(this.building.toLowerCase() || '') && 
                     rec.FloorNo >= this.floor && 
                     rec.RoomNo >= this.room &&
@@ -184,7 +185,7 @@ export default {
             this.stationSearch(null).then(res => {
                 stationData = res.data
                 this.loadMasterMaintenance('dormpassheader').then(res => {
-                    this.dormitoryPassLists = res.data || []
+                    this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
                     this.dormitoryPassLists.forEach(rec => {
                         let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         Object.assign(rec, {

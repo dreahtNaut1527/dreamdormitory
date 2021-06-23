@@ -10,6 +10,13 @@
             <v-row align="center" justify="center">
                 <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                     <v-card outlined>
+                        <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" absolute>
+                            <v-row align="center" justify="center">
+                                <v-avatar size="126">
+                                    <v-img src="../assets/HTIlogo.png" />
+                                </v-avatar>
+                            </v-row>
+                        </v-overlay>
                         <v-container>
                             <v-subheader>
                                 Bed {{item.BedNo}}
@@ -155,7 +162,7 @@ export default {
         this.roomDetails = this.$route.query
         this.loadMasterMaintenance('availabletenants').then(res => {
             this.loadOccupants()
-            this.availableTenants = res.data
+            this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
         })
     },
     computed: {
@@ -189,7 +196,7 @@ export default {
             let employee = []
             this.loading = true
             val.forEach((rec, index) => {
-                if(rec.EmployeeCode != undefined) {
+                if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.CODE) {
                     this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: rec.EmployeeCode}).then(res => {
                         employee = res.data[0]
                         Object.assign(rec, {
