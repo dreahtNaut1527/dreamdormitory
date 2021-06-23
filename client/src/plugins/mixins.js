@@ -70,6 +70,16 @@ const plugins = {
                     }
                     return path
                 },
+                getMonth() {
+                    let data = []
+                    for (let i = 1; i < 13; i++) {
+                        data.push({
+                            text: this.moment(this.zeroPad(i, 2), 'MM').format('MMMM'),
+                            value: this.zeroPad(i, 2)
+                        })
+                    }
+                    return data
+                },
 
                 // Load Masters Maintenance
                 loadMasterMaintenance(tablename) {
