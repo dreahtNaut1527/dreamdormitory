@@ -32,7 +32,7 @@
                                         <v-subheader class="font-weight-bold">
                                             {{ room.RoomDesc }}  
                                             <v-spacer></v-spacer>
-                                            <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
+                                            <v-sheet v-if="getTotalOccupants(room.Beds) < 4 && getTotalOccupants(room.Beds) > 0" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
                                                 {{ getTotalOccupants(room.Beds) }}
                                             </v-sheet>
                                         </v-subheader>
