@@ -11,7 +11,7 @@
                     <span>Edit</span>
                 </v-tooltip>
             </v-toolbar>
-            <v-container>
+            <v-container fluid>
                 <v-row align="center" justify="center">
                     <v-col class="text-center" cols="12" md="12" sm="12">
                         <v-avatar size="156">

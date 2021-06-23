@@ -7,7 +7,7 @@
                  {{ isEditMode ? 'Edit' : 'New' }}<v-icon right>mdi-pencil</v-icon>
             </v-toolbar-title>
         </v-toolbar>
-        <v-container>
+        <v-container fluid>
             <v-row justify="center">
                 <v-col class="text-center" cols="12" md="3">
                     <v-avatar size="126">
@@ -53,7 +53,7 @@
                 <v-col cols="12" md="9">
                     <v-card outlined>
                         <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-container class="my-4">
+                            <v-container class="my-4" fluid>
                                 <v-row dense>
                                     <v-col cols="12" md="3" sm="3">
                                         <v-subheader>Employee:</v-subheader>
