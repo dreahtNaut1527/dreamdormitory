@@ -2,7 +2,7 @@
     <div>
         <v-navigation-drawer 
             :mini-variant="true"
-            color="primary"
+            :color="themeColor == '' ? '#1976d2' : themeColor"
             permanent
             dark
             app
@@ -46,7 +46,7 @@
             </v-list>
             <template v-slot:append>
                 <v-container>
-                    <v-btn icon><v-icon>mdi-cog</v-icon></v-btn>
+                    <v-btn @click="sideDrawer = !sideDrawer" icon><v-icon>mdi-cog</v-icon></v-btn>
                 </v-container>
             </template>
         </v-navigation-drawer>
@@ -88,11 +88,56 @@
                 </v-card>
             </v-menu>
         </v-app-bar>
-        <v-overlay v-model="overlay">
+        <v-navigation-drawer
+            v-model="sideDrawer"
+            :disable-resize-watcher="true"
+            hide-overlay
+            temporary
+            right
+            app   
+        >
+            <v-toolbar color="transparent" flat>
+                <v-toolbar-title>Settings</v-toolbar-title>
+            </v-toolbar>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-subtitle>Theme Color</v-list-item-subtitle>
+                    <v-color-picker 
+                        v-model="themeColorVal"
+                        mode="hexa" 
+                        hide-mode-switch 
+                        hide-canvas
+                        :show-swatches="swatches"
+                        :update:color="changeThemeColor(themeColorVal)"
+                    ></v-color-picker>
+                </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                <v-btn x-small block text @click="swatches = !swatches" :color="themeColor == '' ? 'primary' : themeColor">
+                    {{swatches == false ? "Show more" : "Hide"}}
+                </v-btn>
+                </v-list-item-content>
+            </v-list-item>
+            <v-divider class="mx-3"></v-divider>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-subtitle>Dark Mode</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-switch
+                        v-model="dark"        
+                        @change="changeTheme()"
+                        inset
+                    ></v-switch>
+                </v-list-item-action>
+            </v-list-item>
+        </v-navigation-drawer>
+        <v-overlay v-model="overlay" absolute>
             <v-snackbar v-model="overlay" top app>
                 <v-card-title class="pa-0 caption">Do you want to logout?</v-card-title>
                 <template v-slot:action="{ attrs }">
-                    <v-btn class="mx-3" @click="overlay = !overlay" v-bind="attrs" color="primary" small dark>No</v-btn>
+                    <v-btn class="mx-3" @click="overlay = !overlay" v-bind="attrs" :color="themeColor == '' ? '#1976d2' : themeColor" small dark>No</v-btn>
                     <v-btn @click="userLoggedOut()" small text>Yes</v-btn>
                 </template>
             </v-snackbar>
@@ -104,16 +149,30 @@
 export default {
     data() {
         return {
+            dark: false,
             menu: false,
             overlay: false,
+            swatches: true,
             navDrawer: false,
+            sideDrawer: false,
+            themeColorVal: '',
             navDrawerLists: []
         }
     },
     created() {
+        this.dark = this.darkMode
+        this.themeColorVal = this.themeColor
         this.loadNavDrawerLists()
     },
     methods: {
+        changeTheme() {
+            this.$vuetify.theme.dark = this.dark
+            this.icon = this.dark ? 'mdi-weather-sunny' : 'mdi-weather-night'
+            this.$store.commit('CHANGE_DARKMODE', this.dark)
+        },
+        changeThemeColor(val) {
+            this.$store.commit('CHANGE_THEMECOLOR', val)
+        },
         loadNavDrawerLists() {
             this.navDrawerLists = [
                 {

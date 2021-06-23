@@ -7,8 +7,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     hrisUserInfo: {},
+    darkMode: false,
     isConnect: true,
     isLoggedIn: false,
+    themeColor: '#1976d2',
   },
   plugins: [
     createPersistedState() 
@@ -22,6 +24,12 @@ export default new Vuex.Store({
     },
     CHANGE_LOGGING: (state, data) => {
       state.isLoggedIn = data
+    },
+    CHANGE_DARKMODE: (state, data) => {
+      state.darkMode = data
+    },
+    CHANGE_THEMECOLOR: (state, data) => {
+      state.themeColor = data
     },
   },
   actions: {

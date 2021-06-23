@@ -4,7 +4,7 @@
         <v-container>
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
-                    <v-toolbar color="primary" dark>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Dormitory Pass</v-toolbar-title>
                     </v-toolbar>
                     <v-container>
@@ -13,6 +13,7 @@
                                 <v-select
                                     v-model="building"
                                     :items="buildingLists"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Buildings"
                                     hide-details
                                     outlined
@@ -23,6 +24,7 @@
                                 <v-select
                                     v-model="floor"
                                     :items="floorLists"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Floors"
                                     item-text="text"
                                     item-value="floorNo"
@@ -36,6 +38,7 @@
                                 <v-select
                                     v-model="room"
                                     :items="roomLists"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     item-text="text"
                                     item-value="roomNo"
                                     placeholder="Rooms"
@@ -49,6 +52,7 @@
                                 <v-select
                                     v-model="category"
                                     :items="categoryList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     item-text="text"
                                     item-value="value"
                                     placeholder="Category"
@@ -61,15 +65,37 @@
                         </v-row>
                         <v-divider></v-divider>
                         <v-data-table
+                            v-model="selectedTenants"
                             :headers="headers" 
                             :items="filterDormitoryPass"
                             :search="searchTable"
                             :page.sync="page"
+                            :loading="loading"
+                            loading-text=""
+                            item-key="EmployeeCode"
                             @page-count="pageCount = $event"
                             hide-default-footer
+                            show-select
                         >
+                            <template v-slot:progress>
+                                <v-sheet height="400">
+                                    <v-container class="fill-height">
+                                        <v-row class="text-center" align="center" justify="center">
+                                            <v-col cols="12" md="12">
+                                                <v-progress-circular
+                                                    :size="70"
+                                                    :width="7"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    indeterminate
+                                                ></v-progress-circular>
+                                            </v-col>
+                                            <v-subheader>Loading Data. . .Please Wait</v-subheader>
+                                        </v-row>
+                                    </v-container>
+                                </v-sheet>
+                            </template>
                             <template v-slot:[`item.EmployeeCode`]="{ item }">
-                                <v-badge v-if="!item.DormitoryPassCode" content="new">{{item.EmployeeCode}}</v-badge>
+                                <v-badge :color="themeColor == '' ? '#1976d2' : themeColor" v-if="!item.DormitoryPassCode" content="new">{{item.EmployeeCode}}</v-badge>
                                 <div v-else>{{item.EmployeeCode}}</div>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
@@ -80,18 +106,12 @@
                             v-model="page"
                             :length="pageCount"
                             :total-visible="10"
-                            color="primary"
+                            :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
                 </v-card>
             </v-lazy>
         </v-container>
-        <v-overlay :value="loading">
-            <v-progress-circular
-                indeterminate
-                size="64"
-            ></v-progress-circular>
-        </v-overlay>
     </v-main>
 </template>
 
@@ -107,6 +127,7 @@ export default {
             category: 0,
             pageCount: 0,
             page: 1,
+            selectedTenants: [],
             dormitoryPassLists: [],
             categoryList: [
                 {text: 'Incoming', value: 0},

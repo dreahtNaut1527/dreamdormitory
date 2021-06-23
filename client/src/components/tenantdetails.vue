@@ -6,7 +6,7 @@
                 <v-spacer></v-spacer>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn @click="editRecord()" v-on="on" v-bind="attrs" icon><v-icon color="primary" large>mdi-pencil-box</v-icon></v-btn>
+                        <v-btn @click="editRecord()" v-on="on" v-bind="attrs" icon><v-icon :color="themeColor == '' ? '#1976d2' : themeColor" large>mdi-pencil-box</v-icon></v-btn>
                     </template>
                     <span>Edit</span>
                 </v-tooltip>

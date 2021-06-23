@@ -4,7 +4,7 @@
         <v-container>
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
-                    <v-toolbar color="primary" flat dark>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Buildings</v-toolbar-title>
                     </v-toolbar>
                     <v-container>
@@ -14,6 +14,7 @@
                                     v-model="searchTable"
                                     placeholder="Search Name or Address"
                                     append-icon="mdi-magnify"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     hide-details
                                     outlined
                                     dense
@@ -39,7 +40,7 @@
                             v-model="page"
                             :length="pageCount"
                             :total-visible="10"
-                            color="primary"
+                            :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
                 </v-card>
@@ -47,7 +48,7 @@
         </v-container>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card outlines>
-                <v-toolbar color="primary" dark>
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                     <v-toolbar-title>{{editMode ? 'Edit Record' : 'Create New'}}</v-toolbar-title>
                 </v-toolbar>
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -58,6 +59,7 @@
                                     v-model="editBuildings.BuildingDesc"
                                     :rules="[v => !!v || 'field is required']"
                                     @keypress.enter="saveRecord(editBuildings)"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     label='Building Name'
                                     outlined
                                     dense
@@ -68,6 +70,7 @@
                                     v-model="editBuildings.BuildingAddress"
                                     :rules="[v => !!v || 'field is required']"
                                     @keypress.enter="saveRecord(editBuildings)"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     label='Building Address'
                                     outlined
                                     dense
@@ -79,13 +82,13 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn @click="clearVariables()" text>Cancel</v-btn>
-                    <v-btn @click="saveRecord(editBuildings)" color="primary" dark>Save</v-btn>
+                    <v-btn @click="saveRecord(editBuildings)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>   
         </v-dialog>
         <v-fab-transition>
             <v-btn
-                color="primary"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
                 @click="dialog = !dialog"
                 fixed
                 bottom

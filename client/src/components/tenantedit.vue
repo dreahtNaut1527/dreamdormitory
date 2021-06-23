@@ -64,6 +64,7 @@
                                             @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
                                             @blur="getStationSearch(editTenantDetails.EmployeeCode)"
                                             :rules="[v => !!v || 'field is required']"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             @click:clear="newRecord()"
                                             placeholder="Code"
                                             type="number"
@@ -77,6 +78,7 @@
                                     <v-col cols="12" md="7" sm="7">
                                         <v-text-field
                                             v-model="editTenantDetails.EmployeeName"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Name"
                                             hide-details
                                             outlined
@@ -90,6 +92,7 @@
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Department"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Department"
                                             hide-details
                                             outlined
@@ -103,6 +106,7 @@
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Section"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Section"
                                             hide-details
                                             outlined
@@ -116,6 +120,7 @@
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Team"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Team"
                                             hide-details
                                             outlined
@@ -141,6 +146,7 @@
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.RentalFee"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Team"
                                             hide-details
                                             outlined
@@ -153,6 +159,7 @@
                                     <v-col cols="12" md="9" sm="9">
                                         <v-textarea
                                             v-model="editTenantDetails.Remarks"
+                                            :color="themeColor == '' ? '#1976d2' : themeColor"
                                             placeholder="Remarks"
                                             hide-details
                                             outlined
@@ -169,12 +176,13 @@
         <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn to="/vacancies" class="mx-3" text>Cancel</v-btn>
-            <v-btn @click="saveRecord(editTenantDetails)" color="primary" dark>Save</v-btn>
+            <v-btn @click="saveRecord(editTenantDetails)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
         </v-card-actions>
         <v-overlay :value="loading">
             <v-progress-circular
                 indeterminate
                 size="64"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
