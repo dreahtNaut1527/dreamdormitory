@@ -25,6 +25,8 @@
                                 </v-col>
                             <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
+                                        :items="buildingList"
+                                        v-model="building"
                                         outlined
                                         chip
                                         small-chips
@@ -35,6 +37,10 @@
                                 </v-col>
                                 <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
+                                        :items="floorList"
+                                        item-text="text"
+                                        item-value="floorNo"
+                                        v-model="floor"
                                         outlined
                                         chip
                                         small-chips
@@ -45,6 +51,10 @@
                                 </v-col>
                                 <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
+                                        :items="roomList"
+                                        item-text="text"
+                                        item-value="roomNo"
+                                        v-model="room"
                                         outlined
                                         chip
                                         small-chips
@@ -53,101 +63,9 @@
                                         hide-details
                                     ></v-autocomplete>
                                 </v-col> 
-
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-text-field
-                                        
-                                        outlined
-                                        dense
-                                        label="Previous Reading"
-                                        hide-details
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-text-field
-                                        outlined
-                                        dense
-                                        label="Date"
-                                        hide-details
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-text-field
-                                        outlined
-                                        dense
-                                        label="Latest Reading"
-                                        hide-details
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-text-field
-                                        outlined
-                                        dense
-                                        label="Date"
-                                        hide-details
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3">
-                                    <v-text-field
-                                        v-model="cubickilowatt"
-                                        outlined
-                                        dense
-                                        small
-                                        :label="cubickilowatt ==10 ?  'Less Free M3':'Less Free KW'"
-                                        disabled 
-                                        hide-details
-                                        value="80 KW / 10m3"                               
-                                    ></v-text-field>
-                                </v-col>   
-                                <v-col cols="12" md="3">
-                                    <v-text-field
-                                        outlined
-                                        dense
-                                        small
-                                        hide-details
-                                        disabled
-                                        label="Consumption"                            
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="2">
-                                    <v-text-field                                    
-                                        outlined
-                                        dense
-                                        small
-                                        hide-details
-                                        disabled
-                                        label="Per KW / M3:"                            
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="2">
-                                    <v-text-field
-                                        outlined
-                                        dense
-                                        small
-                                        hide-details
-                                        disabled
-                                        label="Amount/Room"                            
-                                    ></v-text-field>
-                                </v-col>
-                            <v-col cols="12" md="2">
-                                <v-text-field
-                                    outlined
-                                    dense
-                                    small
-                                    small-chips
-                                    hide-details
-                                    disabled
-                                    label="Amount/Head"                            
-                                ></v-text-field>
-                            </v-col>
                         </v-row>
                     </v-container>
                 </v-form>
-                <v-card-actions dense >
-                    <v-spacer></v-spacer>
-                    <v-btn width="120"  >Cancel</v-btn>
-                    <v-btn width="120">Save</v-btn>
-                </v-card-actions>
             </v-card>            
         </v-container>
         <v-container>
@@ -157,9 +75,31 @@
                         :headers="headers"
                         hide-default-footer
                     ></v-data-table>
+                    <v-pagination></v-pagination>
                 </v-container>
             </v-card>
         </v-container>
+        <v-dialog v-model="dialog" width="1000">            
+                <v-card>
+                    <v-toolbar color="primary" dark>
+                        <v-toolbar-title>
+                            Edit record
+                        </v-toolbar-title>
+                    </v-toolbar>
+                    <v-form>
+                        <v-container>
+                            <v-row justify="center"></v-row>
+                        </v-container>
+                    </v-form>
+                    <v-divider></v-divider>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn>Save</v-btn>
+                        <v-btn>Close</v-btn>
+                    </v-card-actions>
+                </v-card>            
+        </v-dialog>
+        v-daia
     </v-main>
 </template>
 
@@ -185,20 +125,64 @@ export default {
                 {text:'Electricity',value:'80'},
                 {text:'Water',value:'10'}
             ],
+            editConsumption:{                	
+                    Building:'',
+                    Floor:'',
+                    Room:'',
+                    ConsumptionType:'',
+                    StartDate:null,
+                    EndDate:null,
+                    PayrollDate:null,
+                    PrevReading:0,
+                    LatestReading:0,
+                    TotalConsumption:0,
+                    TotalKWM3:0,
+                    TotalAmount:0,
+            },
+            dialog:false,
+            consumption:[],
+            roomRelationView:[],
             selectedtype:'10',            
             page:1,
             pagecount:0,
             loading:false,
             cubickilowatt:"",
+            building:"",
+            room:"",
+            floor:"",
             
         }
     },
     created() {
         this.consumptiontype()
+        this.loadRoomRelationView()
+    },
+    computed:{
+        buildingList(){
+            return this.roomRelationView.map(rec => {
+                return rec.BuildingDesc
+            }).sort()
+        },
+        floorList(){
+            return this.buildingList.map(rec => {
+                return {floorNo: rec.FloorNo, text: `FLOOR ${rec.FloorNo}`}
+            }).sort()
+        },
+        roomList(){
+            return this.buildingList.map(rec => {
+                return {roomNo: rec.RoomNo, text: `Room ${this.zeroPad(rec.RoomNo, 3)}`}
+            })
+        }
     },
     methods: {
         consumptiontype(){
             this.cubickilowatt=this.selectedtype
+        },
+        loadRoomRelationView(){
+            this.loadMasterMaintenance('roomrelations').then(res => {
+                this.roomRelationView = res.data
+                console.log( this.roamRelationView);
+            })
         }
     }
 }
