@@ -10,7 +10,7 @@
             <v-row align="center" justify="center">
                 <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                     <v-card outlined>
-                        <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" absolute>
+                        <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" :opacity="0.8" absolute>
                             <v-row align="center" justify="center">
                                 <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
                             </v-row>
