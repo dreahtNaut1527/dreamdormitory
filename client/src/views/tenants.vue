@@ -180,15 +180,16 @@ export default {
                 this.value = 0
                 this.loadMasterMaintenance('tenants').then(res => {
                     this.tenants = res.data
+                    console.log(this.filterTenants);
                     if(this.tenants != []) {
-                        this.tenants.forEach(rec => {
+                        this.filterTenants.forEach(rec => {
                             let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
                             Object.assign(rec, {
                                 EmployeeName: employee[0].EMPNAME || null,
                                 Department: employee[0].DEPTDESC || null,
-                                Section: employee[0].SECTIONDESC || null,
-                                Team: employee[0].TEAMDESC || null,
-                                Designation: employee[0].DESIGDESC || null
+                                Section: employee[0].SECTIONDESC || 'NONE',
+                                Team: employee[0].TEAMDESC || 'NONE',
+                                Designation: employee[0].DESIGDESC || 'NONE'
                             })
                             this.$forceUpdate()
                         })
