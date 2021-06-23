@@ -12,9 +12,7 @@
                     <v-card outlined>
                         <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" absolute>
                             <v-row align="center" justify="center">
-                                <v-avatar size="126">
-                                    <v-img src="../assets/HTIlogo.png" />
-                                </v-avatar>
+                                <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
                             </v-row>
                         </v-overlay>
                         <v-container>

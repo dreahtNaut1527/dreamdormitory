@@ -49,6 +49,37 @@ const plugins = {
                 leftString(str, chr) {
                     return str.slice(0, chr - str.length);
                 },
+                getCompanyLogo(cocode) {
+                    let path = null
+                    switch (cocode) {
+                        case '00':
+                            path = require('../assets/PVlogo.png')
+                            break;
+                        case '10':
+                            path = require('../assets/SCADlogo.png')
+                            break;
+                        case '20':
+                            path = require('../assets/HTIlogo.png')
+                            break;
+                        case '40':
+                            path = require('../assets/WKNlogo.png')
+                            break;
+                        default:
+                            path = require('../assets/HRDlogo.png')
+                            break;
+                    }
+                    return path
+                },
+                getMonth() {
+                    let data = []
+                    for (let i = 1; i < 13; i++) {
+                        data.push({
+                            text: this.moment(this.zeroPad(i, 2), 'MM').format('MMMM'),
+                            value: this.zeroPad(i, 2)
+                        })
+                    }
+                    return data
+                },
 
                 // Load Masters Maintenance
                 loadMasterMaintenance(tablename) {
