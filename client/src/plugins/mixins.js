@@ -49,6 +49,27 @@ const plugins = {
                 leftString(str, chr) {
                     return str.slice(0, chr - str.length);
                 },
+                getCompanyLogo(cocode) {
+                    let path = null
+                    switch (cocode) {
+                        case '00':
+                            path = require('../assets/PVlogo.png')
+                            break;
+                        case '10':
+                            path = require('../assets/SCADlogo.png')
+                            break;
+                        case '20':
+                            path = require('../assets/HTIlogo.png')
+                            break;
+                        case '40':
+                            path = require('../assets/WKNlogo.png')
+                            break;
+                        default:
+                            path = require('../assets/HRDlogo.png')
+                            break;
+                    }
+                    return path
+                },
 
                 // Load Masters Maintenance
                 loadMasterMaintenance(tablename) {
