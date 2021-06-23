@@ -12,12 +12,12 @@
                             <v-list-item-content>
                                 <v-list-item-title class="font-weight-bold title">{{ dormData.EmployeeCode }}</v-list-item-title>
                                 <v-list-item-subtitle>{{ dormData.EmployeeName }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>{{ dormData.Department }}</v-list-item-subtitle>
+                                <v-list-item-subtitle>{{ dormData.Department }} / {{ dormData.Section }}</v-list-item-subtitle>
                                 <v-list-item-subtitle>{{ dormData.BuildingDesc }} - Room {{zeroPad(dormData.RoomNo, 3)}}</v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                     </v-list>
-                    <v-toolbar color="primary" dark>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Materials / Appliances</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-btn icon><v-icon large>mdi-file-find</v-icon></v-btn>
@@ -51,14 +51,14 @@
                         v-model="page"
                         :length="pageCount"
                         :total-visible="10"
-                        color="primary"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
                     ></v-pagination>
                 </v-container>
             </v-card>
         </v-container>
         <v-dialog v-model="dialog" width="600" persistent>
             <v-card>
-                <v-toolbar color="primary" dark>
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                     <v-toolbar-title>{{ editMode ? 'Edit Material' : 'New Material' }}</v-toolbar-title>
                 </v-toolbar>
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -69,6 +69,7 @@
                                     v-model="dormData.Destination"
                                     label="Destination"
                                     :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     :hide-details="valid"
                                     outlined
                                     dense
@@ -78,6 +79,7 @@
                                 <v-radio-group v-model="dormData.Category" row>
                                     <v-radio
                                         v-for="(item, i) in categoryList" :key="i"
+                                        :color="themeColor == '' ? '#1976d2' : themeColor"
                                         :label="item.text"
                                         :value="item.value"
                                     ></v-radio>
@@ -94,6 +96,7 @@
                                     v-model="itemDetails.ItemName"
                                     label="Item Name"
                                     :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     :hide-details="valid"
                                     outlined
                                     dense
@@ -105,6 +108,7 @@
                                     label="Quantity"
                                     type="number"
                                     :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     :hide-details="valid"
                                     outlined
                                     dense
@@ -115,6 +119,7 @@
                                     v-model="itemDetails.Specification"
                                     label="Specification"
                                     :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     :hide-details="valid"
                                     outlined
                                     dense
@@ -125,6 +130,7 @@
                                     v-model="itemDetails.Remarks"
                                     label="Remarks"
                                     :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     :hide-details="valid"
                                     outlined
                                     dense
@@ -136,12 +142,12 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn @click="clearVariables()" class="mx-3" text>Cancel</v-btn>
-                    <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
+                    <v-btn @click="saveRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <v-fab-transition>
-            <v-btn @click="newRecord()" color="primary" fixed bottom right large dark fab>
+            <v-btn @click="newRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
             </v-btn>
         </v-fab-transition>
@@ -149,6 +155,7 @@
             <v-progress-circular
                 indeterminate
                 size="64"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>
     </v-main>
@@ -199,14 +206,18 @@ export default {
             ]
         }
     },
-    mounted() {
-        this.loading = true
-        this.loadMasterMaintenance('dormpassdetails').then(res => {
-            this.dormitoryPassDetails = res.data || []
-            this.loading = false
-            this.dormPassCode =  `RNTR-${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
-            this.dormData.DormitoryPassCode = this.dormPassCode
-        })
+    created() {
+        if(!this.dormData) {
+            this.$router.push('/dormpass')
+        } else {
+            this.loading = true
+            this.loadMasterMaintenance('dormpassdetails').then(res => {
+                this.dormitoryPassDetails = res.data || []
+                this.loading = false
+                this.dormPassCode =  `RNTR-${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
+                this.dormData.DormitoryPassCode = this.dormPassCode
+            })
+        }
     },
     computed: {
         filterDormitoryPassDetails() {

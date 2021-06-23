@@ -21,7 +21,7 @@
                             <v-row dense>
                                 <v-col cols="12" md="2" sm="2">
                                     <v-avatar class="mt-5" size="80">
-                                        <img :src="`${photo}/${item.EmployeeCode}.jpg`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
+                                        <img :src="item.EmployeeCode ? `${photo}/${item.EmployeeCode}.jpg` : require('../assets/NoPic.jpg')" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
                                     </v-avatar>
                                 </v-col>
                                 <v-col cols="12" md="10" sm="10">
@@ -34,6 +34,7 @@
                                                     v-model="item.EmployeeCode"
                                                     label="Code"
                                                     :rules="[v => !!v || 'field is required']"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                                     @keypress.enter="assignVacant(item)"
                                                     @blur="assignVacant(item)"
                                                     :readonly="item.IsAvailable"
@@ -47,6 +48,7 @@
                                                 <v-text-field
                                                     class="caption"
                                                     v-model="item.EmployeeName"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                                     label="Name"
                                                     hide-details
                                                     readonly
@@ -59,6 +61,7 @@
                                                 <v-text-field
                                                     class="caption"
                                                     v-model="item.Department"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                                     label="Department"
                                                     hide-details
                                                     readonly
@@ -71,6 +74,7 @@
                                                 <v-text-field
                                                     class="caption"
                                                     v-model="item.Section"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                                     label="Section"
                                                     hide-details
                                                     readonly
@@ -83,6 +87,7 @@
                                                 <v-text-field
                                                     class="caption"
                                                     v-model="item.Team"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                                     label="Team"
                                                     hide-details
                                                     readonly
@@ -99,7 +104,7 @@
                             <v-card-actions>
                                 <v-btn v-if="item.IsAvailable" @click="viewTenantDetails(item)" class="text-xs-caption" color="primary" small text>View More...</v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn v-if="!item.IsAvailable" @click="saveRecord(item, i)" color="primary" small dark>
+                                <v-btn v-if="!item.IsAvailable" @click="saveRecord(item, i)" :color="themeColor == '' ? '#1976d2' : themeColor" small dark>
                                     <v-icon left>mdi-content-save</v-icon>Save
                                 </v-btn>
                             </v-card-actions>
@@ -113,6 +118,7 @@
             <v-progress-circular
                 indeterminate
                 size="64"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>

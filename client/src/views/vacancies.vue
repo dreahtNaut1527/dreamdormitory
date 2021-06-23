@@ -2,7 +2,7 @@
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
         <v-container>
-            <v-tabs v-model="tab" background-color="primary" @change="getBuilding()" icons-and-text centered grow dark>
+            <v-tabs v-model="tab" :background-color="themeColor == '' ? '#1976d2' : themeColor" @change="getBuilding()" icons-and-text centered grow dark>
                 <v-tab v-for="(item, i) in buildingMasters" :key="i">
                     {{item.BuildingDesc}}
                     <v-icon>mdi-domain</v-icon>
@@ -15,6 +15,7 @@
                         :key="i"
                         :value="item.FloorNo"
                         :label="item.FloorDesc"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
                     ></v-radio>
                 </v-radio-group>
                 <v-data-iterator
@@ -28,7 +29,7 @@
                         <v-row dense>
                             <v-col cols="12" md="2" sm="4" v-for="(room, i) in props.items" :key="i">
                                 <v-hover v-slot="{ hover }" open-delay="200">
-                                    <v-card class="rounded-lg" :elevation="hover ? 8 : 2" @click="assignRoom(room)" outlined>
+                                    <v-card class="rounded-lg" :elevation="hover ? 12 : 2" @click="assignRoom(room)" outlined>
                                         <v-subheader class="font-weight-bold">
                                             {{ room.RoomDesc }}  
                                             <v-spacer></v-spacer>
@@ -67,7 +68,7 @@
                 v-model="page"
                 :length="pageCount"
                 :total-visible="10"
-                color="primary"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-pagination>
             <!-- <v-row v-for="(floor, i) in floors" :key="i" dense>
                 <v-container class="mb-n2 overline">
@@ -99,7 +100,7 @@
         </v-container>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card>
-                <v-toolbar color="primary" dark flat>
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark flat>
                     <v-toolbar-title>Assign Rooms</v-toolbar-title>
                 </v-toolbar>
                 <v-form>
@@ -110,6 +111,7 @@
                                     class="caption"
                                     v-model="selectedRoom"
                                     :items="roomListMaster"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Rooms"
                                     item-value="RoomNo"
                                     item-text="RoomDesc"
@@ -124,6 +126,7 @@
                                     class="caption"
                                     v-model="selectedFloor"
                                     :items="floorMasters"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Floors"
                                     item-value="FloorNo"
                                     item-text="FloorDesc"
@@ -138,6 +141,7 @@
                                     class="caption"
                                     v-model="selectedBuildings"
                                     :items="buildingMasters"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Building"
                                     item-value="BuildingId"
                                     item-text="BuildingDesc"
@@ -161,23 +165,14 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn @click="clearVariables()" text>Cancel</v-btn>
-                            <v-btn @click="saveRecord()" color="primary" dark>Save</v-btn>
+                            <v-btn @click="saveRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                         </v-card-actions>
                     </v-container>
                 </v-form>
             </v-card>
         </v-dialog>
         <v-fab-transition>
-            <v-btn
-                color="primary"
-                @click="dialog = !dialog"
-                fixed
-                bottom
-                right
-                large
-                dark
-                fab
-            >
+            <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" @click="dialog = !dialog" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
             </v-btn>
         </v-fab-transition>

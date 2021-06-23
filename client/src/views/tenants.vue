@@ -4,25 +4,51 @@
         <v-container>
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
-                    <v-toolbar color="primary" dark>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Tenants</v-toolbar-title>
                     </v-toolbar>
                     <v-container>
-                        <v-row align="center" justify="end">
-                            <v-col cols="12" md="2">
-                                <v-select
-                                    v-model="company"
-                                    :items="companyLists"
-                                    placeholder="Company"
+                        <v-row align="center" justify="center">
+                            <v-col cols="12" md="3">
+                                <v-autocomplete
+                                    v-model="department"
+                                    :items="departmentList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    placeholder="Department"
                                     hide-details
                                     clearable
                                     outlined
                                     dense
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="3">
+                                <v-autocomplete
+                                    v-model="section"
+                                    :items="sectionList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    placeholder="Section"
+                                    hide-details
+                                    clearable
+                                    outlined
+                                    dense
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" md="3">
+                                <v-autocomplete
+                                    v-model="team"
+                                    :items="teamList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    placeholder="Team"
+                                    hide-details
+                                    clearable
+                                    outlined
+                                    dense
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" md="3">
                                 <v-text-field
                                     v-model="searchTable"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Search Code or Name"
                                     append-icon="mdi-magnify"
                                     hide-details
@@ -38,11 +64,30 @@
                             :items="filterTenants"
                             :search="searchTable"
                             :page.sync="page"
+                            :loading="loading"
+                            loading-text=""
                             @page-count="pageCount = $event"
                             hide-default-footer
                         >
+                            <template v-slot:progress>
+                                <v-sheet height="400">
+                                    <v-container class="fill-height">
+                                        <v-row class="text-center" align="center" justify="center">
+                                            <v-col cols="12" md="12">
+                                                <v-progress-circular
+                                                    :size="70"
+                                                    :width="7"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    indeterminate
+                                                ></v-progress-circular>
+                                            </v-col>
+                                            <v-subheader>Loading Data. . .Please Wait</v-subheader>
+                                        </v-row>
+                                    </v-container>
+                                </v-sheet>
+                            </template>
                             <template v-slot:[`item.EmployeeCode`]="{ item }">
-                                <v-badge v-if="item.BuildingId == 0" content="new">{{item.EmployeeCode}}</v-badge>
+                                <v-badge :color="themeColor == '' ? '#1976d2' : themeColor" v-if="item.BuildingId == 0" content="new">{{item.EmployeeCode}}</v-badge>
                                 <div v-else>{{item.EmployeeCode}}</div>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
@@ -53,29 +98,14 @@
                             v-model="page"
                             :length="pageCount"
                             :total-visible="10"
-                            color="primary"
+                            :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
                 </v-card>
             </v-lazy>
         </v-container>
-        <v-overlay :value="loading">
-            <v-progress-circular
-                indeterminate
-                size="64"
-            ></v-progress-circular>
-        </v-overlay>
         <v-fab-transition>
-            <v-btn
-                color="primary"
-                to="/tenantedit"
-                fixed
-                bottom
-                right
-                large
-                dark
-                fab
-            >
+            <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" to="/tenantedit" :disabled="loading" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
             </v-btn>
         </v-fab-transition>
@@ -83,11 +113,15 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
             loading: true,
             company: '',
+            department: '',
+            section: '',
+            team: '',
             searchTable: '',
             pageCount: 0,
             page: 1,
@@ -109,41 +143,60 @@ export default {
     created() {
 
     },
-    mounted() {
-        this.stationSearch(null).then(res => {
-            let station = res.data
-            this.loadMasterMaintenance('tenants').then(res => {
-                this.tenants = res.data
-                if(this.tenants != []) {
-                    this.tenants.forEach(rec => {
-                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                        Object.assign(rec, {
-                            EmployeeName: employee[0].EMPNAME || null,
-                            Department: employee[0].DEPTDESC || null,
-                            Section: employee[0].SECTIONDESC || null,
-                            Team: employee[0].TEAMDESC || null,
-                            Designation: employee[0].DESIGDESC || null
-                        })
-                        this.$forceUpdate()
-                    })
-                }
-            }) 
-            this.loading = false 
-        })
+    mounted() { 
+        this.loadTenants()
     },
     computed: {
         filterTenants() {
             return this.tenants.filter(rec => {
-                return (rec.ShortName.includes(this.company || ''))
+                return (
+                    rec.CompanyCode.includes(this.hrisUserInfo.CODE || '') && 
+                    rec.Department.includes(this.department || '') &&
+                    rec.Section.includes(this.section || '') &&
+                    rec.Team.includes(this.team || '')
+                )
             })
         },
-        companyLists() {
+        departmentList() {
+            return this.tenants.map(rec => {
+                return rec.Department
+            })
+        },
+        sectionList() {
             return this.filterTenants.map(rec => {
-                return rec.ShortName
+                return rec.Section
+            })
+        },
+        teamList() {
+            return this.filterTenants.map(rec => {
+                return rec.Team
             })
         }
     },
     methods: {
+        loadTenants() {
+            this.stationSearch(null).then(res => {
+                let station = res.data
+                this.value = 0
+                this.loadMasterMaintenance('tenants').then(res => {
+                    this.tenants = res.data
+                    if(this.tenants != []) {
+                        this.tenants.forEach(rec => {
+                            let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                            Object.assign(rec, {
+                                EmployeeName: employee[0].EMPNAME || null,
+                                Department: employee[0].DEPTDESC || null,
+                                Section: employee[0].SECTIONDESC || null,
+                                Team: employee[0].TEAMDESC || null,
+                                Designation: employee[0].DESIGDESC || null
+                            })
+                            this.$forceUpdate()
+                        })
+                    }
+                }) 
+                this.loading = false 
+            })
+        },
         editRecord(data) {
             this.$router.push({name: 'tenantedit', query: {code: data.EmployeeCode}})
         }

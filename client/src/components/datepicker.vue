@@ -12,7 +12,7 @@
                <v-text-field
                     v-model="date"
                     :label="label"
-                    color="primary"
+                    :color="themeColor == '' ? '#1976d2' : themeColor"
                     @click:append="menuDialog = true"
                     append-icon="mdi-calendar"
                     v-bind="attrs"
@@ -30,7 +30,7 @@
                scrollable
                :events="events"
                event-color="#ED6351"
-               color="primary"
+               :color="themeColor == '' ? '#1976d2' : themeColor"
                @change="$refs.menu.save(date)"
           >
           </v-date-picker>

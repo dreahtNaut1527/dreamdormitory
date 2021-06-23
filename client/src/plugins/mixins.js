@@ -16,14 +16,18 @@ const plugins = {
                 ...mapState([
                     'hrisUserInfo',
                     'isConnect',
-                    'isLoggedIn'
+                    'isLoggedIn',
+                    'themeColor',
+                    'darkMode'
                 ])
             },
             methods: {
                 ...mapMutations([
                     'CHANGE_USER_INFO',
                     'CHANGE_CONNECTION',
-                    'CHANGE_LOGGING'
+                    'CHANGE_LOGGING',
+                    'CHANGE_THEMECOLOR',
+                    'CHANGE_DARKMODE'
                 ]),
                 zeroPad(num, numZeros) {
                     let n = Math.abs(num)
