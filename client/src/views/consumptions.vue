@@ -73,6 +73,7 @@
                 <v-container>
                     <v-data-table 
                         :headers="headers"
+                        :items="consumptions"
                         hide-default-footer
                     ></v-data-table>
                     <v-pagination></v-pagination>
@@ -99,11 +100,17 @@
                     </v-card-actions>
                 </v-card>            
         </v-dialog>
-        v-daia
+        <setcutoff
+            :setcutoffdialog="setcutoffdialog"
+            :consumptiondetails.sync="consumptions"
+        >
+        </setcutoff>
+    
     </v-main>
 </template>
 
 <script>
+import setcutoff from "../components/setcutoff.vue";
 export default {
     data() {
         return {
@@ -114,8 +121,7 @@ export default {
             headers:[
                 {text:'Payroll Date',value:'PayrollDate'},
                 {text:'Previous Reading',value:'PrevReading'},
-                {text:'Latest Reading',value:'LatestReading'},
-                {text:'Payroll Date',value:'PayrollDate'},
+                {text:'Latest Reading',value:'LatestReading'},                
                 {text:'Consumption',value:'TotalConsumption'},
                 {text:'Amount/Room',value:'TotalKWM3'},
                 {text:'Amount/Head',value:'TotalConsumption'},
@@ -140,7 +146,7 @@ export default {
                     TotalAmount:0,
             },
             dialog:false,
-            consumption:[],
+            consumptions:[],
             roomRelationView:[],
             selectedtype:'10',            
             page:1,
@@ -150,26 +156,31 @@ export default {
             building:"",
             room:"",
             floor:"",
-            
+            setcutoffdialog:false,
         }
     },
     created() {
         this.consumptiontype()
         this.loadRoomRelationView()
+        this.setcutoffdialog=!this.setcutoffdialog
     },
+
     computed:{
+        // filterCon(){
+
+        // },
         buildingList(){
-            return this.roomRelationView.map(rec => {
+            return this.consumptions.map(rec => {
                 return rec.BuildingDesc
             }).sort()
         },
         floorList(){
-            return this.buildingList.map(rec => {
+            return this.consumptions.map(rec => {
                 return {floorNo: rec.FloorNo, text: `FLOOR ${rec.FloorNo}`}
             }).sort()
         },
         roomList(){
-            return this.buildingList.map(rec => {
+            return this.consumptions.map(rec => {
                 return {roomNo: rec.RoomNo, text: `Room ${this.zeroPad(rec.RoomNo, 3)}`}
             })
         }
@@ -183,7 +194,10 @@ export default {
                 this.roomRelationView = res.data
                 console.log( this.roamRelationView);
             })
-        }
+        },
+    },
+        components:{
+        setcutoff
     }
 }
 </script>

@@ -50,11 +50,12 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="dialog=!dialog"><v-icon left> mdi-close </v-icon> Close</v-btn>
+                
                 <v-btn 
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                     :disabled="disableprocess"
                     :dark="!disableprocess"
+                    @click="processRental()"
                 >
                     <v-icon left>mdi-calendar-blank</v-icon> 
                     Rental Transaction
@@ -67,7 +68,7 @@
 <script>
 
 export default {
-    props:['setcutoffdialog'],
+    props:['setcutoffdialog','consumptiondetails'],
     data(){
         return {
             cutoffrule:[
@@ -90,7 +91,58 @@ export default {
     methods:{
         enableprocess(){
             this.disableprocess= !this.valid
-        }
+        },
+        processRental(){
+            let lastPaydate=`${this.year}-${this.selectedmonth}-15`
+            let dtconsumptionstart =null
+            let dtconsumptionend = null
+            if (this.cutoff==2){
+                lastPaydate=this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
+                dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
+                dtconsumptionend =this.moment(`${this.year}-${this.selectedmonth}-20`).format('YYYY-MM-DD')
+            }else{                
+                dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
+                dtconsumptionend =this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
+            }  
+                 
+            let body={
+                procedureName: 'ProcRentalTransaction',
+                values:[
+                    lastPaydate,
+                    this.hrisUserInfo.USERACCT
+                ]
+            }
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                console.log(res.data);
+                this.processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend)
+                this.dialog=false
+            })
+        },
+        processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend){        
+            let body={
+            procedureName: 'ProcConsumptionTransaction',
+            values:[
+                null,
+                this.moment(lastPaydate).format('YYYY-MM-DD'),
+                0,
+                this.moment(dtconsumptionstart).format('YYYY-MM-DD'),
+                this.moment(dtconsumptionend).format('YYYY-MM-DD'),
+                0,
+                0,
+                0,
+                0,
+                this.hrisUserInfo.USERACCT,
+                0,
+            ]
+            }
+            console.log(body);
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                this.$emit('update:consumptiondetails',res.data)
+                console.log(res.data);
+                this.dialog=false
+            })
+        } 
+        
     }
 
 }
