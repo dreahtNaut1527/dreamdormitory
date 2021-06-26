@@ -91,7 +91,15 @@
                                 <div v-else>{{item.EmployeeCode}}</div>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
-                                <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn @click="editRecord(item)" v-on="on" v-bind="attrs" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                                    </template>
+                                    <span>Edit Record</span>
+                                </v-tooltip>
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                <v-chip class="caption">Move-In: {{moment(item.MoveInDate).fromNow()}}</v-chip>
                             </template>
                         </v-data-table>
                         <v-pagination
@@ -101,6 +109,7 @@
                             :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
+                    <v-subheader class="font-weight-bold">Total Record(s): {{ filterTenants.length }}</v-subheader>
                 </v-card>
             </v-lazy>
         </v-container>
@@ -132,12 +141,20 @@ export default {
                 {text: 'Department', value: 'Department'},
                 {text: 'Section', value: 'Section'},
                 {text: 'Team', value: 'Team'},
-                {text: 'Actions', value: 'actions'}
+                {text: 'Actions', value: 'actions'},
+                {text: 'Status', value: 'status'}
             ],
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
                 {text: 'Tenants', disabled: true, href: '#'}
             ]
+        }
+    },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.loadTenants()
+            }, 1500);
         }
     },
     created() {

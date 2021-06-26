@@ -2,10 +2,10 @@
     <v-main>
         <v-container class="fill-height">
             <v-row align="center" justify="center">
-                <v-col cols="12" md="10">
+                <v-col cols="12" lg="9" md="10" sm="10">
                     <v-card elevation="12">
                         <v-row justify="center" no-gutters>
-                            <v-col class="hidden-md-and-down" cols="12" md="7">
+                            <v-col class="hidden-md-and-down" cols="12" lg="7" md="7">
                                 <v-img src="../assets/5433.jpg">                                    
                                     <v-container style="position:absolute;bottom:0px">
                                         <v-list-item two-line>
@@ -17,7 +17,7 @@
                                     </v-container>
                                 </v-img>
                             </v-col>
-                            <v-col cols="12" md="5">
+                            <v-col cols="12" lg="5" md="5">
                                 <v-row align="center" justify="center">
                                     <v-col cols="12" md="12">
                                         <v-container>

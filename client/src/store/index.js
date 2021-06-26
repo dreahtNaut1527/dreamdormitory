@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    appVersion: null,
     hrisUserInfo: {},
     darkMode: false,
     isConnect: true,
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     },
     CHANGE_THEMECOLOR: (state, data) => {
       state.themeColor = data
+    },
+    CHANGE_APP_VERSION: (state, data) => {
+      state.appVersion = data
     },
   },
   actions: {

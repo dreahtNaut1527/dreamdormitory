@@ -8,9 +8,10 @@ export default {
           return {
                chartData: {},
                options: {
-                    tooltips: {
-                        mode: 'point'
-                    },
+                    // tooltips: {
+                    //     mode: 'point',
+                    //     position: 'average'
+                    // },
                     scales: {
                          yAxes: [{
                               ticks: {
@@ -70,9 +71,9 @@ export default {
                               {
                                 label: 'Total Tenants',
                                 data: Object.values(this.summaryRecords[0]),
-                                fill: false,
-                                borderColor: '#9ad0f5',
-                              //   backgroundColor: 'rgb(255, 255, 255, 0.5)',
+                              //   fill: false,
+                                borderColor: '#ff6888',
+                                backgroundColor: 'rgb(255, 177, 193, 0.5)',
                                 borderWidth: 2
                               }
                          ]

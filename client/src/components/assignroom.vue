@@ -1,12 +1,12 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
+        <v-toolbar color="transparent" dense flat>
+            <v-subheader class="display-1 font-weight-bold">{{roomDetails.RoomDesc}}</v-subheader>
+            <v-spacer></v-spacer>
+            <v-subheader class="display-1 font-weight-bold">Floor {{roomDetails.FloorNo}}</v-subheader>
+        </v-toolbar>
         <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition"> 
-            <v-toolbar color="transparent" dense flat>
-                <v-subheader class="display-1 font-weight-bold">{{roomDetails.RoomDesc}}</v-subheader>
-                <v-spacer></v-spacer>
-                <v-subheader class="display-1 font-weight-bold">Floor {{roomDetails.FloorNo}}</v-subheader>
-            </v-toolbar>
             <v-container fluid>
                 <v-row align="center" justify="center">
                     <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
@@ -158,12 +158,16 @@ export default {
             ]
         }
     },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.clearVariables()
+            }, 1500);
+        }
+    },
     created() {
         this.roomDetails = this.$route.query
-        this.loadMasterMaintenance('availabletenants').then(res => {
-            this.loadOccupants()
-            this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
-        })
+        this.clearVariables()
     },
     computed: {
         filterCurrentOccupants() {
@@ -269,8 +273,9 @@ export default {
             if(this.$refs.form[index].validate()) {
                 this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                 setTimeout(() => {
-                    this.clearVariables()
+                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} assigned tenants to Room ${this.zeroPad(data.RoomNo, 3)}`)
                 }, 2000);
+                this.$refs.form[index].resetValidation()
             } else {
                 this.alert = true
                 this.alertText = 'Employee Code is required'
@@ -280,9 +285,10 @@ export default {
             this.occupants = []
             this.currentOccupants = []
             this.availableTenants = []
-            this.loadOccupants()
-            this.loadMasterMaintenance('availabletenants').then(res => this.availableTenants = res.data)
-            this.$refs.form.resetValidation()
+            this.loadMasterMaintenance('availabletenants').then(res => {
+                this.loadOccupants()
+                this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
+            })
         }
 
     },

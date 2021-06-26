@@ -9,7 +9,7 @@
                     <v-col cols="12" md="12">
                         <v-card elevation="0" outlined>
                             <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark flat>
-                                <v-toolbar-title>Registered Tenants</v-toolbar-title>
+                                <v-toolbar-title>Summary</v-toolbar-title>
                             </v-toolbar>
                             <v-container fluid>
                                 <bargraph />
@@ -66,6 +66,7 @@
                                     </v-sheet>
                                 </template>
                             </v-data-table>
+                            <v-subheader class="font-weight-bold">Total Record(s): {{ filterTenants.length }}</v-subheader>
                         </v-card>
                     </v-col>
                     <v-col cols="12" lg="4" md="4">
@@ -83,7 +84,7 @@
                             </v-toolbar>
                             <v-data-iterator
                                 :items="filterNewTenants"
-                                :items-per-page="5"
+                                :items-per-page="4"
                                 item-key="EmployeeCode"
                                 :page.sync="page"
                                 @page-count="pageCount = $event"
@@ -99,8 +100,8 @@
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
                                                     <v-list-item-title class="font-weight-bold">{{ item.EmployeeCode }}</v-list-item-title>
-                                                    <v-list-item-subtitle>{{ item.EmployeeName }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle>{{ item.Department }} / {{ item.Section }}</v-list-item-subtitle>
+                                                    <v-list-item-subtitle class="caption">{{ item.EmployeeName }}</v-list-item-subtitle>
+                                                    <v-list-item-subtitle class="caption">{{ item.Department }} / {{ item.Section }}</v-list-item-subtitle>
                                                 </v-list-item-content>
                                                 <v-list-item-action>
                                                     <v-chip class="caption">Registered {{ moment(item.CreatedDate).fromNow() }}</v-chip>
@@ -153,9 +154,16 @@ export default {
                 {text: 'Department', value: 'Department'},
                 {text: 'Section', value: 'Section'},
                 {text: 'Team', value: 'Team'},
-                {text: 'Actions', value: 'actions'}
+                {text: '', value: 'actions'}
             ],
             tenantList: []
+        }
+    },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.loadTenants()
+            }, 1500);
         }
     },
     created() {

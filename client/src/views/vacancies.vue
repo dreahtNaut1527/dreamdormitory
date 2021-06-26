@@ -33,13 +33,19 @@
                                         <v-subheader class="font-weight-bold">
                                             {{ room.RoomDesc }}  
                                             <v-spacer></v-spacer>
-                                            <v-sheet v-if="getTotalOccupants(room.Beds) < 4 && getTotalOccupants(room.Beds) > 0" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
+                                            <v-sheet 
+                                                v-if="getTotalOccupants(room.Beds) < 4 && getTotalOccupants(room.Beds) > 0" 
+                                                class="caption text-center rounded-circle mt-n8 pa-1" 
+                                                color="red" 
+                                                width="30" 
+                                                dark
+                                            >
                                                 {{ getTotalOccupants(room.Beds) }}
                                             </v-sheet>
                                         </v-subheader>
                                         <v-container>
-                                            <v-row justify="end" dense>
-                                                <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" cols="12" md="3" sm="3">
+                                            <v-row justify="start" dense>
+                                                <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" cols="12" lg="2" md="3" sm="3">
                                                     <v-avatar class="text-center" size="35">
                                                         <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
                                                     </v-avatar>
@@ -64,6 +70,7 @@
                     </template>
                 </v-data-iterator>
                 <v-pagination
+                    class="mt-4"
                     v-model="page"
                     :length="pageCount"
                     :total-visible="10"
@@ -208,6 +215,13 @@ export default {
             ]
         }
     },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.loadMasters()
+            }, 1500);
+        }
+    },
     created() {
         this.loadMasters()
     },
@@ -297,6 +311,7 @@ export default {
                 }
                 // console.log(body);
                 this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
             })
             this.clearVariables()
             this.loadMasters()

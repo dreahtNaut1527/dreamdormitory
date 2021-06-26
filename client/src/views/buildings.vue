@@ -133,6 +133,13 @@ export default {
             ]
         }
     },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.loadBuildings()
+            }, 1500);
+        }
+    },
     created() {
         this.loadBuildings()
     },
@@ -168,6 +175,11 @@ export default {
             }
             if(this.$refs.form.validate()) {
                 this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                if(this.isEditMode) {
+                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                } else {
+                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new building`)
+                }
                 this.clearVariables()
                 this.loadBuildings()
             }
