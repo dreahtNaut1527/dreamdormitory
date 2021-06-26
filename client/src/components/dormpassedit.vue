@@ -3,7 +3,7 @@
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
         <v-container fluid>
             <v-card outlined>
-                <v-container>
+                <v-container fluid>
                     <v-list>
                         <v-list-item>
                             <v-list-item-avatar size="84">
@@ -238,6 +238,7 @@ export default {
             }
         },
         editRecord(data) {
+            this.editMode = true
             Object.assign(this.itemDetails, data)
             this.dialog = true
         },
@@ -276,6 +277,7 @@ export default {
             this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
         },
         clearVariables() {
+            this.editMode = false
             this.dialog = false
             this.itemDetails = {
                 DetailNo: 0,
