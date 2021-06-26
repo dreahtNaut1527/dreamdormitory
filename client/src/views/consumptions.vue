@@ -73,10 +73,22 @@
                 <v-container>
                     <v-data-table 
                         :headers="headers"
-                        :items="consumptions"
+                        :items="filterConsumptions"
+                        :page.sync="page"
+                        loading-text="Loading Data. . .Please Wait"
+                        @page-count="pagecount = $event"
                         hide-default-footer
-                    ></v-data-table>
-                    <v-pagination></v-pagination>
+                    >
+                        <template v-slot:[`item.ConsumptionType`]='{ item }'>
+                            <v-chip>{{!item.ConsumptionType ? 'Electricity' : 'Water'}}</v-chip>
+                        </template>
+                    </v-data-table>
+                    <v-pagination
+                        v-model="page"
+                        :length="pagecount"
+                        :total-visible="10"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
+                    ></v-pagination>
                 </v-container>
             </v-card>
         </v-container>
@@ -119,17 +131,21 @@ export default {
                 {text: 'Consumption', disabled: true, href: '#'}
             ],
             headers:[
+                {text:'Buiding',value:'BuildingDesc'},
+                {text:'Floor',value:'FloorDesc'},
+                {text:'Room',value:'RoomDesc'},
                 {text:'Payroll Date',value:'PayrollDate'},
                 {text:'Previous Reading',value:'PrevReading'},
                 {text:'Latest Reading',value:'LatestReading'},                
+                {text:'Consumption Type',value:'ConsumptionType'},                
                 {text:'Consumption',value:'TotalConsumption'},
                 {text:'Amount/Room',value:'TotalKWM3'},
                 {text:'Amount/Head',value:'TotalConsumption'},
                 {text:'Actions',value:'Actions'},
             ],
             itemstype:[
-                {text:'Electricity',value:'80'},
-                {text:'Water',value:'10'}
+                {text:'Electricity',value:0},
+                {text:'Water',value:1}
             ],
             editConsumption:{                	
                     Building:'',
@@ -148,7 +164,7 @@ export default {
             dialog:false,
             consumptions:[],
             roomRelationView:[],
-            selectedtype:'10',            
+            selectedtype:0,            
             page:1,
             pagecount:0,
             loading:false,
@@ -166,9 +182,14 @@ export default {
     },
 
     computed:{
-        // filterCon(){
-
-        // },
+        filterConsumptions(){
+            return this.consumptions.filter(rec => {
+                return(
+                    rec.BuildingDesc.includes(this.building || '') &&
+                    rec.ConsumptionType==this.selectedtype
+                )
+            })
+        },
         buildingList(){
             return this.consumptions.map(rec => {
                 return rec.BuildingDesc
