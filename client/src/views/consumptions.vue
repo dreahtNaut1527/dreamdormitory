@@ -1,7 +1,7 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container >
+        <v-container fluid>
             <v-toolbar color="primary" dark>
                 <v-toolbar-title>
                     <span>Payroll Date : </span>
@@ -38,8 +38,6 @@
                                 <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
                                         :items="floorList"
-                                        item-text="text"
-                                        item-value="floorNo"
                                         v-model="floor"
                                         outlined
                                         chip
@@ -52,8 +50,6 @@
                                 <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
                                         :items="roomList"
-                                        item-text="text"
-                                        item-value="roomNo"
                                         v-model="room"
                                         outlined
                                         chip
@@ -68,9 +64,9 @@
                 </v-form>
             </v-card>            
         </v-container>
-        <v-container>
+        <v-container fluid >
             <v-card outlined>
-                <v-container>
+                <v-container >
                     <v-data-table 
                         :headers="headers"
                         :items="filterConsumptions"
@@ -82,6 +78,9 @@
                         <template v-slot:[`item.ConsumptionType`]='{ item }'>
                             <v-chip>{{!item.ConsumptionType ? 'Electricity' : 'Water'}}</v-chip>
                         </template>
+                        <template v-slot:[`item.Actions`]='{ item }'>
+                            <v-btn icon @click="editRecord(item)"><v-icon>mdi-pencil</v-icon></v-btn>
+                        </template>
                     </v-data-table>
                     <v-pagination
                         v-model="page"
@@ -92,25 +91,160 @@
                 </v-container>
             </v-card>
         </v-container>
-        <v-dialog v-model="dialog" width="1000">            
+        <v-dialog v-model="dialog" width="800">            
                 <v-card>
-                    <v-toolbar color="primary" dark>
+                    <v-toolbar :color="selectedtype ==0 ? 'deep-orange accent-3' :'#0091EA'"  dark>
                         <v-toolbar-title>
-                            Edit record
+                            {{selectedtype ==0 ? 'Electric Bill' : 'Water Bill'}}
                         </v-toolbar-title>
                     </v-toolbar>
                     <v-form>
-                        <v-container>
-                            <v-row justify="center"></v-row>
+                        <v-container >
+                            <v-row justify="center" align="center">
+                                <v-col cols="12" md="6" sm="6">
+                                    <v-card>
+                                        <v-system-bar>
+                                            Previous
+                                        </v-system-bar>   
+                                        <v-container>
+                                            <v-row>
+                                                <v-col cols= 12 md="4" sm="6">
+                                                    <v-text-field
+                                                        v-model="editConsumption.PrevReading"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Reading"
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols= 12 md="8" sm="6">
+                                                    <v-text-field
+                                                        v-model="editConsumption.PrevBillPeriod"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Bill Period"
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>                                                
+                                            </v-row>                                           
+                                        </v-container>
+                                    </v-card>
+
+                                </v-col>
+                                <v-col cols="12" md="6" sm="6">
+                                    <v-card>
+                                        <v-system-bar>
+                                            Latest
+                                        </v-system-bar>    
+                                        <v-container>
+                                            <v-row>
+                                                <v-col cols= 12 md="4" sm="6">
+                                                    <v-text-field
+                                                        v-model="editConsumption.LatestReading"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Reading"
+                                                        @blur="computeConsumption(editConsumption)"
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols= 12 md="8" sm="6">
+                                                    <v-text-field
+                                                        v-model="editConsumption.LatestBillPeriod"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Bill Period"                                                        
+                                                        
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>                                                
+                                            </v-row>
+                                           
+                                        </v-container>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12" md="12" sm="12">
+                                    <v-card outlined>
+                                        <v-container>
+                                            <v-row>
+                                                <v-col cols="12" md="4" sm="4">
+                                                    <v-text-field
+                                                        v-model="lesskwm3"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        :label="selectedtype==0 ? 'Less free KW (fixed)' : 'Less free M3 (fixed)'"                                                
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" md="4" sm="4">
+                                                    <v-text-field
+                                                        v-model="editConsumption.TotalConsumption"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Consumption"                                                
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" md="4" sm="4">
+                                                    <v-text-field
+                                                        v-model="amountperkwm3"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        :label="selectedtype==0 ? 'Per KW' : 'Per M3'"                                           
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" md="6" sm="4">
+                                                    <v-text-field
+                                                        v-model="editConsumption.TotalKWM3"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Amount/Room"                                               
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" md="6" sm="4">
+                                                    <v-text-field
+                                                        v-model="editConsumption.TotalAmount"
+                                                        dense
+                                                        small
+                                                        outlined
+                                                        hide-details
+                                                        label="Amount/Head"                                              
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
                         </v-container>
                     </v-form>
+                    
                     <v-divider></v-divider>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn>Save</v-btn>
-                        <v-btn>Close</v-btn>
+                        <v-btn @click="saveConsumption()">Save</v-btn>
+                        <v-btn @click="clearVariables">Close</v-btn>
                     </v-card-actions>
-                </v-card>            
+                </v-card>      
         </v-dialog>
         <setcutoff
             :setcutoffdialog="setcutoffdialog"
@@ -138,6 +272,7 @@ export default {
                 {text:'Previous Reading',value:'PrevReading'},
                 {text:'Latest Reading',value:'LatestReading'},                
                 {text:'Consumption Type',value:'ConsumptionType'},                
+                {text:'Total tenants',value:'TotalTenants'},                
                 {text:'Consumption',value:'TotalConsumption'},
                 {text:'Amount/Room',value:'TotalKWM3'},
                 {text:'Amount/Head',value:'TotalConsumption'},
@@ -147,7 +282,8 @@ export default {
                 {text:'Electricity',value:0},
                 {text:'Water',value:1}
             ],
-            editConsumption:{                	
+            editConsumption:{  
+                    SerialNo:'',             	
                     Building:'',
                     Floor:'',
                     Room:'',
@@ -157,13 +293,13 @@ export default {
                     PayrollDate:null,
                     PrevReading:0,
                     LatestReading:0,
+                    TotalTenants:0,
                     TotalConsumption:0,
                     TotalKWM3:0,
                     TotalAmount:0,
             },
             dialog:false,
             consumptions:[],
-            roomRelationView:[],
             selectedtype:0,            
             page:1,
             pagecount:0,
@@ -173,11 +309,12 @@ export default {
             room:"",
             floor:"",
             setcutoffdialog:false,
+            amountperkwm3:12.50,
+            lesskwm3:0,
         }
     },
     created() {
         this.consumptiontype()
-        this.loadRoomRelationView()
         this.setcutoffdialog=!this.setcutoffdialog
     },
 
@@ -186,23 +323,25 @@ export default {
             return this.consumptions.filter(rec => {
                 return(
                     rec.BuildingDesc.includes(this.building || '') &&
-                    rec.ConsumptionType==this.selectedtype
+                    rec.ConsumptionType==this.selectedtype && 
+                    rec.FloorDesc.includes(this.floor|| '') &&
+                    rec.RoomDesc.includes(this.room || '')
                 )
             })
         },
         buildingList(){
-            return this.consumptions.map(rec => {
+            return this.filterConsumptions.map(rec => {
                 return rec.BuildingDesc
             }).sort()
         },
         floorList(){
-            return this.consumptions.map(rec => {
-                return {floorNo: rec.FloorNo, text: `FLOOR ${rec.FloorNo}`}
+            return this.filterConsumptions.map(rec => {
+                return rec.FloorDesc
             }).sort()
         },
         roomList(){
-            return this.consumptions.map(rec => {
-                return {roomNo: rec.RoomNo, text: `Room ${this.zeroPad(rec.RoomNo, 3)}`}
+            return this.filterConsumptions.map(rec => {
+                return rec.RoomDesc
             })
         }
     },
@@ -210,12 +349,70 @@ export default {
         consumptiontype(){
             this.cubickilowatt=this.selectedtype
         },
-        loadRoomRelationView(){
-            this.loadMasterMaintenance('roomrelations').then(res => {
-                this.roomRelationView = res.data
-                console.log( this.roamRelationView);
+        editRecord(data){
+            this.actionMode=1
+            this.dialog=true
+            Object.assign(this.editConsumption,data)
+            if (data.ConsumptionType==0){
+                this.lesskwm3=80
+            }else{
+                this.lesskwm3=10
+            }
+
+        },
+        computeConsumption(val){
+            val.TotalConsumption=val.LatestReading - val.PrevReading
+            val.TotalKWM3=(val.TotalConsumption - this.lesskwm3) * this.amountperkwm3
+            val.TotalAmount=val.TotalKWM3 / val.TotalTenants
+            this.$forceUpdate()
+        },
+        saveConsumption(){
+            let body={
+            procedureName: 'ProcConsumptionTransaction',
+            values:[
+                this.editConsumption.SerialNo,
+                this.editConsumption.PayrollDate,
+                this.editConsumption.ConsumptionType,
+                this.editConsumption.ConsumptionStartDate,
+                this.editConsumption.ConsumptionEndDate,
+                this.editConsumption.LatestReading,
+                this.editConsumption.TotalConsumption,
+                this.editConsumption.TotalKWM3,
+                this.editConsumption.TotalAmount,
+                this.hrisUserInfo.USERACCT,
+                1,
+            ]
+            }
+            console.log(body);
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                this.$emit('update:consumptiondetails',res.data)
+                console.log(res.data);
+                this.consumptions=[]
+                this.consumptions=res.data
+                console.log(this.consumptions);
+                this.clearVariables()
+               
             })
         },
+        clearVariables(){
+            this.dialog=false
+            this.editConsumption={                	
+                    Building:'',
+                    Floor:'',
+                    Room:'',
+                    ConsumptionType:'',
+                    StartDate:null,
+                    EndDate:null,
+                    PayrollDate:null,
+                    PrevReading:0,
+                    LatestReading:0,
+                    TotalTenants:0,
+                    TotalConsumption:0,
+                    TotalKWM3:0,
+                    TotalAmount:0
+                    
+            }
+        }
     },
         components:{
         setcutoff

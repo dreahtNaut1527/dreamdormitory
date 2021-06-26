@@ -138,7 +138,7 @@ export default {
             console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
                 this.$emit('update:consumptiondetails',res.data)
-                console.log(res.data);
+                // console.log(res.data);
                 this.dialog=false
             })
         } 
