@@ -4,7 +4,7 @@
         <v-toolbar color="transparent" flat>
             <v-spacer></v-spacer>
             <v-toolbar-title class="font-weight-bold display-1">
-                 {{ isEditMode ? 'Edit' : 'New' }}<v-icon right>mdi-pencil</v-icon>
+                {{ isEditMode ? 'Edit' : 'New' }}<v-icon right>mdi-pencil</v-icon>
             </v-toolbar-title>
         </v-toolbar>
         <v-container fluid>
@@ -181,7 +181,7 @@
         <v-overlay :value="loading">
             <v-progress-circular
                 indeterminate
-                size="64"
+                size="126"
                 :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>

@@ -1,13 +1,14 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container fluid>
-            <v-tabs v-model="tab" :background-color="themeColor == '' ? '#1976d2' : themeColor" @change="getBuilding()" icons-and-text centered grow dark>
-                <v-tab v-for="(item, i) in buildingMasters" :key="i">
-                    {{item.BuildingDesc}}
-                    <v-icon>mdi-domain</v-icon>
-                </v-tab>
-            </v-tabs>
+        <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
+            <v-container fluid>
+                <v-tabs v-model="tab" :background-color="themeColor == '' ? '#1976d2' : themeColor" @change="getBuilding()" icons-and-text centered grow dark>
+                    <v-tab v-for="(item, i) in buildingMasters" :key="i">
+                        {{item.BuildingDesc}}
+                        <v-icon>mdi-domain</v-icon>
+                    </v-tab>
+                </v-tabs>
                 <v-radio-group v-model="floor" row>
                     <v-radio
                         v-for="(item, i) in floorMasters"
@@ -62,40 +63,41 @@
                         </v-row>
                     </template>
                 </v-data-iterator>
-            <v-pagination
-                v-model="page"
-                :length="pageCount"
-                :total-visible="10"
-                :color="themeColor == '' ? '#1976d2' : themeColor"
-            ></v-pagination>
-            <!-- <v-row v-for="(floor, i) in floors" :key="i" dense>
-                <v-container class="mb-n2 overline">
-                    <v-chip outlined>Floor {{floor.FloorNo}}</v-chip>
-                </v-container>
-                <v-col cols="12" md="2" sm="4" v-for="(room, i) in listOfRoomsPerFloor(floor.FloorNo)" :key="i">
-                    <v-hover v-slot="{ hover }" open-delay="200">
-                        <v-card class="rounded-lg" @click="assignRoom(room)" :elevation="hover ? 8 : 2" v-if="room.FloorNo == floor.FloorNo" outlined>
-                            <v-subheader class="font-weight-bold">
-                                {{ room.RoomDesc }}  
-                                <v-spacer></v-spacer>
-                                <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
-                                    {{ getTotalOccupants(room.Beds) }}
-                                </v-sheet>
-                            </v-subheader>
-                            <v-container>
-                                <v-row justify="end" dense>
-                                    <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="3">
-                                        <v-avatar class="text-center" size="35">
-                                            <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
-                                        </v-avatar>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-card>
-                    </v-hover>
-                </v-col>
-            </v-row> -->
-        </v-container>
+                <v-pagination
+                    v-model="page"
+                    :length="pageCount"
+                    :total-visible="10"
+                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                ></v-pagination>
+                <!-- <v-row v-for="(floor, i) in floors" :key="i" dense>
+                    <v-container class="mb-n2 overline">
+                        <v-chip outlined>Floor {{floor.FloorNo}}</v-chip>
+                    </v-container>
+                    <v-col cols="12" md="2" sm="4" v-for="(room, i) in listOfRoomsPerFloor(floor.FloorNo)" :key="i">
+                        <v-hover v-slot="{ hover }" open-delay="200">
+                            <v-card class="rounded-lg" @click="assignRoom(room)" :elevation="hover ? 8 : 2" v-if="room.FloorNo == floor.FloorNo" outlined>
+                                <v-subheader class="font-weight-bold">
+                                    {{ room.RoomDesc }}  
+                                    <v-spacer></v-spacer>
+                                    <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
+                                        {{ getTotalOccupants(room.Beds) }}
+                                    </v-sheet>
+                                </v-subheader>
+                                <v-container>
+                                    <v-row justify="end" dense>
+                                        <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="3">
+                                            <v-avatar class="text-center" size="35">
+                                                <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
+                                            </v-avatar>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card>
+                        </v-hover>
+                    </v-col>
+                </v-row> -->
+            </v-container>
+        </v-lazy>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card>
                 <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark flat>
