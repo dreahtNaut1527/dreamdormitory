@@ -177,7 +177,6 @@ export default {
         loadTenants() {
             this.stationSearch(null).then(res => {
                 let station = res.data
-                this.value = 0
                 this.loadMasterMaintenance('tenants').then(res => {
                     this.tenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
                     if(this.tenants != []) {

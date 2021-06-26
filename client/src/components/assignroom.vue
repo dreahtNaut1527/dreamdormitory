@@ -10,7 +10,7 @@
             <v-row align="center" justify="center">
                 <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                     <v-card outlined>
-                        <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" :opacity="0.8" absolute>
+                        <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" :opacity="0.4" absolute>
                             <v-row align="center" justify="center">
                                 <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
                             </v-row>
@@ -26,7 +26,7 @@
                             <v-row dense>
                                 <v-col cols="12" md="2" sm="2">
                                     <v-avatar class="mt-5" size="80">
-                                        <img :src="item.EmployeeCode ? `${photo}/${item.EmployeeCode}.jpg` : require('../assets/NoPic.jpg')" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
+                                        <img :src="item.EmployeeName ? `${photo}/${item.EmployeeCode}.jpg` : require('../assets/NoPic.jpg')" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
                                     </v-avatar>
                                 </v-col>
                                 <v-col cols="12" md="10" sm="10">
@@ -232,6 +232,10 @@ export default {
                 if(rec.BedNo == data.BedNo && rec.EmployeeCode) {
                     let tenant = this.getAvailableTenants(data.EmployeeCode)
                     Object.assign(rec, tenant[0])
+                    if(!rec.EmployeeName) {
+                        this.alert = true
+                        this.alertText = 'Employee does not registered as tenant'
+                    }
                 } else if(!rec.EmployeeCode) {
                     Object.assign(rec, {
                         EmployeeName: null, 
