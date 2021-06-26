@@ -68,7 +68,7 @@
 <script>
 
 export default {
-    props:['setcutoffdialog','consumptiondetails'],
+    props:['setcutoffdialog','consumptiondetails','payrolldate'],
     data(){
         return {
             cutoffrule:[
@@ -138,7 +138,7 @@ export default {
             console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
                 this.$emit('update:consumptiondetails',res.data)
-                // console.log(res.data);
+                this.$emit('update:payrolldate',this.moment(lastPaydate).format('LL'))
                 this.dialog=false
             })
         } 

@@ -5,7 +5,7 @@
             <v-toolbar color="primary" dark>
                 <v-toolbar-title>
                     <span>Payroll Date : </span>
-                    <span>June 31, 2021</span>
+                    <span>{{consumptions.payrolldate}}</span>
                 </v-toolbar-title>
             </v-toolbar>           
             <v-card outlined>
@@ -249,6 +249,7 @@
         <setcutoff
             :setcutoffdialog="setcutoffdialog"
             :consumptiondetails.sync="consumptions"
+            :payrolldate.sync="payrollDate"
         >
         </setcutoff>
     
@@ -311,6 +312,7 @@ export default {
             setcutoffdialog:false,
             amountperkwm3:12.50,
             lesskwm3:0,
+            payrollDate:''
         }
     },
     created() {
