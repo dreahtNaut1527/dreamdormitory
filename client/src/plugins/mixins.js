@@ -1,11 +1,12 @@
 import { mapState, mapMutations } from 'vuex'
-// import store from '../store'
+import store from '../store'
 
 const plugins = {
     install(Vue) {
         Vue.mixin({
             data: () => ({
                 api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL,
+                server: 'http://localhost:8800', // process.env.VUE_APP_SERVER,
                 api_HRIS: 'http://localhost:8080/server/api',
                 photo: process.env.VUE_APP_PHOTO
             }),
@@ -18,7 +19,8 @@ const plugins = {
                     'isConnect',
                     'isLoggedIn',
                     'themeColor',
-                    'darkMode'
+                    'darkMode',
+                    'appVersion'
                 ])
             },
             methods: {
@@ -27,7 +29,8 @@ const plugins = {
                     'CHANGE_CONNECTION',
                     'CHANGE_LOGGING',
                     'CHANGE_THEMECOLOR',
-                    'CHANGE_DARKMODE'
+                    'CHANGE_DARKMODE',
+                    'CHANGE_APP_VERSION'
                 ]),
                 zeroPad(num, numZeros) {
                     let n = Math.abs(num)
@@ -79,6 +82,38 @@ const plugins = {
                         })
                     }
                     return data
+                },
+                setNotifications(code, message) {
+                     let body = {
+                          procedureName: 'ProcPushNotification',
+                          values: [
+                               0,
+                               this.$socket.id,
+                               this.hrisUserInfo.CODE,
+                               code,
+                               message,
+                               1
+                          ]
+                     }
+                     this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                     this.$socket.emit('newNotifications', body.values)
+                },
+                checkAppVersion() {
+                     let version = null
+                     this.axios.get(`${this.server}/appversion`).then(res => {
+                          version = res.data
+                          if(version != this.appVersion) {
+                               store.commit('CHANGE_APP_VERSION', version)
+                               store.commit('CHANGE_CONNECTION', true)
+                               store.commit('CHANGE_USER_INFO', {})
+                               store.commit('CHANGE_LOGGING', false)
+                               store.commit('CHANGE_THEMECOLOR', '#1976d2')
+                               store.commit('CHANGE_DARKMODE', false)
+                               if(this.$route.name != 'login') {
+                                    this.$router.push('/')
+                               }
+                          }
+                     })
                 },
 
                 // Load Masters Maintenance

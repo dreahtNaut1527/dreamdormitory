@@ -236,6 +236,11 @@ export default {
             if(this.$refs.form.validate()) {
                 this.saveDormitoryPassHDetails()
                 this.saveDormitoryPassHeader()
+                if(this.editMode) {
+                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                } else {
+                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
+                }
                 this.clearVariables()
             }
         },

@@ -57,7 +57,6 @@
                                     item-value="value"
                                     placeholder="Category"
                                     hide-details
-                                    clearable
                                     outlined
                                     dense
                                 ></v-select>
@@ -99,7 +98,12 @@
                                 <div v-else>{{item.EmployeeCode}}</div>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
-                                <v-btn class="mx-3" @click="editDormPass(item)" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn class="mx-3" @click="editDormPass(item)" v-on="on" v-bind="attrs" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
+                                    </template>
+                                    <span>{{ item.DormitoryPassCode ? 'View Record' : 'Edit Record' }}</span>
+                                </v-tooltip>
                             </template>
                         </v-data-table>
                         <v-pagination
@@ -109,6 +113,7 @@
                             :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
+                    <v-subheader class="font-weight-bold">Total Record(s): {{ filterDormitoryPass.length }}</v-subheader>
                 </v-card>
             </v-lazy>
         </v-container>
@@ -147,6 +152,13 @@ export default {
             ]
         }
     },
+    sockets: {
+        showNotifications() {
+            setTimeout(() => {
+                this.loadData()
+            }, 1500);
+        }
+    },
     created() {
         this.loadData()
     },
@@ -156,9 +168,11 @@ export default {
                 return (
                     rec.CompanyCode.includes(this.hrisUserInfo.CODE) && 
                     rec.BuildingDesc.toLowerCase().includes(this.building.toLowerCase() || '') && 
-                    rec.FloorNo >= this.floor && 
-                    rec.RoomNo >= this.room &&
-                    rec.Category >= this.category
+                    rec.FloorDesc.includes(this.floor || '') && 
+                    rec.RoomDesc.includes(this.room || '') &&
+                    rec.Category == this.category
+
+                    
                 )
             })
         },
@@ -169,12 +183,12 @@ export default {
         },
         floorLists() {
             return this.filterDormitoryPass.map(rec => {
-                return {floorNo: rec.FloorNo, text: `FLOOR ${rec.FloorNo}`}
+                return {floorNo: rec.FloorDesc, text: `FLOOR ${rec.FloorNo}`}
             })
         },
         roomLists() {
             return this.filterDormitoryPass.map(rec => {
-                return {roomNo: rec.RoomNo, text: `Room ${this.zeroPad(rec.RoomNo, 3)}`}
+                return {roomNo: rec.RoomDesc, text: `Room ${this.zeroPad(rec.RoomNo, 3)}`}
             })
         }
     },
