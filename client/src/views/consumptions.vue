@@ -111,10 +111,10 @@
                 </v-toolbar>
                 <v-form>
                     <v-container fluid>
-                        <v-row justify="center" align="center" dense>
+                        <v-row justify="center" align="center">
                             <v-col cols="12" md="6" sm="6">
                                 <v-card>
-                                    <v-system-bar>
+                                    <v-system-bar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                                         Previous
                                     </v-system-bar>   
                                     <v-container fluid>
@@ -154,7 +154,7 @@
                             </v-col>
                             <v-col cols="12" md="6" sm="6">
                                 <v-card>
-                                    <v-system-bar>
+                                    <v-system-bar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                                         Latest
                                     </v-system-bar>    
                                     <v-container fluid>
@@ -194,6 +194,9 @@
                             </v-col>
                             <v-col cols="12" md="12" sm="12">
                                 <v-card outlined>
+                                    <v-system-bar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
+                                        Billing Results
+                                    </v-system-bar>   
                                     <v-container fluid>
                                         <v-row dense>
                                             <v-col cols="12" md="4" sm="4">
