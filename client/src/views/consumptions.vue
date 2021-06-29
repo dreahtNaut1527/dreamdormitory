@@ -100,7 +100,7 @@
                 </v-container>
             </v-card>
         </v-container>
-        <v-dialog v-model="dialog" width="800">            
+        <v-dialog v-model="dialog" width="800" persistent>            
             <v-card>
                 <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor"  dark>
                     <v-toolbar-title>
