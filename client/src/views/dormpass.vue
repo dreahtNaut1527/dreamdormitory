@@ -117,10 +117,27 @@
                 </v-card>
             </v-lazy>
         </v-container>
+        <v-fab-transition>
+            <v-btn
+                :color="themeColor == '' ? '#1976d2' : themeColor"
+                @click="printDormitoryID()"
+                :disabled="selectedTenants.length == 0"
+                fixed
+                bottom
+                right
+                large
+                dark
+                fab
+            >
+                <v-icon large>mdi-file-find</v-icon>
+            </v-btn>
+        </v-fab-transition>
     </v-main>
 </template>
 
 <script>
+import printDormID from '@/print/dormitoryId'
+
 export default {
     data() {
         return {
@@ -191,6 +208,9 @@ export default {
         }
     },
     methods: {
+        printDormitoryID() {
+            printDormID(this.selectedTenants, this.photo)
+        },
         loadData() {
             let stationData = []
             this.loading = true
