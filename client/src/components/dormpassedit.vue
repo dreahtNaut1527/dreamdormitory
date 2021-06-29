@@ -143,8 +143,8 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="clearVariables()" class="mx-3" text>Cancel</v-btn>
-                    <v-btn @click="saveRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
+                    <v-btn @click="clearVariables()" class="mx-3 px-5" text>Cancel</v-btn>
+                    <v-btn class="px-5" @click="saveRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -234,14 +234,19 @@ export default {
         },
         saveRecord() {
             if(this.$refs.form.validate()) {
-                this.saveDormitoryPassHDetails()
-                this.saveDormitoryPassHeader()
-                if(this.editMode) {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
-                } else {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
-                }
-                this.clearVariables()
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                    if(result.isConfirmed) {
+                        this.saveDormitoryPassHDetails()
+                        this.saveDormitoryPassHeader()
+                        if(this.editMode) {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                        } else {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
+                        }
+                        this.clearVariables()
+                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                    }
+                })
             }
         },
         editRecord(data) {

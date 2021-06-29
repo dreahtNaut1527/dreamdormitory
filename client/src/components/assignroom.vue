@@ -271,11 +271,16 @@ export default {
                 ]
             }
             if(this.$refs.form[index].validate()) {
-                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-                setTimeout(() => {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} assigned tenants to Room ${this.zeroPad(data.RoomNo, 3)}`)
-                }, 2000);
-                this.$refs.form[index].resetValidation()
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                    if(result.isConfirmed) {
+                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                        setTimeout(() => {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} assigned tenants to Room ${this.zeroPad(data.RoomNo, 3)}`)
+                        }, 2000);
+                        this.$refs.form[index].resetValidation()
+                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                    }
+                })
             } else {
                 this.alert = true
                 this.alertText = 'Employee Code is required'

@@ -100,7 +100,7 @@
                             <template v-slot:[`item.actions`]="{ item }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn class="mx-3" @click="editDormPass(item)" v-on="on" v-bind="attrs" icon><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
+                                        <v-btn class="mx-3" @click="editDormPass(item)" v-on="on" v-bind="attrs" :color="themeColor == '' ? '#1976d2' : themeColor" small dark fab><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
                                     </template>
                                     <span>{{ item.DormitoryPassCode ? 'View Record' : 'Edit Record' }}</span>
                                 </v-tooltip>
@@ -171,8 +171,6 @@ export default {
                     rec.FloorDesc.includes(this.floor || '') && 
                     rec.RoomDesc.includes(this.room || '') &&
                     rec.Category == this.category
-
-                    
                 )
             })
         },
