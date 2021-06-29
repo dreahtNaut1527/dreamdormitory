@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog" width="500"  heigth="800" persistent>
         <v-card>
-            <v-toolbar color="primary" dark dense hide-details>
+            <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark dense hide-details>
                 <span>Set Payroll Cut-off</span>
             </v-toolbar>
             
@@ -13,6 +13,7 @@
                             <v-autocomplete 
                                 v-model="selectedmonth"
                                 :items="getMonth()"
+                                :color="themeColor == '' ? '#1976d2' : themeColor"
                                 item-text="text"
                                 item-value="value"
                                 dense 
@@ -24,6 +25,7 @@
                         <v-col cols="12" md="4" sm="4">
                             <v-text-field 
                                 v-model="year"
+                                :color="themeColor == '' ? '#1976d2' : themeColor"
                                 dense 
                                 hide-details 
                                 outlined
@@ -33,6 +35,7 @@
                         <v-col cols="12" md="2" sm="2">
                             <v-text-field
                                 type="number"
+                                :color="themeColor == '' ? '#1976d2' : themeColor"
                                 v-model="cutoff"
                                 outlined
                                 dense 
@@ -50,7 +53,7 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                
+                <v-btn class="px-5" to="/dashboard" text>Cancel</v-btn>
                 <v-btn 
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                     :disabled="disableprocess"

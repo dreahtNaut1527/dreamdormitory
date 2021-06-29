@@ -189,7 +189,7 @@ export default {
                         }
                         this.clearVariables()
                         this.loadBuildings()
-                        this.handleToastMesaage('Record saved', 'success')
+                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
                     }
                 }) 
             }

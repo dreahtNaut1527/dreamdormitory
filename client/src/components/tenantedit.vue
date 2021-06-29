@@ -269,13 +269,18 @@ export default {
                 ]
             }
             if(this.$refs.form.validate()) {
-                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-                if(this.isEditMode) {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
-                } else {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
-                }
-                this.$router.push('/tenants')
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                    if(result.isConfirmed) {
+                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                        if(this.isEditMode) {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                        } else {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
+                        }
+                        this.$router.push('/tenants')
+                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                    }
+                })
             } else {
                 this.alert = true
                 this.alertText = 'Employee Code is required'

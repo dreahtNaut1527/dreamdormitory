@@ -1,14 +1,14 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-container>
+        <v-container fluid>
             <!-- Transition upon opening -->
             <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
                 <v-card outlined>
-                    <v-toolbar color="primary" dark>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                         <v-toolbar-title>Beds</v-toolbar-title>
                     </v-toolbar>
-                    <v-container>
+                    <v-container fluid>
                         <v-row align="center" justify="end">
                             <v-col cols=12 md="6">
                                 <v-text-field
@@ -16,6 +16,7 @@
                                     hide-details
                                     outlined
                                     dense
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Search Beds"
                                     append-icon="mdi-magnify"
                                 ></v-text-field>
@@ -33,16 +34,19 @@
                             
                         >
                             <template v-slot:[`item.Actions`]='{ item }'>
-                                <v-btn @click="editRecord(item)" icon>
-                                    <v-icon>mdi-pencil</v-icon>
-                                </v-btn>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                    </template>
+                                    <span>Edit Record</span>
+                                </v-tooltip>
                             </template>
                         </v-data-table>  
                         <v-pagination
                             v-model="page"
                             :length="pageCount"
                             :total-visible="10"
-                            color="primary"
+                            :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>                 
                     </v-container>
                 </v-card>
@@ -50,7 +54,7 @@
         </v-container>
         <v-dialog v-model="dialog" width="500" persistent>
             <v-card>
-                <v-toolbar color='primary' dark>
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                     <v-toolbar-title>
                         {{editMode ? 'Edit Record' : 'Create New'}}
                     </v-toolbar-title>
@@ -63,6 +67,7 @@
                                 outlined
                                 v-model="editBeds.BedDesc"
                                 dense
+                                :color="themeColor == '' ? '#1976d2' : themeColor"
                                 :rules="[v => !!v || 'Bed Decription is required']"
                                 label="Bed Decription"
                             ></v-text-field>
@@ -72,14 +77,14 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="clearVariables()">Cancel</v-btn>
-                    <v-btn @click="saveRecord(editBeds)">{{editMode ? 'Update' : 'Save'}}</v-btn>
+                    <v-btn class="px-5" @click="clearVariables()" text>Cancel</v-btn>
+                    <v-btn class="px-5" @click="saveRecord(editBeds)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <v-fab-transition>
             <v-btn
-                color="primary"
+                :color="themeColor == '' ? '#1976d2' : themeColor"
                 @click="dialog = !dialog"
                 fixed
                 bottom
@@ -150,8 +155,18 @@ export default {
                 ]
             }
             if (this.$refs.form.validate()) {
-                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-                this.clearVariables()
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                    if(result.isConfirmed) {
+                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                        if(this.editMode) {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                        } else {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new bed`)
+                        }
+                        this.clearVariables()
+                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                    }
+                }) 
             }
         },
         clearVariables() {

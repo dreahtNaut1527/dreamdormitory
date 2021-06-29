@@ -111,36 +111,22 @@ const plugins = {
                             this.$router.push('/')
                         }
                     }
-                    // this.axios.get(`${this.server}/appversion`).then(res => {
-                    //     version = res.data
-                    //     if(version != this.appVersion) {
-                    //         store.commit('CHANGE_APP_VERSION', version)
-                    //         store.commit('CHANGE_CONNECTION', true)
-                    //         store.commit('CHANGE_USER_INFO', {})
-                    //         store.commit('CHANGE_LOGGING', false)
-                    //         store.commit('CHANGE_THEMECOLOR', '#1976d2')
-                    //         store.commit('CHANGE_DARKMODE', false)
-                    //         if(this.$route.name != 'login') {
-                    //             this.$router.push('/')
-                    //         }
-                    //     }
-                    // })
                 },
-                handleToastMesaage(message, icon) {
-                    const Toast = this.swal.mixin({
+                handleToastMesaage() {
+                    const Toast = this.Swal.mixin({
                         toast: true,
                         position: 'bottom-end',
                         showConfirmButton: false,
-                        timer: 3000,
+                        timer: 2000,
                         timerProgressBar: true
                     })
-                    Toast.fire(icon, message)
+                    return Toast
                 },
                 handleConfimedMessage(title, message, icon) {
-                    this.swal.fire(title, message, icon)
+                    this.Swal.fire(title, message, icon)
                 },
                 handleQuestionMessage(title, message, buttonText, icon) {
-                    return this.swal.fire({
+                    return this.Swal.fire({
                         title: title,
                         text: message,
                         icon: icon,

@@ -2,7 +2,7 @@
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
         <v-container fluid>
-            <v-toolbar color="primary" dark>
+            <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                 <v-toolbar-title>
                     <span>Payroll Date : </span>
                     <span>{{consumptions.payrolldate}}</span>
@@ -16,6 +16,7 @@
                                     <v-select    
                                     v-model="selectedtype"                                 
                                     :items="itemstype"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
                                     label="Type"
                                     outlined
                                     dense
@@ -23,9 +24,10 @@
                                     @change="consumptiontype()"
                                     ></v-select>
                                 </v-col>
-                            <v-col cols="12" md="3" sm="3">
+                                <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
                                         :items="buildingList"
+                                        :color="themeColor == '' ? '#1976d2' : themeColor"
                                         v-model="building"
                                         outlined
                                         chip
@@ -38,6 +40,7 @@
                                 <v-col cols="12" md="3" sm="3">
                                     <v-autocomplete 
                                         :items="floorList"
+                                        :color="themeColor == '' ? '#1976d2' : themeColor"
                                         v-model="floor"
                                         outlined
                                         chip
@@ -48,25 +51,26 @@
                                     ></v-autocomplete>
                                 </v-col>
                                 <v-col cols="12" md="3" sm="3">
-                                    <v-autocomplete 
-                                        :items="roomList"
-                                        v-model="room"
-                                        outlined
-                                        chip
-                                        small-chips
-                                        dense
-                                        label="Room"
-                                        hide-details
-                                    ></v-autocomplete>
-                                </v-col> 
+                                <v-autocomplete 
+                                    :items="roomList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    v-model="room"
+                                    outlined
+                                    chip
+                                    small-chips
+                                    dense
+                                    label="Room"
+                                    hide-details
+                                ></v-autocomplete>
+                            </v-col> 
                         </v-row>
                     </v-container>
                 </v-form>
             </v-card>            
         </v-container>
-        <v-container fluid >
+        <v-container fluid>
             <v-card outlined>
-                <v-container >
+                <v-container fluid>
                     <v-data-table 
                         :headers="headers"
                         :items="filterConsumptions"
@@ -76,10 +80,15 @@
                         hide-default-footer
                     >
                         <template v-slot:[`item.ConsumptionType`]='{ item }'>
-                            <v-chip>{{!item.ConsumptionType ? 'Electricity' : 'Water'}}</v-chip>
+                            <v-chip class="px-6">{{!item.ConsumptionType ? 'Electricity' : 'Water'}}<v-icon right>{{!item.ConsumptionType ? 'mdi-flash' : 'mdi-water'}}</v-icon></v-chip>
                         </template>
                         <template v-slot:[`item.Actions`]='{ item }'>
-                            <v-btn icon @click="editRecord(item)"><v-icon>mdi-pencil</v-icon></v-btn>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                </template>
+                                <span>Edit Record</span>
+                            </v-tooltip>
                         </template>
                     </v-data-table>
                     <v-pagination
@@ -92,159 +101,185 @@
             </v-card>
         </v-container>
         <v-dialog v-model="dialog" width="800">            
-                <v-card>
-                    <v-toolbar :color="selectedtype ==0 ? 'deep-orange accent-3' :'#0091EA'"  dark>
-                        <v-toolbar-title>
-                            {{selectedtype ==0 ? 'Electric Bill' : 'Water Bill'}}
-                        </v-toolbar-title>
-                    </v-toolbar>
-                    <v-form>
-                        <v-container >
-                            <v-row justify="center" align="center">
-                                <v-col cols="12" md="6" sm="6">
-                                    <v-card>
-                                        <v-system-bar>
-                                            Previous
-                                        </v-system-bar>   
-                                        <v-container>
-                                            <v-row>
-                                                <v-col cols= 12 md="4" sm="6">
-                                                    <v-text-field
-                                                        v-model="editConsumption.PrevReading"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Reading"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols= 12 md="8" sm="6">
-                                                    <v-text-field
-                                                        v-model="editConsumption.PrevBillPeriod"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Bill Period"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>                                                
-                                            </v-row>                                           
-                                        </v-container>
-                                    </v-card>
+            <v-card>
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor"  dark>
+                    <v-toolbar-title>
+                        {{selectedtype ==0 ? 'Electric Bill' : 'Water Bill'}}
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-icon x-large>{{selectedtype == 0 ? 'mdi-flash' : 'mdi-water'}}</v-icon>
+                </v-toolbar>
+                <v-form>
+                    <v-container fluid>
+                        <v-row justify="center" align="center" dense>
+                            <v-col cols="12" md="6" sm="6">
+                                <v-card>
+                                    <v-system-bar>
+                                        Previous
+                                    </v-system-bar>   
+                                    <v-container fluid>
+                                        <v-row dense>
+                                            <v-col cols= 12 md="4" sm="6">
+                                                <v-text-field
+                                                    v-model="editConsumption.PrevReading"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Reading"
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols= 12 md="8" sm="6">
+                                                <v-text-field
+                                                    v-model="editConsumption.PrevBillPeriod"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Bill Period"
+                                                >
+                                                </v-text-field>
+                                            </v-col>                                                
+                                        </v-row>                                           
+                                    </v-container>
+                                </v-card>
 
-                                </v-col>
-                                <v-col cols="12" md="6" sm="6">
-                                    <v-card>
-                                        <v-system-bar>
-                                            Latest
-                                        </v-system-bar>    
-                                        <v-container>
-                                            <v-row>
-                                                <v-col cols= 12 md="4" sm="6">
-                                                    <v-text-field
-                                                        v-model="editConsumption.LatestReading"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Reading"
-                                                        @blur="computeConsumption(editConsumption)"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols= 12 md="8" sm="6">
-                                                    <v-text-field
-                                                        v-model="editConsumption.LatestBillPeriod"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Bill Period"                                                        
-                                                        
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>                                                
-                                            </v-row>
-                                           
-                                        </v-container>
-                                    </v-card>
-                                </v-col>
-                                <v-col cols="12" md="12" sm="12">
-                                    <v-card outlined>
-                                        <v-container>
-                                            <v-row>
-                                                <v-col cols="12" md="4" sm="4">
-                                                    <v-text-field
-                                                        v-model="lesskwm3"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        :label="selectedtype==0 ? 'Less free KW (fixed)' : 'Less free M3 (fixed)'"                                                
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="4" sm="4">
-                                                    <v-text-field
-                                                        v-model="editConsumption.TotalConsumption"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Consumption"                                                
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="4" sm="4">
-                                                    <v-text-field
-                                                        v-model="amountperkwm3"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        :label="selectedtype==0 ? 'Per KW' : 'Per M3'"                                           
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="6" sm="4">
-                                                    <v-text-field
-                                                        v-model="editConsumption.TotalKWM3"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Amount/Room"                                               
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" md="6" sm="4">
-                                                    <v-text-field
-                                                        v-model="editConsumption.TotalAmount"
-                                                        dense
-                                                        small
-                                                        outlined
-                                                        hide-details
-                                                        label="Amount/Head"                                              
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-container>
-                                    </v-card>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-form>
-                    
-                    <v-divider></v-divider>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn @click="saveConsumption()">Save</v-btn>
-                        <v-btn @click="clearVariables">Close</v-btn>
-                    </v-card-actions>
-                </v-card>      
+                            </v-col>
+                            <v-col cols="12" md="6" sm="6">
+                                <v-card>
+                                    <v-system-bar>
+                                        Latest
+                                    </v-system-bar>    
+                                    <v-container fluid>
+                                        <v-row dense>
+                                            <v-col cols= 12 md="4" sm="6">
+                                                <v-text-field
+                                                    v-model="editConsumption.LatestReading"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    type="number"
+                                                    label="Reading"
+                                                    @blur="computeConsumption(editConsumption)"
+                                                    @change="computeConsumption(editConsumption)"
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols= 12 md="8" sm="6">
+                                                <v-text-field
+                                                    v-model="editConsumption.LatestBillPeriod"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Bill Period"        
+                                                >
+                                                </v-text-field>
+                                            </v-col>                                                
+                                        </v-row>
+                                    </v-container>
+                                </v-card>
+                            </v-col>
+                            <v-col cols="12" md="12" sm="12">
+                                <v-card outlined>
+                                    <v-container fluid>
+                                        <v-row dense>
+                                            <v-col cols="12" md="4" sm="4">
+                                                <v-text-field
+                                                    v-model="lesskwm3"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    :label="selectedtype==0 ? 'Less free KW (fixed)' : 'Less free M3 (fixed)'"        
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"                                        
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="4" sm="4">
+                                                <v-text-field
+                                                    v-model="editConsumption.TotalConsumption"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Consumption"                                                
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="4" sm="4">
+                                                <v-text-field
+                                                    v-model="amountperkwm3"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    :label="selectedtype==0 ? 'Per KW' : 'Per M3'" 
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"                                          
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="6" sm="4">
+                                                <v-text-field
+                                                    v-model="editConsumption.TotalKWM3"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Amount/Room"                                               
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="6" sm="4">
+                                                <v-text-field
+                                                    v-model="editConsumption.TotalAmount"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    dense
+                                                    small
+                                                    outlined
+                                                    hide-details
+                                                    filled
+                                                    readonly
+                                                    label="Amount/Head"                                              
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-form>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn class="px-5" @click="clearVariables" text>Cancel</v-btn>
+                    <v-btn class="px-5" @click="saveConsumption()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
+                </v-card-actions>
+            </v-card>      
         </v-dialog>
         <setcutoff
             :setcutoffdialog="setcutoffdialog"
@@ -399,19 +434,19 @@ export default {
         clearVariables(){
             this.dialog=false
             this.editConsumption={                	
-                    Building:'',
-                    Floor:'',
-                    Room:'',
-                    ConsumptionType:'',
-                    StartDate:null,
-                    EndDate:null,
-                    PayrollDate:null,
-                    PrevReading:0,
-                    LatestReading:0,
-                    TotalTenants:0,
-                    TotalConsumption:0,
-                    TotalKWM3:0,
-                    TotalAmount:0
+                Building:'',
+                Floor:'',
+                Room:'',
+                ConsumptionType:'',
+                StartDate:null,
+                EndDate:null,
+                PayrollDate:null,
+                PrevReading:0,
+                LatestReading:0,
+                TotalTenants:0,
+                TotalConsumption:0,
+                TotalKWM3:0,
+                TotalAmount:0
                     
             }
         }
