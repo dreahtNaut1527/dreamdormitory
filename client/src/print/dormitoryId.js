@@ -2,6 +2,7 @@
 import imageToBase64 from 'image-to-base64/browser'
 
 function printDormitoryID(data, photo) {
+    let employeePhoto = null
     let docDefinition = {}
     let docContent = []
     let pdfMake = require('pdfmake/build/pdfmake.js')
@@ -10,8 +11,10 @@ function printDormitoryID(data, photo) {
       pdfMake.vfs = pdfFonts.pdfMake.vfs;
     }
 
-    data.forEach(rec => {
-        imageToBase64(`${photo}/${rec.EmployeeCode}.jpg`).then(response => {
+    data.forEach((rec, index) => {
+        imageToBase64(`${photo}/${rec.EmployeeCode}.jpg`).then(rec => {
+            employeePhoto = `data:image/jpeg;base64,${rec}`
+
             docContent.push(
                 {
                     text: 'DREAM DORMITORY PASS', 
@@ -19,27 +22,29 @@ function printDormitoryID(data, photo) {
                     bold: true,
                     fontSize: 16,
                     alignment: 'center',
-                    margin: [0, 200, 0, 0],
+                    margin: [0, 0, 0, 0],
                 },
                 {
-                    image: `data:image/png;base64,${response}`,
-                    width: 150,
+                    image: employeePhoto,
+                    width: 80,
                     height: 80,
-                    margin: [0, -80, 0, 0]
-                },
+                    margin: [0, 50, 0, 0]
+                }
             )
-        }).catch(err => {
-            console.log(err);
+            
+            if(index == data.length - 1) {
+                docDefinition = { 
+                    font: 'tahoma',
+                    pageSize: 'A4',
+                    pageOrientation: 'landscape',
+                    pageMargins: [80, 0, 80, 0],
+                    content: docContent
+                }    
+                window.open(pdfMake.createPdf(docDefinition).open(), '_blank')
+            }
         })
     })
 
-    docDefinition = { 
-        font: 'tahoma',
-        pageSize: 'A4',
-        pageMargins: [80, 0, 80, 0],
-        content: docContent
-    }    
-    window.open(pdfMake.createPdf(docDefinition).open(), '_blank')
 }
 
 export default printDormitoryID

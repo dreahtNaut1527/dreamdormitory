@@ -210,6 +210,7 @@ export default {
     methods: {
         printDormitoryID() {
             printDormID(this.selectedTenants, this.photo)
+            this.selectedTenants = []
         },
         loadData() {
             let stationData = []
