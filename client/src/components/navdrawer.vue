@@ -69,7 +69,7 @@
                     <v-list dense>
                         <v-list-item two-list>
                             <v-list-item-avatar>
-                                <v-img :src="`${photo}/${ hrisUserInfo.USERACCT.length > 6 ? hrisUserInfo.USERACCT.substring(1, 6) : hrisUserInfo.USERACCT}.jpg`" />
+                                <v-img :src="`${photo}/${ hrisUserInfo.USERACCT.length > 5 ? hrisUserInfo.USERACCT.substring(1, 6) : hrisUserInfo.USERACCT}.jpg`" />
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title class="font-weight-bold">{{ hrisUserInfo.USERACCT }}</v-list-item-title>

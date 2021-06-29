@@ -20,14 +20,14 @@
                 </v-radio-group>
                 <v-data-iterator
                     :items="listOfRoomsPerFloor(floor)"
-                    :items-per-page="30"
+                    :items-per-page="20"
                     :page.sync="page"
                     @page-count="pageCount = $event"
                     hide-default-footer
                 >
                     <template v-slot:default="props">
                         <v-row dense>
-                            <v-col cols="12" md="2" sm="4" v-for="(room, i) in props.items" :key="i">
+                            <v-col cols="12" lg="3" md="4" sm="4" v-for="(room, i) in props.items" :key="i">
                                 <v-hover v-slot="{ hover }" open-delay="200">
                                     <v-card class="rounded-lg" :elevation="hover ? 12 : 2" @click="assignRoom(room)" outlined>
                                         <v-subheader class="font-weight-bold">
@@ -46,7 +46,7 @@
                                         <v-container>
                                             <v-row justify="start" dense>
                                                 <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" cols="12" lg="2" md="3" sm="3">
-                                                    <v-avatar class="text-center" size="35">
+                                                    <v-avatar class="text-center" size="50">
                                                         <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
                                                     </v-avatar>
                                                 </v-col>
@@ -178,11 +178,11 @@
                 </v-form>
             </v-card>
         </v-dialog>
-        <v-fab-transition>
+        <!-- <v-fab-transition>
             <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" @click="dialog = !dialog" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
             </v-btn>
-        </v-fab-transition>
+        </v-fab-transition> -->
     </v-main>
 </template>
 

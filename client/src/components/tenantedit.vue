@@ -175,8 +175,8 @@
         </v-container>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn to="/vacancies" class="mx-3" text>Cancel</v-btn>
-            <v-btn @click="saveRecord(editTenantDetails)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
+            <v-btn to="/vacancies" class="mx-3 px-5" text>Cancel</v-btn>
+            <v-btn class="px-5" @click="saveRecord(editTenantDetails)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
         </v-card-actions>
         <v-overlay :value="loading">
             <v-progress-circular

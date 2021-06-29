@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import md5 from 'md5'
 import moment from 'moment'
+import swal from 'sweetalert2'
 import socketio from 'socket.io-client'
 import VueSocketIO from 'vue-socket.io'
 import Vuemask from 'v-mask'
@@ -24,6 +25,7 @@ Vue.config.productionTip = false
 Vue.prototype.axios = axios
 Vue.prototype.md5 = md5
 Vue.prototype.moment = moment
+Vue.prototype.swal = swal
 
 // Vue Use
 Vue.use(mixins)

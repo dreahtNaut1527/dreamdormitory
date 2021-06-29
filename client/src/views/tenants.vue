@@ -93,7 +93,7 @@
                             <template v-slot:[`item.actions`]="{ item }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn @click="editRecord(item)" v-on="on" v-bind="attrs" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                                        <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
                                     </template>
                                     <span>Edit Record</span>
                                 </v-tooltip>
@@ -102,6 +102,7 @@
                                 <v-chip class="caption">Move-In: {{moment(item.MoveInDate).fromNow()}}</v-chip>
                             </template>
                         </v-data-table>
+                        <v-divider></v-divider>
                         <v-pagination
                             v-model="page"
                             :length="pageCount"

@@ -99,21 +99,55 @@ const plugins = {
                      this.$socket.emit('newNotifications', body.values)
                 },
                 checkAppVersion() {
-                     let version = null
-                     this.axios.get(`${this.server}/appversion`).then(res => {
-                          version = res.data
-                          if(version != this.appVersion) {
-                               store.commit('CHANGE_APP_VERSION', version)
-                               store.commit('CHANGE_CONNECTION', true)
-                               store.commit('CHANGE_USER_INFO', {})
-                               store.commit('CHANGE_LOGGING', false)
-                               store.commit('CHANGE_THEMECOLOR', '#1976d2')
-                               store.commit('CHANGE_DARKMODE', false)
-                               if(this.$route.name != 'login') {
-                                    this.$router.push('/')
-                               }
-                          }
-                     })
+                    let version = process.env.VUE_APP_VERSION
+                    if(version != this.appVersion) {
+                        store.commit('CHANGE_APP_VERSION', process.env.VUE_APP_VERSION)
+                        store.commit('CHANGE_CONNECTION', true)
+                        store.commit('CHANGE_USER_INFO', {})
+                        store.commit('CHANGE_LOGGING', false)
+                        store.commit('CHANGE_THEMECOLOR', '#1976d2')
+                        store.commit('CHANGE_DARKMODE', false)
+                        if(this.$route.name != 'login') {
+                            this.$router.push('/')
+                        }
+                    }
+                    // this.axios.get(`${this.server}/appversion`).then(res => {
+                    //     version = res.data
+                    //     if(version != this.appVersion) {
+                    //         store.commit('CHANGE_APP_VERSION', version)
+                    //         store.commit('CHANGE_CONNECTION', true)
+                    //         store.commit('CHANGE_USER_INFO', {})
+                    //         store.commit('CHANGE_LOGGING', false)
+                    //         store.commit('CHANGE_THEMECOLOR', '#1976d2')
+                    //         store.commit('CHANGE_DARKMODE', false)
+                    //         if(this.$route.name != 'login') {
+                    //             this.$router.push('/')
+                    //         }
+                    //     }
+                    // })
+                },
+                handleToastMesaage(message, icon) {
+                    const Toast = this.swal.mixin({
+                        toast: true,
+                        position: 'bottom-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    })
+                    Toast.fire(icon, message)
+                },
+                handleConfimedMessage(title, message, icon) {
+                    this.swal.fire(title, message, icon)
+                },
+                handleQuestionMessage(title, message, buttonText, icon) {
+                    return this.swal.fire({
+                        title: title,
+                        text: message,
+                        icon: icon,
+                        showCancelButton: true,
+                        confirmButtonColor: this.themeColor == '' ? '#1976d2' : this.themeColor,
+                        confirmButtonText: buttonText
+                    })
                 },
 
                 // Load Masters Maintenance

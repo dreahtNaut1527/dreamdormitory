@@ -33,7 +33,12 @@
                             hide-default-footer
                         >
                             <template v-slot:[`item.actions`]="{ item }">
-                                <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                    </template>
+                                    <span>Edit Record</span>
+                                </v-tooltip>
                             </template>
                         </v-data-table>
                         <v-pagination
@@ -81,8 +86,8 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="clearVariables()" text>Cancel</v-btn>
-                    <v-btn @click="saveRecord(editBuildings)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
+                    <v-btn class="px-5" @click="clearVariables()" text>Cancel</v-btn>
+                    <v-btn class="px-5" @click="saveRecord(editBuildings)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>   
         </v-dialog>
@@ -174,14 +179,19 @@ export default {
                 ]
             }
             if(this.$refs.form.validate()) {
-                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-                if(this.isEditMode) {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
-                } else {
-                    this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new building`)
-                }
-                this.clearVariables()
-                this.loadBuildings()
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                    if(result.isConfirmed) {
+                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                        if(this.isEditMode) {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} updated a record`)
+                        } else {
+                            this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new building`)
+                        }
+                        this.clearVariables()
+                        this.loadBuildings()
+                        this.handleToastMesaage('Record saved', 'success')
+                    }
+                }) 
             }
         },
         clearVariables() {
