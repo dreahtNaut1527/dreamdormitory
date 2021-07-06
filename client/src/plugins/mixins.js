@@ -21,7 +21,8 @@ const plugins = {
                     'isLoggedIn',
                     'themeColor',
                     'darkMode',
-                    'appVersion'
+                    'appVersion',
+                    'cutOffDate'
                 ])
             },
             methods: {
@@ -31,7 +32,8 @@ const plugins = {
                     'CHANGE_LOGGING',
                     'CHANGE_THEMECOLOR',
                     'CHANGE_DARKMODE',
-                    'CHANGE_APP_VERSION'
+                    'CHANGE_APP_VERSION',
+                    'CHANGE_CUTOFFDATE'
                 ]),
                 zeroPad(num, numZeros) {
                     let n = Math.abs(num)
@@ -163,7 +165,7 @@ const plugins = {
                                 hrisData = res.data.HRIS
                                 if(hrisData.Last_Updated == this.moment().format('MM/DD/YYYY')) {
                                     this.stationSearch(null).then(async res => {
-                                        await this.handleInsertData(res.data)
+                                        await this.handleInsertData(store.state.hrisUserInfo.ABBR, res.data)
                                     })
                                 }
                             }

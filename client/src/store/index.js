@@ -7,6 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     appVersion: null,
+    cutOffDate: null,
     hrisUserInfo: {},
     darkMode: false,
     isConnect: true,
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     CHANGE_APP_VERSION: (state, data) => {
       state.appVersion = data
     },
+    CHANGE_CUTOFFDATE: (state, data) => {
+      state.cutOffDate = data
+    }
   },
   actions: {
 

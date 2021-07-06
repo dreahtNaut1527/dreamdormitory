@@ -132,13 +132,11 @@
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
             {{ alertText }}
         </v-snackbar>
-        <tenantsearch :dialog="tenantSearchDialog" :code.sync="emplcode" />
     </v-main>
 </template>
 
 <script>
 import tenantdetails from './tenantdetails'
-import tenantsearch from './tenantsearch'
 
 export default {
     data() {
@@ -147,8 +145,6 @@ export default {
             valid: true,
             loading: false,
             assignDialog: false,
-            tenantSearchDialog: false,
-            emplcode: '',
             alertText: '',
             stationImg: '',
             occupants: [],
@@ -205,7 +201,7 @@ export default {
             this.loading = true
             val.forEach((rec, index) => {
                 if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.CODE) {
-                    this.handleSelectData().then(data => {
+                    this.handleSelectData(this.hrisUserInfo.ABBR).then(data => {
                         let station = data.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         employee = station[0]
                         Object.assign(rec, {
@@ -305,7 +301,7 @@ export default {
     watch: {
         availableTenants(val) {
             val.forEach(rec => {
-                this.handleSelectData().then(res => {
+                this.handleSelectData(this.hrisUserInfo.ABBR).then(res => {
                     Object.assign(rec, {
                         EmployeeName: res[0].EMPNAME || null,
                         Department: res[0].DEPTDESC || null,
@@ -319,8 +315,7 @@ export default {
         }
     },
     components: {
-        tenantdetails,
-        tenantsearch
+        tenantdetails
     }
 }
 </script>

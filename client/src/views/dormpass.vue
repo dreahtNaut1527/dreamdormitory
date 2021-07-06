@@ -212,25 +212,23 @@ export default {
             printDormID(this.selectedTenants, this.photo)
             this.selectedTenants = []
         },
-        loadData() {
+        async loadData() {
             let stationData = []
             this.loading = true
-            this.stationSearch(null).then(res => {
-                stationData = res.data
-                this.loadMasterMaintenance('dormpassheader').then(res => {
-                    this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
-                    this.dormitoryPassLists.forEach(rec => {
-                        let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                        Object.assign(rec, {
-                            EncodedDate: !rec.EncodedDate ? this.moment().format('YYYY-MM-DD') : rec.EncodedDate,
-                            EmployeeName: employee[0].EMPNAME || null,
-                            Department: employee[0].DEPTDESC || null,
-                            Section: employee[0].SECTIONDESC || null,
-                            Team: employee[0].TEAMDESC || null,
-                            Designation: employee[0].DESIGDESC || null
-                        })
-                        this.$forceUpdate()
+            stationData = await this.handleSelectData(this.hrisUserInfo.ABBR)
+            this.loadMasterMaintenance('dormpassheader').then(res => {
+                this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
+                this.dormitoryPassLists.forEach(rec => {
+                    let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                    Object.assign(rec, {
+                        EncodedDate: !rec.EncodedDate ? this.moment().format('YYYY-MM-DD') : rec.EncodedDate,
+                        EmployeeName: employee[0].EMPNAME || null,
+                        Department: employee[0].DEPTDESC || null,
+                        Section: employee[0].SECTIONDESC || null,
+                        Team: employee[0].TEAMDESC || null,
+                        Designation: employee[0].DESIGDESC || null
                     })
+                    this.$forceUpdate()
                 })
                 this.loading = false
             })

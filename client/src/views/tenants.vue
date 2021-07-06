@@ -193,7 +193,7 @@ export default {
     },
     methods: {
         async loadTenants() {
-            let station = await this.handleSelectData()
+            let station = await this.handleSelectData(this.hrisUserInfo.ABBR)
             this.loadMasterMaintenance('tenants').then(res => {
                 this.tenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
                 if(this.tenants != []) {

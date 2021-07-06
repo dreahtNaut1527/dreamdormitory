@@ -108,7 +108,7 @@ export default {
                         this.loading = true
                         this.stationSearch(null).then(res => {
                             if(res.data != []) {
-                                this.handleInsertData(res.data)
+                                this.handleInsertData(this.userInfo.ABBR, res.data)
                                 this.$store.commit('CHANGE_USER_INFO', this.userInfo)
                                 this.$store.commit('CHANGE_LOGGING', true)
                                 this.$router.push('/dashboard')

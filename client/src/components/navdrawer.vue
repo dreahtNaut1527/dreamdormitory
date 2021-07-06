@@ -136,10 +136,22 @@
             </v-list-item>
             <v-list-item>
                 <v-list-item-content>
-                    <v-list-item-subtitle>Station</v-list-item-subtitle>
+                    <v-list-item-subtitle>Update Station</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                    <v-btn @click="handleUpdateStation()" :color="themeColor == '' ? '#1976d2' : themeColor" small dark>Update</v-btn>
+                    <v-btn @click="handleUpdateStation()" :color="themeColor == '' ? '#1976d2' : themeColor" small dark fab>
+                        <v-icon>mdi-upload</v-icon>
+                    </v-btn>
+                </v-list-item-action>
+            </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-subtitle>Set Cut-Off</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" block small dark fab>
+                        <v-icon>mdi-calendar-range</v-icon>
+                    </v-btn>
                 </v-list-item-action>
             </v-list-item>
         </v-navigation-drawer>
@@ -158,6 +170,8 @@
 </template>
 
 <script>
+
+
 export default {
     data() {
         return {
@@ -230,7 +244,7 @@ export default {
             ]
         },
         userLoggedOut() {
-            this.handleClearTable()
+            this.handleClearTable(this.hrisUserInfo.ABBR)
             this.$store.commit('CHANGE_USER_INFO', {})
             this.$store.commit('CHANGE_LOGGING', false)
             this.$router.push('/')

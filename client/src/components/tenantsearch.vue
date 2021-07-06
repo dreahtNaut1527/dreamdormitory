@@ -52,7 +52,7 @@ export default {
             this.loadMasterMaintenance('availabletenants').then(res => {
                 if(res.data != []) {
                     res.data.forEach(data => {
-                        this.handleSelectData().then(res => {
+                        this.handleSelectData(this.hrisUserInfo.ABBR).then(res => {
                             let employee = res.filter(item => item.EMPLCODE == data.EmployeeCode)
                             this.station.push(employee[0])
                             console.log(this.station);
