@@ -9,9 +9,9 @@
                 </v-toolbar-title>  
             </v-toolbar> 
             <v-card outlined>
-                <v-container>
+                <v-container fluid>
                     <v-row align= 'center' justify='center'>
-                        <v-col cols='12' md='4' sm='3'>
+                        <v-col cols='12' md='4' sm='4'>
                             <v-autocomplete
                                 dense
                                 hide-details
@@ -22,7 +22,7 @@
                             >   
                             </v-autocomplete>
                         </v-col>
-                        <v-col cols='12' md='4' sm='3'>
+                        <v-col cols='12' md='4' sm='4'>
                             <v-autocomplete 
                                 dense
                                 hide-details
@@ -32,7 +32,7 @@
                                 :items="floorList"
                             ></v-autocomplete>
                         </v-col>
-                        <v-col cols='12' md='4' sm='3'>
+                        <v-col cols='12' md='4' sm='4'>
                             <v-autocomplete 
                                 dense
                                 hide-details
@@ -48,7 +48,7 @@
         </v-container>
         <v-container fluid>
             <v-card outlined>
-                <v-container>
+                <v-container fluid>
                     <v-data-table
                         :headers="headers"
                         :items="filterRentals"
