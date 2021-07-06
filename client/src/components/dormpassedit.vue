@@ -66,16 +66,8 @@
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <v-container fluid>
                         <v-row align="center" justify="center" dense>
-                            <v-col cols="12" md="7">
-                                <v-text-field
-                                    v-model="dormData.Destination"
-                                    label="Destination"
-                                    :rules="[v => !!v || 'This field is required']"
-                                    :color="themeColor == '' ? '#1976d2' : themeColor"
-                                    :hide-details="valid"
-                                    outlined
-                                    dense
-                                ></v-text-field>
+                            <v-col cols="12" md="7" sm="7">
+                                <datepicker :menu="encodeDialog" :dateValue.sync="dormData.EncodedDate" dateLabel="Encoded" />
                             </v-col>
                             <v-col cols="12" md="5">
                                 <v-radio-group v-model="dormData.Category" row>
@@ -88,7 +80,15 @@
                                 </v-radio-group>
                             </v-col>
                             <v-col cols="12" md="6" sm="6">
-                                <datepicker :menu="encodeDialog" :dateValue.sync="dormData.EncodedDate" dateLabel="Encoded" />
+                                <v-text-field
+                                    v-model="dormData.Destination"
+                                    label="Destination"
+                                    :rules="[v => !!v || 'This field is required']"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    :hide-details="valid"
+                                    outlined
+                                    dense
+                                ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="6" sm="6">
                                 <datepicker :menu="validDialog" :dateValue.sync="dormData.ValidDate" dateLabel="Validity" />

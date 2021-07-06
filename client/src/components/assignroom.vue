@@ -129,7 +129,7 @@
                 :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>
-        <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
+        <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" top right>
             {{ alertText }}
         </v-snackbar>
     </v-main>
@@ -212,8 +212,8 @@ export default {
                             Designation: employee.DESIGDESC || null,
                             Dialog: false
                         })
-                        if(index + 1 == val.length) this.loading = false
                         this.currentOccupants.unshift(rec)
+                        this.loading = false
                     })
                 } else {
                     Object.assign(rec, {
@@ -224,8 +224,8 @@ export default {
                         Designation: employee.DESIGDESC || null,
                         Dialog: false
                     })
-                    this.currentOccupants.push(rec)
                     if(index + 1 == val.length) this.loading = false
+                    this.currentOccupants.push(rec)
                 }
             })
         },
