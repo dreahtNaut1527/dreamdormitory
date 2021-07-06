@@ -37,7 +37,7 @@ export default new Vuex.Store({
       state.appVersion = data
     },
     CHANGE_CUTOFFDATE: (state, data) => {
-      state.cutOffDate = data
+      state.payrollDate = data
     }
   },
   actions: {
