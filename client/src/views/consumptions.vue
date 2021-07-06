@@ -340,14 +340,13 @@ export default {
             building:"",
             room:"",
             floor:"",
-            setcutoffdialog:false,
             amountperkwm3:12.50,
             lesskwm3:0,
         }
     },
     created() {
         this.consumptiontype()
-        this.setcutoffdialog=!this.setcutoffdialog
+        this.loadConsumption()
     },
 
     computed:{
@@ -378,15 +377,15 @@ export default {
         }
     },
     methods: {
-        processConsumption(){        
+        loadConsumption(){        
             let body={
             procedureName: 'ProcConsumptionTransaction',
             values:[
                 null,
-                this.moment(this.payrollDate).format('YYYY-MM-DD'),
+                this.payrollDate,
                 0,
-                null,
-                null,
+                this.cutOffDate[0],
+                this.cutOffDate[1],
                 0,
                 0,
                 0,
@@ -397,6 +396,7 @@ export default {
             }
             console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                console.log(res.data);
                 this.consumptions=res.data
             })
         }, 

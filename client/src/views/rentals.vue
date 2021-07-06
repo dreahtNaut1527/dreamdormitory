@@ -150,7 +150,6 @@ export default {
             building:'',
             floor:'',
             room:'',
-            payrollDate:'',
             page:1,
             pageCount:0,
             
@@ -160,10 +159,12 @@ export default {
         this.setcutoffdialog=!this.setcutoffdialog
         this.loadMasterMaintenance('billinginfos').then(res => {
             this.billingInfos = res.data
-            console.log(res.data);
+            console.log(res.data);        
         })
+        this.loadRentals()
     },
     computed:{
+
         filterRentals(){
             return this.rentals.filter(rec =>{
                 return (
@@ -191,6 +192,18 @@ export default {
 
     },
     methods: {
+        loadRentals(){
+            let body={
+            procedureName: 'ProcRentalTransaction',
+            values:[
+                this.payrollDate,
+                this.hrisUserInfo.USERACCT
+            ]
+        }
+        this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+            this.rentals=res.data
+        })
+        },
         filterBIllingInfo(data){
             console.log(this.billingInfos);
             return this.billingInfos.filter(rec => {
@@ -203,19 +216,3 @@ export default {
 
 }
 </script>
-<style>
-    table, td, th {  
-    border: 1px solid #ddd;
-    text-align: left;
-    background-color:azure;
-    }
-
-    table {
-    border-collapse: collapse;
-    width: 100%;
-    }
-
-    th, td {
-    padding: 5px;
-    }
-</style>
