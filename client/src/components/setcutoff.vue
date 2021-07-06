@@ -71,7 +71,7 @@
 <script>
 
 export default {
-    props:['setcutoffdialog','consumptiondetails','payrolldate'],
+    props:['setcutoffdialog','consumptiondetails','payrolldate','rentals'],
     data(){
         return {
             cutoffrule:[
@@ -99,6 +99,7 @@ export default {
             let lastPaydate=`${this.year}-${this.selectedmonth}-15`
             let dtconsumptionstart =null
             let dtconsumptionend = null
+            // let histpayrolldate =null
             if (this.cutoff==2){
                 lastPaydate=this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
                 dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
@@ -107,7 +108,10 @@ export default {
                 dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
                 dtconsumptionend =this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
             }  
-                 
+            // this.loadMasterMaintenance('rentals').then(res => {
+            //     histpayrolldate =res.data.maxPaydate
+            // })
+            // //   console.log(histpayrolldate);   
             let body={
                 procedureName: 'ProcRentalTransaction',
                 values:[
@@ -116,7 +120,8 @@ export default {
                 ]
             }
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-                console.log(res.data);
+                // console.log(res.data);
+                this.$emit('update:rentals',res.data)
                 this.processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend)
                 this.dialog=false
             })
@@ -140,6 +145,7 @@ export default {
             }
             console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                console.log(res.data);
                 this.$emit('update:consumptiondetails',res.data)
                 this.$emit('update:payrolldate',this.moment(lastPaydate).format('LL'))
                 this.dialog=false

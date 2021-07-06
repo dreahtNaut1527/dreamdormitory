@@ -5,7 +5,7 @@
             <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                 <v-toolbar-title>
                     <span>Payroll Date : </span>
-                    <span>{{consumptions.payrolldate}}</span>
+                    <span>{{payrollDate}}</span>
                 </v-toolbar-title>
             </v-toolbar>           
             <v-card outlined>
@@ -366,7 +366,7 @@ export default {
                     rec.ConsumptionType==this.selectedtype && 
                     rec.FloorDesc.includes(this.floor|| '') &&
                     rec.RoomDesc.includes(this.room || '')
-                )
+                )   
             })
         },
         buildingList(){
@@ -401,10 +401,17 @@ export default {
 
         },
         computeConsumption(val){
-            val.TotalConsumption=val.LatestReading - val.PrevReading
-            val.TotalKWM3=(val.TotalConsumption - this.lesskwm3) * this.amountperkwm3
-            val.TotalAmount=val.TotalKWM3 / val.TotalTenants
-            this.$forceUpdate()
+            
+            if (val.LatestReading>80) {
+                val.TotalConsumption=val.LatestReading - val.PrevReading
+                val.TotalKWM3=(val.TotalConsumption - this.lesskwm3) * this.amountperkwm3
+                val.TotalAmount=val.TotalKWM3 / val.TotalTenants
+                this.$forceUpdate()
+            }else{
+                val.TotalConsumption=0
+                val.TotalKWM3=0
+                val.TotalAmount=0
+            }
         },
         saveConsumption(){
             let body={
