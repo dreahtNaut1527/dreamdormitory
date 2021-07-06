@@ -283,19 +283,12 @@
                     <v-btn class="px-5" @click="saveConsumption()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>      
-        </v-dialog>
-        <setcutoff
-            :setcutoffdialog="setcutoffdialog"
-            :consumptiondetails.sync="consumptions"
-            :payrolldate.sync="payrollDate"
-        >
-        </setcutoff>
-    
+        </v-dialog>    
     </v-main>
 </template>
 
 <script>
-import setcutoff from "../components/setcutoff.vue";
+
 export default {
     data() {
         return {
@@ -350,7 +343,6 @@ export default {
             setcutoffdialog:false,
             amountperkwm3:12.50,
             lesskwm3:0,
-            payrollDate:''
         }
     },
     created() {
@@ -386,6 +378,28 @@ export default {
         }
     },
     methods: {
+        processConsumption(){        
+            let body={
+            procedureName: 'ProcConsumptionTransaction',
+            values:[
+                null,
+                this.moment(this.payrollDate).format('YYYY-MM-DD'),
+                0,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0,
+                null,
+                0,
+            ]
+            }
+            console.log(body);
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+                this.consumptions=res.data
+            })
+        }, 
         consumptiontype(){
             this.cubickilowatt=this.selectedtype
         },
@@ -461,8 +475,6 @@ export default {
             }
         }
     },
-        components:{
-        setcutoff
-    }
+
 }
 </script>

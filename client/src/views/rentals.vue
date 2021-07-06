@@ -1,12 +1,6 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <setcutoff
-            :setcutoffdialog="setcutoffdialog"
-            :payrolldate.sync="payrollDate"
-            :rentals.sync="rentals"
-        >
-        </setcutoff>
         <v-container fluid>
             <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                 <v-toolbar-title>
@@ -130,7 +124,7 @@
 </template>
 
 <script> 
-import setcutoff from "../components/setcutoff.vue";
+
 export default {   
     data() {
         return {
@@ -206,9 +200,7 @@ export default {
             })            
         }
     },
-    components:{
-        setcutoff
-    }
+
 }
 </script>
 <style>
