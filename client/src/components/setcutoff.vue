@@ -53,7 +53,7 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn class="px-5" to="/dashboard" text>Cancel</v-btn>
+                <v-btn class="px-5" @click="dialog = !dialog" text>Cancel</v-btn>
                 <v-btn 
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                     :disabled="disableprocess"
@@ -71,7 +71,7 @@
 <script>
 
 export default {
-    props:['setcutoffdialog','consumptiondetails','payrolldate','rentals'],
+    props:['setcutoffdialog'],
     data(){
         return {
             cutoffrule:[
@@ -88,8 +88,7 @@ export default {
         }
     },
     created(){
-        this.dialog=this.setcutoffdialog
-        
+        this.dialog = this.setcutoffdialog
     },
     methods:{
         enableprocess(){
@@ -119,12 +118,13 @@ export default {
                     this.hrisUserInfo.USERACCT
                 ]
             }
-            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-                // console.log(res.data);
-                this.$emit('update:rentals',res.data)
-                this.processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend)
-                this.dialog=false
-            })
+            // this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+            //     // console.log(res.data);
+            //     this.$emit('update:rentals',res.data)
+            //     this.dialog=false
+            // })
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)})
+            this.processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend)
         },
         processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend){        
             let body={
@@ -143,15 +143,23 @@ export default {
                 0,
             ]
             }
-            console.log(body);
-            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-                console.log(res.data);
-                this.$emit('update:consumptiondetails',res.data)
-                this.$emit('update:payrolldate',this.moment(lastPaydate).format('LL'))
-                this.dialog=false
-            })
+            // console.log(body);
+            // this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
+            //     console.log(res.data);
+            //     this.$emit('update:consumptiondetails',res.data)
+            //     this.$emit('update:payrolldate',this.moment(lastPaydate).format('LL'))
+            //     this.dialog=false
+            // })
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)})
+            this.$store.commit('CHANGE_CUTOFFDATE', lastPaydate)
+            this.dialog = !this.dialog
         } 
         
+    },
+    watch: {
+        setcutoffdialog() {
+            this.dialog = true
+        }
     }
 
 }

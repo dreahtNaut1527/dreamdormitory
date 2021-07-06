@@ -22,7 +22,7 @@ const plugins = {
                     'themeColor',
                     'darkMode',
                     'appVersion',
-                    'cutOffDate'
+                    'payrollDate'
                 ])
             },
             methods: {

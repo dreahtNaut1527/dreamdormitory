@@ -149,7 +149,7 @@
                     <v-list-item-subtitle>Set Cut-Off</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                    <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" block small dark fab>
+                    <v-btn @click="cutOffDateDialog = !cutOffDateDialog" :color="themeColor == '' ? '#1976d2' : themeColor" block small dark fab>
                         <v-icon>mdi-calendar-range</v-icon>
                     </v-btn>
                 </v-list-item-action>
@@ -166,11 +166,14 @@
                 </template>
             </v-snackbar>
         </v-overlay>
+
+        <!-- Set cut off -->
+        <setcutoff :setcutoffdialog="cutOffDateDialog" />
     </div>
 </template>
 
 <script>
-
+import setcutoff from './setcutoff'
 
 export default {
     data() {
@@ -181,6 +184,7 @@ export default {
             swatches: true,
             navDrawer: false,
             sideDrawer: false,
+            cutOffDateDialog: false,
             themeColorVal: '',
             navDrawerLists: []
         }
@@ -260,6 +264,9 @@ export default {
                 }
             })
         }
+    },
+    components: {
+        setcutoff
     }
 }
 </script>

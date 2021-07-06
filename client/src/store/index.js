@@ -7,7 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     appVersion: null,
-    cutOffDate: null,
+    payrollDate: null,
     hrisUserInfo: {},
     darkMode: false,
     isConnect: true,
