@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     appVersion: null,
     payrollDate: null,
+    cutOffDate: [],
     hrisUserInfo: {},
     darkMode: false,
     isConnect: true,
@@ -36,8 +37,11 @@ export default new Vuex.Store({
     CHANGE_APP_VERSION: (state, data) => {
       state.appVersion = data
     },
-    CHANGE_CUTOFFDATE: (state, data) => {
+    CHANGE_PAYROLLDATE: (state, data) => {
       state.payrollDate = data
+    },
+    CHANGE_CUTOFFDATE: (state, data) => {
+      state.cutOffDate = data
     }
   },
   actions: {

@@ -151,7 +151,8 @@ export default {
             //     this.dialog=false
             // })
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)})
-            this.$store.commit('CHANGE_CUTOFFDATE', lastPaydate)
+            this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
+            this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
             this.dialog = !this.dialog
         } 
         

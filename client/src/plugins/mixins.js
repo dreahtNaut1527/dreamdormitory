@@ -22,7 +22,8 @@ const plugins = {
                     'themeColor',
                     'darkMode',
                     'appVersion',
-                    'payrollDate'
+                    'payrollDate',
+                    'cutOffDate'
                 ])
             },
             methods: {
@@ -33,6 +34,7 @@ const plugins = {
                     'CHANGE_THEMECOLOR',
                     'CHANGE_DARKMODE',
                     'CHANGE_APP_VERSION',
+                    'CHANGE_PAYROLLDATE',
                     'CHANGE_CUTOFFDATE'
                 ]),
                 zeroPad(num, numZeros) {
