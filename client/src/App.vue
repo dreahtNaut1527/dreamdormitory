@@ -11,6 +11,9 @@ import navdrawer from '@/components/navdrawer'
 import navfooter from '@/components/navfooter'
 
 export default {
+    created() {
+
+    },
     mounted() {
         setInterval(() => {
             this.checkAppVersion()

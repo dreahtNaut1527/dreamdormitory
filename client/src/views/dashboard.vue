@@ -167,10 +167,10 @@ export default {
         }
     },
     created() {
-        this.loadTenants()
+
     },
     mounted() {
-
+        this.loadTenants()
     },
     computed: {
         filterTenants() {
@@ -189,10 +189,9 @@ export default {
         }
     },
     methods: {
-        loadTenants() {
-            this.loading = true
-            this.stationSearch(null).then(res => {
-                let station = res.data
+        async loadTenants() {
+            setTimeout(async () => {
+                let station = await this.handleSelectData()
                 this.loadMasterMaintenance('tenants').then(res => {
                     this.tenantList = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
                     if(this.tenantList != []) {
@@ -208,9 +207,8 @@ export default {
                             this.$forceUpdate()
                         })
                     }
-                    this.loading = false
                 }) 
-            })
+            }, 200);
         },
     },
     components: {

@@ -88,6 +88,8 @@
                 </v-card>
             </v-menu>
         </v-app-bar>
+
+        <!-- Left navigation drawer -->
         <v-navigation-drawer
             v-model="sideDrawer"
             :disable-resize-watcher="true"
@@ -132,7 +134,17 @@
                     ></v-switch>
                 </v-list-item-action>
             </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-subtitle>Station</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-btn @click="handleUpdateStation()" :color="themeColor == '' ? '#1976d2' : themeColor" small dark>Update</v-btn>
+                </v-list-item-action>
+            </v-list-item>
         </v-navigation-drawer>
+        <!-- End of Left navigation drawer -->
+
         <v-overlay v-model="overlay" absolute>
             <v-snackbar v-model="overlay" top app>
                 <v-card-title class="pa-0 caption">Do you want to logout?</v-card-title>
@@ -218,9 +230,21 @@ export default {
             ]
         },
         userLoggedOut() {
+            this.handleClearTable()
             this.$store.commit('CHANGE_USER_INFO', {})
             this.$store.commit('CHANGE_LOGGING', false)
             this.$router.push('/')
+        },
+        handleUpdateStation() {
+            this.handleQuestionMessage('', 'Update your local storage?', 'Update', 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.updateStation()
+                    this.handleToastMesaage().fire({
+                        icon: 'success',
+                        title: 'Update Success'
+                    })
+                }
+            })
         }
     }
 }

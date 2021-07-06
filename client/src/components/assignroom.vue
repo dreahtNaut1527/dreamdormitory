@@ -43,6 +43,7 @@
                                                         :color="themeColor == '' ? '#1976d2' : themeColor"
                                                         @keypress.enter="assignVacant(item)"
                                                         @blur="assignVacant(item)"
+                                                        @dblclick="tenantSearchDialog = !tenantSearchDialog"
                                                         :readonly="item.IsAvailable"
                                                         :clearable="!item.IsAvailable"
                                                         hide-details
@@ -131,11 +132,13 @@
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
             {{ alertText }}
         </v-snackbar>
+        <tenantsearch :dialog="tenantSearchDialog" :code.sync="emplcode" />
     </v-main>
 </template>
 
 <script>
 import tenantdetails from './tenantdetails'
+import tenantsearch from './tenantsearch'
 
 export default {
     data() {
@@ -144,7 +147,8 @@ export default {
             valid: true,
             loading: false,
             assignDialog: false,
-            tenantDearchDialog: false,
+            tenantSearchDialog: false,
+            emplcode: '',
             alertText: '',
             stationImg: '',
             occupants: [],
@@ -201,8 +205,9 @@ export default {
             this.loading = true
             val.forEach((rec, index) => {
                 if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.CODE) {
-                    this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: rec.EmployeeCode}).then(res => {
-                        employee = res.data[0]
+                    this.handleSelectData().then(data => {
+                        let station = data.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                        employee = station[0]
                         Object.assign(rec, {
                             EmployeeName: employee.EMPNAME || null,
                             Department: employee.DEPTDESC || null,
@@ -300,13 +305,13 @@ export default {
     watch: {
         availableTenants(val) {
             val.forEach(rec => {
-                this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: rec.EmployeeCode}).then(res => {
+                this.handleSelectData().then(res => {
                     Object.assign(rec, {
-                        EmployeeName: res.data[0].EMPNAME || null,
-                        Department: res.data[0].DEPTDESC || null,
-                        Section: res.data[0].SECTIONDESC || null,
-                        Team: res.data[0].TEAMDESC || null,
-                        Designation: res.data[0].DESIGDESC || null
+                        EmployeeName: res[0].EMPNAME || null,
+                        Department: res[0].DEPTDESC || null,
+                        Section: res[0].SECTIONDESC || null,
+                        Team: res[0].TEAMDESC || null,
+                        Designation: res[0].DESIGDESC || null
                     })
                     this.$forceUpdate()
                 })
@@ -314,7 +319,8 @@ export default {
         }
     },
     components: {
-        tenantdetails
+        tenantdetails,
+        tenantsearch
     }
 }
 </script>

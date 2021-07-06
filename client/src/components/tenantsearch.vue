@@ -1,8 +1,8 @@
 <template>
     <v-dialog v-model="listDialog" width="900" persistent>
         <v-card>
-            <v-toolbar color="primary" dark>
-                <v-toolbar-title>Station Search</v-toolbar-title>
+            <v-toolbar color="primary" dense dark>
+                <v-toolbar-title>Search</v-toolbar-title>
             </v-toolbar>
             <v-container>
                 <v-data-table
@@ -14,7 +14,6 @@
                     loading-text="Loading data. . . Please Wait"
                     item-key="EMPLCODE"
                     show-select
-                    dense
                 ></v-data-table>
             </v-container>
             <v-card-actions>
@@ -48,9 +47,18 @@ export default {
     },
     methods: {
         loadStation() {
+            this.station = []
             this.loading = true
-            this.handleSelectData().then(res => {
-                this.station = res
+            this.loadMasterMaintenance('availabletenants').then(res => {
+                if(res.data != []) {
+                    res.data.forEach(data => {
+                        this.handleSelectData().then(res => {
+                            let employee = res.filter(item => item.EMPLCODE == data.EmployeeCode)
+                            this.station.push(employee[0])
+                            console.log(this.station);
+                        })
+                    })
+                }
                 this.loading = false
             })
         },

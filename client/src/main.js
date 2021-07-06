@@ -12,6 +12,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import mixins from './plugins/mixins'
+import indexDB from './plugins/indexDB'
 
 // Vue socket from server side
 const url = process.env.NODE_ENV == 'production' ? process.env.VUE_APP_SERVER : process.env.VUE_APP_LOCAL_SERVER
@@ -30,6 +31,7 @@ Vue.prototype.Swal = Swal
 // Vue Use
 // Vue.use(Swal)
 Vue.use(mixins)
+Vue.use(indexDB)
 Vue.use(Vuemask)
 Vue.use(new VueSocketIO({
   debug: false,

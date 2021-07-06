@@ -70,6 +70,12 @@
         <v-snackbar v-model="alert" transition="scroll-x-reverse-transition" color="error" :timeout="3000" bottom right>
             {{ alertText }}
         </v-snackbar>
+        <v-overlay :value="loading">
+            <v-progress-circular
+                indeterminate
+                size="126"
+            ></v-progress-circular>
+        </v-overlay>
     </v-main>
 </template>
 
@@ -77,6 +83,7 @@
 export default {
     data() {
         return {
+            loading: false,
             alert: false,
             cocode: '',
             username: '',
@@ -97,9 +104,20 @@ export default {
 
                 if(this.userInfo) {
                     if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
-                        this.$store.commit('CHANGE_USER_INFO', this.userInfo)
-                        this.$store.commit('CHANGE_LOGGING', true)
-                        this.$router.push('/dashboard')
+                        // Get all station record
+                        this.loading = true
+                        this.stationSearch(null).then(res => {
+                            if(res.data != []) {
+                                this.handleInsertData(res.data)
+                                this.$store.commit('CHANGE_USER_INFO', this.userInfo)
+                                this.$store.commit('CHANGE_LOGGING', true)
+                                this.$router.push('/dashboard')
+                            } else {
+                                this.alert = true
+                                this.alertText = 'Network error: Please contact your administrator'
+                            }
+                            this.loading = false
+                        })
                     } else {
                         this.alert = true
                         this.alertText = 'Username or Password do not match'

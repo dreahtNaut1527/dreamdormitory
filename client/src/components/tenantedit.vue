@@ -204,6 +204,7 @@ export default {
             isEditMode: false,
             moveInDialog: false,
             moveOutDialog: false,
+            stationSearchDialog: false,
             alertText: '',
             tenantsLists: [],
             editTenantDetails: {},

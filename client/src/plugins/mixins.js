@@ -8,10 +8,11 @@ const plugins = {
                 api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL,
                 server: 'http://localhost:8800', // process.env.VUE_APP_SERVER,
                 api_HRIS: 'http://localhost:8080/server/api',
-                photo: process.env.VUE_APP_PHOTO
+                photo: process.env.VUE_APP_PHOTO,
+                staionData: []
             }),
             created() {
-
+                
             },
             computed: {
                 ...mapState([
@@ -148,8 +149,27 @@ const plugins = {
                 // HRIS station search
                 stationSearch(code) {
                     return this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: code})
-                }
+                },
 
+                // Update Station
+                async updateStation() {
+                    new Promise(() => {
+                        let config = this.axios.get(`${this.api}/config`)
+                        config.then(res => {
+                            let hrisData = null
+                            if(res.data.errno == -4058) {
+                                this.handleConfimedMessage('', 'Network drive not connected', 'warning')
+                            } else {
+                                hrisData = res.data.HRIS
+                                if(hrisData.Last_Updated == this.moment().format('MM/DD/YYYY')) {
+                                    this.stationSearch(null).then(async res => {
+                                        await this.handleInsertData(res.data)
+                                    })
+                                }
+                            }
+                        })
+                    })
+                }
             }
         })
     }

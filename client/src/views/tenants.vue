@@ -158,11 +158,11 @@ export default {
             }, 1500);
         }
     },
-    created() {
-
+    async created() {
+        await this.loadTenants()
     },
     mounted() { 
-        this.loadTenants()
+
     },
     computed: {
         filterTenants() {
@@ -192,27 +192,25 @@ export default {
         }
     },
     methods: {
-        loadTenants() {
-            this.stationSearch(null).then(res => {
-                let station = res.data
-                this.loadMasterMaintenance('tenants').then(res => {
-                    this.tenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
-                    if(this.tenants != []) {
-                        this.tenants.forEach(rec => {
-                            let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                            Object.assign(rec, {
-                                EmployeeName: employee[0].EMPNAME || 'NONE',
-                                Department: employee[0].DEPTDESC || 'NONE',
-                                Section: employee[0].SECTIONDESC || 'NONE',
-                                Team: employee[0].TEAMDESC || 'NONE',
-                                Designation: employee[0].DESIGDESC || 'NONE'
-                            })
-                            this.$forceUpdate()
+        async loadTenants() {
+            let station = await this.handleSelectData()
+            this.loadMasterMaintenance('tenants').then(res => {
+                this.tenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
+                if(this.tenants != []) {
+                    this.tenants.forEach(rec => {
+                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                        Object.assign(rec, {
+                            EmployeeName: employee[0].EMPNAME || 'NONE',
+                            Department: employee[0].DEPTDESC || 'NONE',
+                            Section: employee[0].SECTIONDESC || 'NONE',
+                            Team: employee[0].TEAMDESC || 'NONE',
+                            Designation: employee[0].DESIGDESC || 'NONE'
                         })
-                    }
-                }) 
-                this.loading = false 
-            })
+                        this.$forceUpdate()
+                    })
+                }
+            }) 
+            this.loading = false 
         },
         editRecord(data) {
             this.$router.push({name: 'tenantedit', query: {code: data.EmployeeCode}})
