@@ -58,7 +58,7 @@
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                     :disabled="disableprocess"
                     :dark="!disableprocess"
-                    @click="processRental()"
+                    @click="processNewCutOffDate()"
                 >
                     <v-icon left>mdi-calendar-blank</v-icon> 
                     Rental Transaction
@@ -88,73 +88,89 @@ export default {
         }
     },
     created(){
-        this.dialog = this.setcutoffdialog
+        this.clearVariables()
     },
     methods:{
-        enableprocess(){
-            this.disableprocess= !this.valid
+        enableprocess() {
+            this.disableprocess = !this.valid
         },
-        processRental(){
-            let lastPaydate=`${this.year}-${this.selectedmonth}-15`
-            let dtconsumptionstart =null
+        processNewCutOffDate() {
+            let dtconsumptionstart = null
             let dtconsumptionend = null
-            // let histpayrolldate =null
-            if (this.cutoff==2){
-                lastPaydate=this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
-                dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
-                dtconsumptionend =this.moment(`${this.year}-${this.selectedmonth}-20`).format('YYYY-MM-DD')
-            }else{                
-                dtconsumptionstart =this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
-                dtconsumptionend =this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
+            let lastPaydate = `${this.year}-${this.selectedmonth}-15`
+            
+            if (this.cutoff == 2) {
+                lastPaydate = this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
+                dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
+                dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-20`).format('YYYY-MM-DD')
+            } else {                
+                dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
+                dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
             }  
-            // this.loadMasterMaintenance('rentals').then(res => {
-            //     histpayrolldate =res.data.maxPaydate
-            // })
-            // //   console.log(histpayrolldate);   
-            let body={
+
+            let body = {
+                procedureName: 'ProcSetNewPayrollDate',
+                values: [
+                    lastPaydate
+                ]
+            }
+
+            this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
+                let result = res.data[0]
+                if(result.ErrCode =='201') {
+                    this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
+                    this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
+                    this.handleConfimedMessage('', 'Cut-Off already processed', 'info')
+                    this.dialog = !this.dialog
+                } else {
+                    this.processRental(lastPaydate, dtconsumptionstart, dtconsumptionend)
+                }
+            })
+        },
+        processRental(lastPaydate, dtconsumptionstart, dtconsumptionend) {
+            let body = {
                 procedureName: 'ProcRentalTransaction',
                 values:[
                     lastPaydate,
                     this.hrisUserInfo.USERACCT
                 ]
             }
-            // this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-            //     // console.log(res.data);
-            //     this.$emit('update:rentals',res.data)
-            //     this.dialog=false
-            // })
-            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)})
-            this.processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend)
+            this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(() => {
+                this.processConsumption(lastPaydate, dtconsumptionstart, dtconsumptionend)
+            })
         },
-        processConsumption(lastPaydate,dtconsumptionstart,dtconsumptionend){        
-            let body={
-            procedureName: 'ProcConsumptionTransaction',
-            values:[
-                null,
-                this.moment(lastPaydate).format('YYYY-MM-DD'),
-                0,
-                this.moment(dtconsumptionstart).format('YYYY-MM-DD'),
-                this.moment(dtconsumptionend).format('YYYY-MM-DD'),
-                0,
-                0,
-                0,
-                0,
-                this.hrisUserInfo.USERACCT,
-                0,
-            ]
+        processConsumption(lastPaydate, dtconsumptionstart, dtconsumptionend) {        
+            let body = {
+                procedureName: 'ProcConsumptionTransaction',
+                values: [
+                    null,
+                    this.moment(lastPaydate).format('YYYY-MM-DD'),
+                    0,
+                    this.moment(dtconsumptionstart).format('YYYY-MM-DD'),
+                    this.moment(dtconsumptionend).format('YYYY-MM-DD'),
+                    0,
+                    0,
+                    0,
+                    0,
+                    this.hrisUserInfo.USERACCT,
+                    0,
+                ]
             }
-            // console.log(body);
-            // this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-            //     console.log(res.data);
-            //     this.$emit('update:consumptiondetails',res.data)
-            //     this.$emit('update:payrolldate',this.moment(lastPaydate).format('LL'))
-            //     this.dialog=false
-            // })
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)})
             this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
             this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
             this.dialog = !this.dialog
-        } 
+            this.clearVariables()
+            this.$refs.form.resetValidation()
+        } ,
+        clearVariables() {
+            this.valid = true
+            this.dialog = false
+            this.selectedmonth = this.moment().format('MM')
+            this.year = this.moment().format('YYYY')
+            this.cutoff = ""
+            this.disableprocess = true
+        }
         
     },
     watch: {

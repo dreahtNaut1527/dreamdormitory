@@ -130,6 +130,7 @@
                     <v-switch
                         v-model="dark"        
                         @change="changeTheme()"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
                         inset
                     ></v-switch>
                 </v-list-item-action>
@@ -226,8 +227,8 @@ export default {
                     items: [
                         {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacancies'},
                         {text: 'Tenants', icon: 'mdi-account-tie', to: '/tenants'},
-                        {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
                         {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
+                        {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
                         {text: 'Dorm Pass', icon: 'mdi-card-account-details', to: '/dormpass'},
                         {text: 'History', icon: 'mdi-history', to: '/history'}
                     ],
