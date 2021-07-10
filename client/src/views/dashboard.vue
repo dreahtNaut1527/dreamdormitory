@@ -19,7 +19,7 @@
                 </v-row>
                 <v-row justify="center">
                     <v-col cols="12" lg="8" md="8">
-                        <v-card>
+                        <v-card height="100%">
                             <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                                 <v-toolbar-title>Tenants</v-toolbar-title>
                                 <v-spacer></v-spacer>
@@ -70,7 +70,7 @@
                         </v-card>
                     </v-col>
                     <v-col cols="12" lg="4" md="4">
-                        <v-card>
+                        <v-card height="100%">
                             <v-toolbar flat>
                                 <v-toolbar-title class="overline">Newly Registered</v-toolbar-title>
                                 <v-spacer></v-spacer>
