@@ -55,50 +55,14 @@
                         hide-default-footer
                         :page.sync='page'
                         @page-count="pageCount = $event"
-                        :single-expand="true"
-                        :expaned.sync="expanded"
-                        show-expand
-                        item-key="SerialNo"
                         loading-text="Loading Data. Please Wait..."                        
                     >   
-
-                         <template v-slot:[`item.data-table-expand`]="{ expand, isExpanded }">
-                              <v-icon @click="expand(!isExpanded)" color="primary">
-                                   {{isExpanded ?' mdi-minus-circle-outline' : 'mdi-plus-circle-outline'  }}
-                              </v-icon>
-                         </template>
-                        <template v-slot:expanded-item="{ headers, item }">
-                            <td :colspan="headers.length">                                
-                                <v-data-iterator
-                                    :items="filterBIllingInfo(item)" 
-                                    hide-default-footer                                   
-                                >
-                                    <template v-slot:default="{ items }">
-                                        <v-spacer></v-spacer>
-                                        <!-- <v-container fluid dense class="grey lighten-5 mb-6"> -->
-                                        <v-row dense v-for="(item, i) in items" :key="i">
-                                            
-                                                <td style="width:100px">                                                    
-                                                    {{item.EmployeeCode}}                                                   
-                                                </td>
-                                           
-                                               
-                                                <td style="width: 100px">                                            
-                                                    {{item.XCode}}
-                                                </td>
-                                        
-                                             
-                                                 <td>                                               
-                                                    {{item.Amount}}
-                                                </td>
-                                            
-                                        </v-row>
-                                         <!-- </v-container> -->
-                                    </template>
-                                </v-data-iterator>
-                            </td>
+                        <template v-slot:[`item.Actions`] = '{ item }'>
+                            <v-btn @click="viewRentalDetails(item)" icon>
+                                <v-icon>mdi-eye</v-icon>
+                            </v-btn>
                         </template>
-                    </v-data-table>
+                    </v-data-table> 
                     <v-pagination
                         v-model="page"
                         :length="pageCount"
@@ -108,16 +72,95 @@
                 </v-container>
             </v-card>
         </v-container>
-        <v-dialog
-        v-model="dialog"
-        width="500">
-            <v-card>
-                <v-container>
-                    <v-row>
-                        <v-col cols="12" md="4" sm="4"></v-col>
-                        <v-col cols="12" md="8" sm="8"></v-col>
+        <v-dialog 
+            v-model="dialog"
+            width="800"
+        >
+            <v-card >
+                <v-container fluid>
+                    <v-row dense >
+                        <v-col dense cols="12" md="6" sm="6">
+                            <v-card
+                                max-width="400"
+                                class="mx-auto"
+                            >              
+                                <v-list two-line>
+                                    <v-list-item>
+                                        <v-list-item-avatar
+                                            size="80"
+                                            tile
+                                        >
+                                        <img :src="!viewRentals.EmployeeCode ? '' : `${photo}/${viewRentals.EmployeeCode}.jpg`"
+                                        >
+                                        </v-list-item-avatar>                                        
+                                        <v-list-item-content>
+                                            <v-list-item-title>{{viewRentals.EmployeeCode}}  {{viewRentals.EmployeeName}}</v-list-item-title>
+                                            <v-list-item-subtitle>{{viewRentals.Department}}</v-list-item-subtitle>
+                                            <v-list-item-subtitle>{{viewRentals.Section}}</v-list-item-subtitle>
+                                            <v-list-item-subtitle>{{viewRentals.Team}}</v-list-item-subtitle>
+                                            <v-list-item-subtitle>{{viewRentals.Company}}</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                    </v-list-item>
+
+                                    <v-divider ></v-divider>
+
+                                    <v-list-item>
+                                        <v-list-item-icon>
+                                        <v-icon color="indigo">
+                                            mdi-domain
+                                        </v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                        <v-list-item-title>{{viewRentals.BuildingDesc}}</v-list-item-title>
+                                        <v-list-item-subtitle>Building</v-list-item-subtitle>
+                                        </v-list-item-content>        
+                                    </v-list-item>
+                                    <v-list-item>
+                                        <v-list-item-icon>
+                                            <v-icon color="indigo">
+                                                mdi-stairs
+                                            </v-icon>
+                                        </v-list-item-icon>
+                                        <v-list-item-content>
+                                            <v-list-item-title>{{viewRentals.FloorDesc}}</v-list-item-title>
+                                            <v-list-item-subtitle>Floor</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                    <v-list-item dense>
+                                        <v-list-item-icon>
+                                            <v-icon color="indigo">
+                                                mdi-bed-empty
+                                            </v-icon>
+                                        </v-list-item-icon>
+                                        <v-list-item-content>
+                                            <v-list-item-title>{{viewRentals.RoomDesc}}</v-list-item-title>
+                                            <v-list-item-subtitle>Rooom</v-list-item-subtitle>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+                        <v-col dense cols="12" md="6" sm="6">
+                            <v-card     
+                                max-width="400"
+                                class="mx-auto"
+                                height="100%">
+                            <v-container fluid  >
+                                <v-data-table 
+                                    :headers="detailsHeader" 
+                                    :items="rentalsDetails"
+                                    hide-default-footer
+                                >
+                                
+                                </v-data-table>
+                            </v-container> 
+                            </v-card>
+                            
+                        </v-col>
                     </v-row>
                 </v-container>
+
             </v-card>
         </v-dialog>
     </v-main>
@@ -133,18 +176,40 @@ export default {
                 {text: 'Rentals', disabled: true, href: '#'}
             ],
             headers:[
-                {text:'Building', value:'BuildingDesc'},
-                {text:'Floor', value:'FloorDesc'},
-                {text:'Room', value:'RoomDesc'},
-                {text:'Payroll Date', value:'PayrollDate'},
-                {text:'Total Amount', value:'TotalAmount'},
-                {text: '', value: 'data-table-expand' },
+                {text:'EmployeeCode', value:'EmployeeCode'},
+                {text:'Name', value:'EmployeeName'},
+                {text:'Department', value:'Department'},
+                {text:'Section', value:'Section'},
+                {text:'Team', value:'Team'},
+                {text:'TotalAmount', value:'TotalAmount'},
+                {text: 'Actions', value: 'Actions' },
                 
             ],
-            rentals:[],
-            expanded:[],
-            billingInfos:[],
-            singleExpand:true,
+            detailsHeader:[
+                {text:'Payroll Code',value:'XCode'},
+                {text:'Description',value:'Description'},
+                {text:'Amount',value:'Amount'},
+            ],
+            viewRentals:{
+                BuildingDesc: "",
+                BuildingId: "",
+                Company: "",
+                CompanyCode:"",
+                Department:"",
+                Description: "",
+                EmployeeCode: "",
+                FloorDesc: "",
+                FloorNo: "",
+                PayrollDate: null,
+                RoomDesc: "",
+                RoomNo: "",
+                Section:"",
+                SerialNo: "",
+                Team:"",
+                TotalAmount: ""
+            },
+            rentalsTotal:[],
+            rentalsDetails:[],          
             setcutoffdialog:false,
             dialog:false,
             building:'',
@@ -155,18 +220,14 @@ export default {
             
         }
     },
-    created() {
-        this.setcutoffdialog=!this.setcutoffdialog
-        this.loadMasterMaintenance('billinginfos').then(res => {
-            this.billingInfos = res.data
-            console.log(res.data);        
-        })
-        this.loadRentals()
+    async created() {
+        // this.setcutoffdialog=!this.setcutoffdialog
+        // this.loadRentals()
+        await this.loadRentatTotal()
     },
     computed:{
-
         filterRentals(){
-            return this.rentals.filter(rec =>{
+            return this.rentalsTotal.filter(rec =>{
                 return (
                     rec.BuildingDesc.includes(this.building || '') &&
                     rec.FloorDesc.includes(this.floor ||'') &&
@@ -192,26 +253,37 @@ export default {
 
     },
     methods: {
-        loadRentals(){
-            let body={
-            procedureName: 'ProcRentalTransaction',
-            values:[
-                this.payrollDate,
-                this.hrisUserInfo.USERACCT
-            ]
-        }
-        this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-            this.rentals=res.data
-        })
+        async loadRentatTotal(){
+            let station=await this.handleSelectData(this.hrisUserInfo.ABBR)
+             this.loadMasterMaintenance('rentalsTotal').then(res => {
+                //  console.log(res.data );
+                 this.rentalsTotal=res.data
+                 if (this.rentalsTotal != []){
+                     this.rentalsTotal.forEach(rec => {
+                         let employee=station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                         Object.assign(rec,{
+                             EmployeeName: employee[0].EMPNAME || 'NONE',
+                             Department: employee[0].DEPTDESC || 'NONE',
+                             Section: employee[0].SECTIONDESC || 'NONE',
+                             Team: employee[0].TEAMDESC || 'NONE',
+                         })
+                         this.$forceUpdate()
+                        //  console.log(rec);
+                     })
+                 }  
+                 console.log(this.rentalsTotal);
+             })
         },
-        filterBIllingInfo(data){
-            console.log(this.billingInfos);
-            return this.billingInfos.filter(rec => {
-                return (
-                    rec.SerialNo.includes(data.SerialNo)                    
-                )
-            })            
+        viewRentalDetails(data){
+            this.loadMasterMaintenance('rentalsdedatils').then(res => {
+                this.rentalsDetails=res.data.filter(item  => item.EmployeeCode == data.EmployeeCode)
+                this.dialog= true
+                
+                Object.assign(this.viewRentals,data)
+            })
+            
         }
+
     },
 
 }

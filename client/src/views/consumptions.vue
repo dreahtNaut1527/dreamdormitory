@@ -109,9 +109,12 @@
                     <v-spacer></v-spacer>
                     <v-icon x-large>{{selectedtype == 0 ? 'mdi-flash' : 'mdi-water'}}</v-icon>
                 </v-toolbar>
-                <v-form>
-                    <v-container fluid>
-                        <v-row justify="center" align="center">
+                <v-card-title>
+                    <v-breadcrumbs class="ml-n8 mt-n5"  :items="breadCrumbsItems2" divider="/"></v-breadcrumbs>      
+                </v-card-title>
+                <v-form class="mt-n5">
+                    <v-container fluid>                        
+                        <v-row justify="center" align="center">                        
                             <v-col cols="12" md="6" sm="6">
                                 <v-card>
                                     <v-system-bar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
@@ -330,6 +333,7 @@ export default {
                     TotalKWM3:0,
                     TotalAmount:0,
             },
+            breadCrumbsItems2:[],
             dialog:false,
             consumptions:[],
             selectedtype:0,            
@@ -412,6 +416,11 @@ export default {
             }else{
                 this.lesskwm3=10
             }
+            this.breadCrumbsItems2.push(
+                {text: data.BuildingDesc, disabled: false, href: '#'},
+                {text: data.FloorDesc, disabled: false, href: '#'},
+                {text: data.FloorDesc, disabled: false, href: '#'}
+            )
 
         },
         computeConsumption(val){
@@ -473,6 +482,7 @@ export default {
                 TotalAmount:0
                     
             }
+            this.breadCrumbsItems2=[]
         }
     },
 
