@@ -11,7 +11,18 @@
             <v-card outlined>
                 <v-container fluid>
                     <v-row align= 'center' justify='center'>
-                        <v-col cols='12' md='4' sm='4'>
+                         <v-col cols='12' md='3' sm='3'>
+                            <v-autocomplete
+                                dense
+                                hide-details
+                                outlined
+                                v-model="company"
+                                label="Company"
+                                :items="companyList"
+                            >   
+                            </v-autocomplete>
+                        </v-col>                       
+                        <v-col cols='12' md='3' sm='3'>
                             <v-autocomplete
                                 dense
                                 hide-details
@@ -22,7 +33,7 @@
                             >   
                             </v-autocomplete>
                         </v-col>
-                        <v-col cols='12' md='4' sm='4'>
+                        <v-col cols='12' md='3' sm='3'>
                             <v-autocomplete 
                                 dense
                                 hide-details
@@ -32,7 +43,7 @@
                                 :items="floorList"
                             ></v-autocomplete>
                         </v-col>
-                        <v-col cols='12' md='4' sm='4'>
+                        <v-col cols='12' md='3' sm='3'>
                             <v-autocomplete 
                                 dense
                                 hide-details
@@ -47,7 +58,7 @@
             </v-card>
         </v-container>
         <v-container fluid>
-            <v-card outlined>
+            <v-card outlined>                
                 <v-container fluid>
                     <v-data-table
                         :headers="headers"
@@ -61,6 +72,14 @@
                             <v-btn @click="viewRentalDetails(item)" icon>
                                 <v-icon>mdi-eye</v-icon>
                             </v-btn>
+                        </template>
+                        <template v-slot:footer>
+                            <v-card flat outlined>
+                                <v-card-text class="caption text-subtitle-1 font-weight-bold">
+                                    <span>Total Record(s): </span>
+                                    <span class="mx-3">{{totalRecords}}</span>
+                                </v-card-text>
+                            </v-card>
                         </template>
                     </v-data-table> 
                     <v-pagination
@@ -77,6 +96,9 @@
             width="800"
         >
             <v-card >
+                <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor"  dark>
+                    <v-toolbar-title>Rental Details</v-toolbar-title>
+                </v-toolbar>
                 <v-container fluid>
                     <v-row dense >
                         <v-col dense cols="12" md="6" sm="6">
@@ -135,7 +157,7 @@
                                         </v-list-item-icon>
                                         <v-list-item-content>
                                             <v-list-item-title>{{viewRentals.RoomDesc}}</v-list-item-title>
-                                            <v-list-item-subtitle>Rooom</v-list-item-subtitle>
+                                            <v-list-item-subtitle>Room</v-list-item-subtitle>
                                         </v-list-item-content>
                                     </v-list-item>
                                 </v-list>
@@ -145,24 +167,74 @@
                             <v-card     
                                 max-width="400"
                                 class="mx-auto"
-                                height="100%">
-                            <v-container fluid  >
-                                <v-data-table 
-                                    :headers="detailsHeader" 
-                                    :items="rentalsDetails"
-                                    hide-default-footer
-                                >
-                                
-                                </v-data-table>
-                            </v-container> 
-                            </v-card>
-                            
+                                height="100%"
+                            >
+                                <v-container fluid  >
+                                    <v-data-table 
+                                        :headers="detailsHeader" 
+                                        :items="rentalsDetails"
+                                        hide-default-footer
+                                    >
+                                    </v-data-table>
+                                <v-card  flat class="mt-16">
+                                    <v-divider></v-divider> 
+                                    <v-container fluid>
+                                        <v-card-actions>
+                                            <span style="font-weight:bold">Total Amount :</span>
+                                            <v-spacer></v-spacer>                
+                                            <span style="margin-left:10px">{{totalAmount}}</span>
+                                        </v-card-actions>                                    
+                                    </v-container>
+                                </v-card>     
+                                </v-container> 
+                            </v-card>                                        
                         </v-col>
                     </v-row>
                 </v-container>
-
             </v-card>
         </v-dialog>
+        <v-dialog v-model="loadingdialog" width="400" height="100%">
+            <v-card 
+                class="text-center"
+                height
+            >
+                <v-container>
+                    <v-progress-circular
+                        :rotate="360"
+                        :size="100"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
+                        :value="value"
+                        width="15"                        
+                    >{{value}}</v-progress-circular>
+                </v-container>
+                <v-subheader>Sending. Please wait...</v-subheader>
+            </v-card>
+            
+        </v-dialog>
+        <v-fab-transition>
+            <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn 
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
+                        v-bind="attrs"
+                        v-on="on"
+                        right
+                        bottom
+                        fixed
+                        fab
+                        dark
+                        @click="SendRentalBillings()"
+
+                    >
+                        <v-icon>mdi-upload-multiple</v-icon>
+                    </v-btn>
+                </template>
+                <span>
+                    Send
+                </span>
+            </v-tooltip>
+
+        </v-fab-transition>
     </v-main>
 </template>
 
@@ -215,8 +287,13 @@ export default {
             building:'',
             floor:'',
             room:'',
+            company:'',
             page:1,
             pageCount:0,
+            totalAmount:0,
+            loadingdialog:false,
+            value:0,
+            interval:{},
             
         }
     },
@@ -231,7 +308,8 @@ export default {
                 return (
                     rec.BuildingDesc.includes(this.building || '') &&
                     rec.FloorDesc.includes(this.floor ||'') &&
-                    rec.RoomDesc.includes(this.room || '')
+                    rec.RoomDesc.includes(this.room || '') &&
+                    rec.Company.includes(this.company || '')
                 )
             })
         },
@@ -250,41 +328,84 @@ export default {
                 return rec.RoomDesc
             })
         },
+        companyList(){
+            return this.filterRentals.map(rec => {
+                return rec.Company
+            })
+        },
+        totalRecords(){
+            return this.filterRentals.length
+        }
 
+    },
+    beforeDestroy(){
+        clearInterval(this.interval)
+    },
+    mounted (){
+        // this.interval=setInterval(()=>{
+        //     if (this.value === 100) {
+        //         return (this.value = 0)
+        //     }           
+        //     // this.value += (1/this.rentalsTotal.length) * 100
+        //     for (let counter=1;counter<=this.rentalsTotal.length;counter++){
+        //         this.value =Math.round(((counter/this.rentalsTotal.length)*100))
+
+        //         console.log(Math.round(((counter/this.rentalsTotal.length)*100)));
+        //     }
+        //     // this.value=Math.round(this.value)
+            
+        // },1000)
     },
     methods: {
         async loadRentatTotal(){
             let station=await this.handleSelectData(this.hrisUserInfo.ABBR)
              this.loadMasterMaintenance('rentalsTotal').then(res => {
-                //  console.log(res.data );
-                 this.rentalsTotal=res.data
-                 if (this.rentalsTotal != []){
-                     this.rentalsTotal.forEach(rec => {
-                         let employee=station.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                         Object.assign(rec,{
-                             EmployeeName: employee[0].EMPNAME || 'NONE',
-                             Department: employee[0].DEPTDESC || 'NONE',
-                             Section: employee[0].SECTIONDESC || 'NONE',
-                             Team: employee[0].TEAMDESC || 'NONE',
-                         })
-                         this.$forceUpdate()
-                        //  console.log(rec);
-                     })
-                 }  
-                 console.log(this.rentalsTotal);
+                this.rentalsTotal=res.data
+                if (this.rentalsTotal != []){
+                    this.rentalsTotal.forEach(rec => {
+                        let employee=station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                        Object.assign(rec,{
+                            EmployeeName: employee[0].EMPNAME || 'NONE',
+                            Department: employee[0].DEPTDESC || 'NONE',
+                            Section: employee[0].SECTIONDESC || 'NONE',
+                            Team: employee[0].TEAMDESC || 'NONE',
+                        })                         
+                        this.$forceUpdate()
+                    })
+                }  
+               
              })
         },
         viewRentalDetails(data){
             this.loadMasterMaintenance('rentalsdedatils').then(res => {
                 this.rentalsDetails=res.data.filter(item  => item.EmployeeCode == data.EmployeeCode)
-                this.dialog= true
-                
-                Object.assign(this.viewRentals,data)
+                this.dialog= true                
+                Object.assign(this.viewRentals,data)                
+                this.totalAmount=this.viewRentals.TotalAmount
             })
             
+        },
+        SendRentalBillings(){
+            this.loadingdialog=true
+            this.interval=setInterval(()=>{
+                if (this.value === this.rentalsTotal.length) 
+                    {this.loadingdialog=false
+                    clearInterval(this.interval)
+                    return (this.value = 0)                    
+                }                         
+                // for (let counter=1;counter<=this.rentalsTotal.length;counter++){
+                //     this.value =Math.round(((counter/this.rentalsTotal.length)*100))
+                // }
+                this.value += 1
+            },100)
+            
         }
-
     },
 
 }
 </script>
+<style scoped>
+.v-progress-circular {
+  margin: 1rem;
+}
+</style>
