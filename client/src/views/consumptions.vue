@@ -419,7 +419,7 @@ export default {
             this.breadCrumbsItems2.push(
                 {text: data.BuildingDesc, disabled: false, href: '#'},
                 {text: data.FloorDesc, disabled: false, href: '#'},
-                {text: data.FloorDesc, disabled: false, href: '#'}
+                {text: data.RoomDesc, disabled: false, href: '#'}
             )
 
         },

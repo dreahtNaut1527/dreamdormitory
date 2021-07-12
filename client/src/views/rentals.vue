@@ -200,14 +200,18 @@
             >
                 <v-container>
                     <v-progress-circular
-                        :rotate="360"
+                        :rotate="270"
                         :size="100"
                         :color="themeColor == '' ? '#1976d2' : themeColor"
-                        :value="value"
+                        :value="percentVal"
+                        indeterminate
                         width="15"                        
-                    >{{value}}</v-progress-circular>
+                    >
+                        {{percentVal}}
+                    </v-progress-circular>
                 </v-container>
-                <v-subheader>Sending. Please wait...</v-subheader>
+                <v-divider></v-divider>
+                <v-subheader class="text-center">Sending. Please wait...</v-subheader>
             </v-card>
             
         </v-dialog>
@@ -294,6 +298,7 @@ export default {
             loadingdialog:false,
             value:0,
             interval:{},
+            percentVal:0,
             
         }
     },
@@ -388,17 +393,15 @@ export default {
         SendRentalBillings(){
             this.loadingdialog=true
             this.interval=setInterval(()=>{
-                if (this.value === this.rentalsTotal.length) 
+                if (this.percentVal ===100) 
                     {this.loadingdialog=false
                     clearInterval(this.interval)
+                    this.percentVal=0
                     return (this.value = 0)                    
                 }                         
-                // for (let counter=1;counter<=this.rentalsTotal.length;counter++){
-                //     this.value =Math.round(((counter/this.rentalsTotal.length)*100))
-                // }
-                this.value += 1
-            },100)
-            
+                this.value++
+                this.percentVal= Math.round((100* this.value)/this.rentalsTotal.length)
+            },100)            
         }
     },
 
