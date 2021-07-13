@@ -60,7 +60,7 @@ export default {
           loadSummaryOfActiveTenants() {
                let body = {
                     procedureName: 'ProcSummaryOfActiveTenants',
-                    values: [this.hrisUserInfo.CODE]
+                    values: [this.hrisUserInfo.COCODE]
                }
                this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
                     this.summaryRecords = res.data

@@ -1,5 +1,5 @@
 <template>
-    <v-app id="inspire" :style="`background-color: ${darkMode ? '' : '#F5F5F5'};`">
+    <v-app id="inspire" :style="`background-color: ${ darkMode ? '' : $route.path != '/' ? '' : themeColor == '' ? '#1976d2' : themeColor };`">
         <navdrawer v-if="hrisUserInfo.USERACCT != undefined" />
         <router-view />
         <navfooter v-if="hrisUserInfo.USERACCT != undefined" />
@@ -12,7 +12,7 @@ import navfooter from '@/components/navfooter'
 
 export default {
     created() {
-
+        
     },
     mounted() {
         setInterval(() => {

@@ -183,7 +183,7 @@ export default {
         filterDormitoryPass() {
             return this.dormitoryPassLists.filter(rec => {
                 return (
-                    rec.CompanyCode.includes(this.hrisUserInfo.CODE) && 
+                    rec.CompanyCode.includes(this.hrisUserInfo.COCODE) && 
                     rec.BuildingDesc.toLowerCase().includes(this.building.toLowerCase() || '') && 
                     rec.FloorDesc.includes(this.floor || '') && 
                     rec.RoomDesc.includes(this.room || '') &&
@@ -217,7 +217,7 @@ export default {
             this.loading = true
             stationData = await this.handleSelectData(this.hrisUserInfo.ABBR)
             this.loadMasterMaintenance('dormpassheader').then(res => {
-                this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
+                this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
                 this.dormitoryPassLists.forEach(rec => {
                     let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
                     Object.assign(rec, {

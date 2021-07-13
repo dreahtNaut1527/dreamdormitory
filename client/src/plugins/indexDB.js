@@ -10,7 +10,7 @@ const plugins = {
                 
             },
             methods: {
-                async connectDatabase(company) {
+                async connectDatabase() {
                     return new Promise((resolve, reject) => {
                         let request = window.indexedDB.open('hris', 1)
                         
@@ -27,7 +27,7 @@ const plugins = {
     
                         request.onupgradeneeded = e => {
                             let db = e.target.result
-                            db.createObjectStore(company, {autoIncrement: false, keyPath: 'EMPLCODE'})
+                            db.createObjectStore('station', {autoIncrement: false, keyPath: 'EMPLCODE'})
                         }
                     })
                 },
@@ -47,17 +47,17 @@ const plugins = {
                     })
                 },
 
-                async handleSelectData(company) {
+                async handleSelectData() {
                     let results = []
-                    let db = await this.connectDatabase(company)
+                    let db = await this.connectDatabase()
                     
                     return new Promise(resolve => {
-                        let dbTrans = db.transaction([company], 'readonly')
+                        let dbTrans = db.transaction(['station'], 'readonly')
                         dbTrans.oncomplete = () => {
                             resolve(results)
                         }
 
-                        let store = dbTrans.objectStore(company)
+                        let store = dbTrans.objectStore('station')
                         store.openCursor().onsuccess = e => {
                             let cursor = e.target.result
                             if(cursor) {
@@ -68,22 +68,21 @@ const plugins = {
                     })
                 },
 
-                async handleInsertData(company, val) {
-                    await this.handleClearTable(company)
-                    let db = await this.connectDatabase(company)
+                async handleInsertData(val) {
+                    let db = await this.connectDatabase()
 
-                    let dbTrans = db.transaction([company], 'readwrite')
-                    let store = dbTrans.objectStore(company)
-                    val.forEach(rec => {
-                        store.put(rec)
+                    let dbTrans = db.transaction(['station'], 'readwrite')
+                    let store = dbTrans.objectStore('station')
+                    val.forEach(async rec => {
+                        await store.put(rec)
                     })
                 },
 
-                async handleClearTable(company) {
-                    let db = await this.connectDatabase(company)
+                async handleClearTable() {
+                    let db = await this.connectDatabase('station')
 
-                    let dbTrans = db.transaction([company], 'readwrite')
-                    let store = dbTrans.objectStore(company)
+                    let dbTrans = db.transaction(['station'], 'readwrite')
+                    let store = dbTrans.objectStore('station')
                     store.clear()
                 }
             }

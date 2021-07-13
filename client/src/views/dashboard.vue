@@ -94,19 +94,21 @@
                                 <template v-slot:default="props">
                                     <v-row align="center" justify="center" dense>
                                         <v-col cols="12" md="12" v-for="(item, i) in props.items" :key="i">
-                                            <v-list-item three-line dense>
-                                                <v-list-item-avatar>
-                                                    <v-img :src="`${photo}/${item.EmployeeCode}.jpg`" />
-                                                </v-list-item-avatar>
-                                                <v-list-item-content>
-                                                    <v-list-item-title class="font-weight-bold">{{ item.EmployeeCode }}</v-list-item-title>
-                                                    <v-list-item-subtitle class="caption">{{ item.EmployeeName }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle class="caption">{{ item.Department }} / {{ item.Section }}</v-list-item-subtitle>
-                                                </v-list-item-content>
-                                                <v-list-item-action>
-                                                    <v-chip class="caption">Registered {{ moment(item.CreatedDate).fromNow() }}</v-chip>
-                                                </v-list-item-action>
-                                            </v-list-item>
+                                            <v-list dense>
+                                                <v-list-item three-line>
+                                                    <v-list-item-avatar>
+                                                        <v-img :src="`${photo}/${item.EmployeeCode}.jpg`" />
+                                                    </v-list-item-avatar>
+                                                    <v-list-item-content>
+                                                        <v-list-item-title class="font-weight-bold">{{ item.EmployeeCode }}</v-list-item-title>
+                                                        <v-list-item-subtitle class="caption">{{ item.EmployeeName }}</v-list-item-subtitle>
+                                                        <v-list-item-subtitle class="caption">{{ item.Department }} / {{ item.Section }}</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                    <v-list-item-action>
+                                                        <v-chip class="caption">Registered {{ moment(item.CreatedDate).fromNow() }}</v-chip>
+                                                    </v-list-item-action>
+                                                </v-list-item>
+                                            </v-list>
                                         </v-col>
                                     </v-row>
                                 </template>
@@ -190,25 +192,23 @@ export default {
     },
     methods: {
         async loadTenants() {
-            setTimeout(async () => {
-                let station = await this.handleSelectData(this.hrisUserInfo.ABBR)
-                this.loadMasterMaintenance('tenants').then(res => {
-                    this.tenantList = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
-                    if(this.tenantList != []) {
-                        this.tenantList.forEach(rec => {
-                            let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                            Object.assign(rec, {
-                                EmployeeName: employee[0].EMPNAME || 'NONE',
-                                Department: employee[0].DEPTDESC || 'NONE',
-                                Section: employee[0].SECTIONDESC || 'NONE',
-                                Team: employee[0].TEAMDESC || 'NONE',
-                                Designation: employee[0].DESIGDESC || 'NONE'
-                            })
-                            this.$forceUpdate()
+            let station = await this.handleSelectData()
+            this.loadMasterMaintenance('tenants').then(res => {
+                this.tenantList = this.hrisUserInfo.COCODE == '20' ? res.data : res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
+                if(this.tenantList != []) {
+                    this.tenantList.forEach(rec => {
+                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                        Object.assign(rec, {
+                            EmployeeName: employee[0].EMPNAME || 'NONE',
+                            Department: employee[0].DEPTDESC || 'NONE',
+                            Section: employee[0].SECTIONDESC || 'NONE',
+                            Team: employee[0].TEAMDESC || 'NONE',
+                            Designation: employee[0].DESIGDESC || 'NONE'
                         })
-                    }
-                }) 
-            }, 200);
+                        this.$forceUpdate()
+                    })
+                }
+            }) 
         },
     },
     components: {

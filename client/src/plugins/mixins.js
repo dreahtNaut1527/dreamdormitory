@@ -23,7 +23,8 @@ const plugins = {
                     'darkMode',
                     'appVersion',
                     'payrollDate',
-                    'cutOffDate'
+                    'cutOffDate',
+                    'hrsys'
                 ])
             },
             methods: {
@@ -35,7 +36,8 @@ const plugins = {
                     'CHANGE_DARKMODE',
                     'CHANGE_APP_VERSION',
                     'CHANGE_PAYROLLDATE',
-                    'CHANGE_CUTOFFDATE'
+                    'CHANGE_CUTOFFDATE',
+                    'CHANGE_HRSYS'
                 ]),
                 zeroPad(num, numZeros) {
                     let n = Math.abs(num)
@@ -49,7 +51,7 @@ const plugins = {
                     return zeroString + n
                 },
                 readINIFile() {
-                    return this.axios.get(`${this.api}/config`)
+                    return this.axios.get(`${this.api_HRIS}/getHRSys.php`)
                 },
                 rightString(str, chr) {
                     return str.slice(str.length - chr, str.length);
@@ -94,7 +96,7 @@ const plugins = {
                           values: [
                                0,
                                this.$socket.id,
-                               this.hrisUserInfo.CODE,
+                               this.hrisUserInfo.COCODE,
                                code,
                                message,
                                1
@@ -151,29 +153,10 @@ const plugins = {
                 },
 
                 // HRIS station search
-                stationSearch(code) {
-                    return this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: code})
+                async stationSearch(company, code) {
+                    let comp = company
+                    return await this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {abbr: comp.toLowerCase(), emplcode: code})
                 },
-
-                // Update Station
-                async updateStation() {
-                    new Promise(() => {
-                        let config = this.axios.get(`${this.api}/config`)
-                        config.then(res => {
-                            let hrisData = null
-                            if(res.data.errno == -4058) {
-                                this.handleConfimedMessage('', 'Network drive not connected', 'warning')
-                            } else {
-                                hrisData = res.data.HRIS
-                                if(hrisData.Last_Updated == this.moment().format('MM/DD/YYYY')) {
-                                    this.stationSearch(null).then(async res => {
-                                        await this.handleInsertData(store.state.hrisUserInfo.ABBR, res.data)
-                                    })
-                                }
-                            }
-                        })
-                    })
-                }
             }
         })
     }

@@ -1,6 +1,7 @@
 <template>
     <div>
         <v-navigation-drawer 
+            v-if="!loading"
             :mini-variant="true"
             :color="themeColor == '' ? '#1976d2' : themeColor"
             permanent
@@ -158,6 +159,7 @@
         </v-navigation-drawer>
         <!-- End of Left navigation drawer -->
 
+        <!-- Logout dialog -->
         <v-overlay v-model="overlay" absolute>
             <v-snackbar v-model="overlay" top app>
                 <v-card-title class="pa-0 caption">Do you want to logout?</v-card-title>
@@ -167,6 +169,27 @@
                 </template>
             </v-snackbar>
         </v-overlay>
+        <!-- End of Logout dialog -->
+
+        <!-- Update Station -->
+        <v-overlay :value="loading">
+            <v-row align="center" justify="center">
+                <v-col cols="12" md="12">
+                    <v-card color="white">
+                        <v-row align="center" justify="center">
+                            <v-col class="text-center" cols="12" md="12">
+                                <v-img src="../assets/data-transfer.gif" aspect-ratio="1.7"/>
+                            </v-col>
+                            <v-col class="text-center" cols="12" md="12">
+                                <v-card-text class="font-weight-bold grey--text text-h4">Updating local database</v-card-text>
+                                <v-card-text class="mt-n4 grey--text">Please wait for a moment while setting up some changes.</v-card-text>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-overlay>
+        <!-- End of Update Station -->
 
         <!-- Set cut off -->
         <setcutoff :setcutoffdialog="cutOffDateDialog" />
@@ -181,6 +204,7 @@ export default {
         return {
             dark: false,
             menu: false,
+            loading: false,
             overlay: false,
             swatches: true,
             navDrawer: false,
@@ -256,7 +280,6 @@ export default {
             ]
         },
         userLoggedOut() {
-            this.handleClearTable(this.hrisUserInfo.ABBR)
             this.$store.commit('CHANGE_USER_INFO', {})
             this.$store.commit('CHANGE_LOGGING', false)
             this.$router.push('/')
@@ -264,12 +287,41 @@ export default {
         handleUpdateStation() {
             this.handleQuestionMessage('', 'Update your local storage?', 'Update', 'question').then(result => {
                 if(result.isConfirmed) {
-                    this.updateStation()
-                    this.handleToastMesaage().fire({
-                        icon: 'success',
-                        title: 'Update Success'
-                    })
+                    if(this.hrisUserInfo.COCODE == '20') {
+                        this.axios.post(`${this.api_HRIS}/ora_company.php`, {abbr: this.hrisUserInfo.ABBR}).then(res => {
+                            this.handleClearTable()
+                            this.getAllStationData(res.data)
+                        })
+                    } else {
+                        this.stationSearch(this.hrisUserInfo.ABBR, null).then(async res => {
+                            if(Array.isArray(res.data)) {
+                                this.handleClearTable()
+                                this.handleInsertData(res.data)
+                            } else {
+                                this.alert = true
+                                this.alertText = 'Network error: Please contact your administrator'
+                            }
+                        })
+                    }
                 }
+            })
+        },
+        getAllStationData(data) {
+            this.loading = true
+            let arrayVal = []
+            new Promise(() => {
+                data.forEach(rec => {
+                    arrayVal.push(this.stationSearch(rec.SHORTNAME, null))
+                })
+                this.axios.all(arrayVal).then(this.axios.spread(async (...res) => {
+                    res.forEach(rec => {
+                        if(Array.isArray(rec.data)) {
+                            this.handleInsertData(rec.data)
+                        }
+                    })
+                    this.loading = false
+                    this.handleConfimedMessage('', 'Update successfull', 'success')
+                }))
             })
         }
     },

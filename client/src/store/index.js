@@ -10,6 +10,7 @@ export default new Vuex.Store({
     payrollDate: null,
     cutOffDate: [],
     hrisUserInfo: {},
+    hrsys: {},
     darkMode: false,
     isConnect: true,
     isLoggedIn: false,
@@ -42,6 +43,9 @@ export default new Vuex.Store({
     },
     CHANGE_CUTOFFDATE: (state, data) => {
       state.cutOffDate = data
+    },
+    CHANGE_HRSYS: (state, data) => {
+      state.hrsys = data
     }
   },
   actions: {

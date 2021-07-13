@@ -11,7 +11,7 @@
                 <v-row align="center" justify="center">
                     <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                         <v-card outlined>
-                            <v-overlay :value="item.CompanyCode != hrisUserInfo.CODE && item.CompanyCode" :opacity="0.4" absolute>
+                            <v-overlay :value="item.CompanyCode != hrisUserInfo.COCODE && item.CompanyCode" :opacity="0.4" absolute>
                                 <v-row align="center" justify="center">
                                     <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
                                 </v-row>
@@ -38,7 +38,7 @@
                                                     <v-text-field
                                                         class="caption"
                                                         v-model="item.EmployeeCode"
-                                                        label="Code"
+                                                        label="Employee ID"
                                                         :rules="[v => !!v || 'field is required']"
                                                         :color="themeColor == '' ? '#1976d2' : themeColor"
                                                         @keypress.enter="assignVacant(item)"
@@ -192,15 +192,15 @@ export default {
         },
         loadOccupants() {
             this.loadMasterMaintenance('roomrelations').then(res => {
+                this.loading = true
                 this.occupants = res.data
                 this.loadCurrentOccupants(this.filterOccupants)
             })
         },
         loadCurrentOccupants(val) {
             let employee = []
-            this.loading = true
-            val.forEach((rec, index) => {
-                if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.CODE) {
+            val.forEach((rec, index, array) => {
+                if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.COCODE) {
                     this.handleSelectData(this.hrisUserInfo.ABBR).then(data => {
                         let station = data.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         employee = station[0]
@@ -224,8 +224,11 @@ export default {
                         Designation: employee.DESIGDESC || null,
                         Dialog: false
                     })
-                    if(index + 1 == val.length) this.loading = false
                     this.currentOccupants.push(rec)
+                }
+
+                if(index == array.lenght) {
+                    this.loading = false
                 }
             })
         },
@@ -293,7 +296,7 @@ export default {
             this.availableTenants = []
             this.loadMasterMaintenance('availabletenants').then(res => {
                 this.loadOccupants()
-                this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.CODE)
+                this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
             })
         }
 
