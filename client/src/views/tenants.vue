@@ -126,7 +126,6 @@
                 </v-card>
             </v-lazy>
         </v-container>
-        {{ companyList }}
         <v-fab-transition>
             <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" to="/tenantedit" :disabled="loading" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
@@ -181,7 +180,7 @@ export default {
         filterTenants() {
             return this.tenants.filter(rec => {
                 return (
-                    rec.CompanyCode.includes(this.company || '') && 
+                    rec.ShortName.includes(this.company || '') && 
                     rec.Department.includes(this.department || '') &&
                     rec.Section.includes(this.section || '') &&
                     rec.Team.includes(this.team || '')
