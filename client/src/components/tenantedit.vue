@@ -290,22 +290,20 @@ export default {
         async getStationSearch(emplcode) {
             if(this.isEditMode || !emplcode) return;
             let station = await this.handleSelectData()
-            setTimeout(() => {
-                let employee = station.filter(item => item.EMPLCODE == emplcode)
-                Object.assign(this.editTenantDetails, {
-                    CompanyCode: '',
-                    MoveInDate: null,
-                    MoveOutDate: null,
-                    Remarks: null,
-                    EmployeeName: employee[0].EMPNAME || null,
-                    Department: employee[0].DEPTDESC || null,
-                    Section: employee[0].SECTIONDESC || null,
-                    Team: employee[0].TEAMDESC || null,
-                    Designation: employee[0].DESIGDESC || null,
-                    RentalFee: 1500.00
-                })
-                console.log(this.editTenantDetails);
-            }, 1500)
+            let employee = station.filter(item => item.EMPLCODE == emplcode)
+            Object.assign(this.editTenantDetails, {
+                CompanyCode: employee[0].COCODE,
+                MoveInDate: null,
+                MoveOutDate: null,
+                Remarks: null,
+                EmployeeName: employee[0].EMPNAME || null,
+                Department: employee[0].DEPTDESC || null,
+                Section: employee[0].SECTIONDESC || null,
+                Team: employee[0].TEAMDESC || null,
+                Designation: employee[0].DESIGDESC || null,
+                RentalFee: 1500.00
+            })
+            this.$forceUpdate()
         }
     },
     components: {

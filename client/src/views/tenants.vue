@@ -8,7 +8,19 @@
                         <v-toolbar-title>Tenants</v-toolbar-title>
                     </v-toolbar>
                     <v-container fluid>
-                        <v-row align="center" justify="center">
+                        <v-row align="center" justify="center" dense>
+                            <v-col cols="12" md="3">
+                                <v-autocomplete
+                                    v-model="company"
+                                    :items="companyList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    placeholder="Company"
+                                    hide-details
+                                    clearable
+                                    outlined
+                                    dense
+                                ></v-autocomplete>
+                            </v-col>
                             <v-col cols="12" md="3">
                                 <v-autocomplete
                                     v-model="department"
@@ -45,7 +57,7 @@
                                     dense
                                 ></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="3">
+                            <v-col cols="12" md="12">
                                 <v-text-field
                                     v-model="searchTable"
                                     :color="themeColor == '' ? '#1976d2' : themeColor"
@@ -114,6 +126,7 @@
                 </v-card>
             </v-lazy>
         </v-container>
+        {{ companyList }}
         <v-fab-transition>
             <v-btn :color="themeColor == '' ? '#1976d2' : themeColor" to="/tenantedit" :disabled="loading" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
@@ -168,10 +181,16 @@ export default {
         filterTenants() {
             return this.tenants.filter(rec => {
                 return (
+                    rec.CompanyCode.includes(this.company || '') && 
                     rec.Department.includes(this.department || '') &&
                     rec.Section.includes(this.section || '') &&
                     rec.Team.includes(this.team || '')
                 )
+            })
+        },
+        companyList() {
+            return this.tenants.map(rec => {
+                return rec.ShortName
             })
         },
         departmentList() {
@@ -199,6 +218,7 @@ export default {
                     this.tenants.forEach(rec => {
                         let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         Object.assign(rec, {
+                            ShortName: employee[0].SHORTNAME || 'NONE',
                             EmployeeName: employee[0].EMPNAME || 'NONE',
                             Department: employee[0].DEPTDESC || 'NONE',
                             Section: employee[0].SECTIONDESC || 'NONE',

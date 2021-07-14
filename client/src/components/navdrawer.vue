@@ -278,7 +278,7 @@ export default {
             this.$router.push('/')
         },
         handleUpdateStation() {
-            this.handleQuestionMessage('', 'Update your local storage?', 'Update', 'question').then(result => {
+            this.handleQuestionMessage('', 'Update your local storage?', 'Update', null, 'question').then(result => {
                 if(result.isConfirmed) {
                     if(this.hrisUserInfo.COCODE == '20') {
                         this.axios.post(`${this.api_HRIS}/ora_company.php`, {abbr: this.hrisUserInfo.ABBR}).then(res => {

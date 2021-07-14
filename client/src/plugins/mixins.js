@@ -132,14 +132,17 @@ const plugins = {
                 handleConfimedMessage(title, message, icon) {
                     this.Swal.fire(title, message, icon)
                 },
-                handleQuestionMessage(title, message, buttonText, icon) {
+                handleQuestionMessage(title, message, buttonText, button2ndText, icon) {
                     return this.Swal.fire({
                         title: title,
                         text: message,
                         icon: icon,
                         showCancelButton: true,
+                        showDenyButton: button2ndText ? true : false,
                         confirmButtonColor: this.themeColor == '' ? '#1976d2' : this.themeColor,
-                        confirmButtonText: buttonText
+                        confirmButtonText: buttonText,
+                        denyButtonText: button2ndText
+
                     })
                 },
 
