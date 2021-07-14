@@ -137,6 +137,7 @@ export default {
                     this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
                 }
                 this.dialog = !this.dialog
+                window.location.reload()
             })
         },
         processRental(lastPaydate, dtconsumptionstart, dtconsumptionend) {
