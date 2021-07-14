@@ -69,8 +69,8 @@
                         loading-text="Loading Data. Please Wait..."                        
                     >   
                         <template v-slot:[`item.Actions`] = '{ item }'>
-                            <v-btn @click="viewRentalDetails(item)" icon>
-                                <v-icon>mdi-eye</v-icon>
+                            <v-btn @click="viewRentalDetails(item)" dark small fab :color="themeColor == '' ? '#1976d2' : themeColor">
+                                <v-icon>mdi-eye-outline</v-icon>
                             </v-btn>
                         </template>
                         <template v-slot:footer>
@@ -200,7 +200,7 @@
             >
                 <v-container>
                     <v-progress-circular
-                        :rotate="270"
+                        :rotate="0"
                         :size="100"
                         :color="themeColor == '' ? '#1976d2' : themeColor"
                         :value="percentVal"
@@ -211,11 +211,12 @@
                     </v-progress-circular>
                 </v-container>
                 <v-divider></v-divider>
-                <v-subheader class="text-center">Sending. Please wait...</v-subheader>
+                <v-card-text class="text-center">Sending. Please wait...</v-card-text>
             </v-card>
             
         </v-dialog>
-        <v-fab-transition>
+        {{sendFlag}}
+        <v-fab-transition v-if="sendFlag.length == 0">
             <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn 
@@ -228,7 +229,6 @@
                         fab
                         dark
                         @click="SendRentalBillings()"
-
                     >
                         <v-icon>mdi-upload-multiple</v-icon>
                     </v-btn>
@@ -299,6 +299,7 @@ export default {
             value:0,
             interval:{},
             percentVal:0,
+            sendFlag:{},
             
         }
     },
@@ -340,32 +341,21 @@ export default {
         },
         totalRecords(){
             return this.filterRentals.length
-        }
+        },
 
     },
     beforeDestroy(){
         clearInterval(this.interval)
     },
     mounted (){
-        // this.interval=setInterval(()=>{
-        //     if (this.value === 100) {
-        //         return (this.value = 0)
-        //     }           
-        //     // this.value += (1/this.rentalsTotal.length) * 100
-        //     for (let counter=1;counter<=this.rentalsTotal.length;counter++){
-        //         this.value =Math.round(((counter/this.rentalsTotal.length)*100))
 
-        //         console.log(Math.round(((counter/this.rentalsTotal.length)*100)));
-        //     }
-        //     // this.value=Math.round(this.value)
-            
-        // },1000)
     },
     methods: {
         async loadRentatTotal(){
             let station=await this.handleSelectData()
              this.loadMasterMaintenance('rentalsTotal').then(res => {
                 this.rentalsTotal=res.data
+                this.sendFlag = this.rentalsTotal.filter(item => item.SendFlag == 1)
                 if (this.rentalsTotal != []){
                     this.rentalsTotal.forEach(rec => {
                         let employee=station.filter(item => item.EMPLCODE == rec.EmployeeCode)
@@ -401,14 +391,18 @@ export default {
                 }                         
                 this.value++
                 this.percentVal= Math.round((100* this.value)/this.rentalsTotal.length)
-            },100)            
+            },100)   
+            // let body={
+            //     procedureName: '',
+            // }
+            // this.axios.post(`${this.api}/executeSelect`,{data: JSON.stringify(body)})        
         }
     },
 
 }
 </script>
 <style scoped>
-.v-progress-circular {
-  margin: 1rem;
-}
+    .v-progress-circular {
+    margin: 1rem;
+    }
 </style>

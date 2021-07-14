@@ -79,15 +79,34 @@
                         @page-count="pagecount = $event"
                         hide-default-footer
                     >
+                        <template v-slot:[`item.RoomDesc`]='{ item }'>
+                            <v-chip class="px-6">{{item.RoomDesc}} <v-icon right>mdi-bed-empty</v-icon> </v-chip>
+                        </template>
                         <template v-slot:[`item.ConsumptionType`]='{ item }'>
                             <v-chip class="px-6">{{!item.ConsumptionType ? 'Electricity' : 'Water'}}<v-icon right>{{!item.ConsumptionType ? 'mdi-flash' : 'mdi-water'}}</v-icon></v-chip>
                         </template>
                         <template v-slot:[`item.Actions`]='{ item }'>
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                    <v-btn v-if="item.SendFlag==0"
+                                    @click="editRecord(item)" 
+                                    :color="themeColor == '' ? '#1976d2' : themeColor" 
+                                    v-on="on" 
+                                    v-bind="attrs" 
+                                    small 
+                                    dark
+                                    fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                <v-btn v-else
+                                    @click="editRecord(item)" 
+                                    :color="themeColor == '' ? '#1976d2' : themeColor" 
+                                    v-on="on" 
+                                    v-bind="attrs" 
+                                    small 
+                                    dark
+                                    fab><v-icon>mdi-eye</v-icon></v-btn>
                                 </template>
-                                <span>Edit Record</span>
+                                <span v-if="item.SendFlag==0">Edit Record</span>
+                                <span v-else>View Record</span>
                             </v-tooltip>
                         </template>
                     </v-data-table>
@@ -172,9 +191,11 @@
                                                     hide-details
                                                     type="number"
                                                     label="Reading"
+                                                    :readonly="!editConsumption.SendFlag==0"
+                                                    :filled="!editConsumption.SendFlag==0"
                                                     @blur="computeConsumption(editConsumption)"
                                                     @change="computeConsumption(editConsumption)"
-                                                >
+                                                >                                               
                                                 </v-text-field>
                                             </v-col>
                                             <v-col cols= 12 md="8" sm="6">
@@ -254,7 +275,8 @@
                                                     hide-details
                                                     filled
                                                     readonly
-                                                    label="Amount/Room"                                               
+                                                    label="Amount/Room"  
+                                                    type='number'                                             
                                                 >
                                                 </v-text-field>
                                             </v-col>
@@ -267,8 +289,8 @@
                                                     outlined
                                                     hide-details
                                                     filled
-                                                    readonly
-                                                    label="Amount/Head"                                              
+                                                    readonly      
+                                                    label="Amount/Head"                               
                                                 >
                                                 </v-text-field>
                                             </v-col>
@@ -310,7 +332,7 @@ export default {
                 {text:'Total tenants',value:'TotalTenants'},                
                 {text:'Consumption',value:'TotalConsumption'},
                 {text:'Amount/Room',value:'TotalKWM3'},
-                {text:'Amount/Head',value:'TotalConsumption'},
+                {text:'Amount/Head',value:'TotalAmount'},
                 {text:'Actions',value:'Actions'},
             ],
             itemstype:[
@@ -332,6 +354,8 @@ export default {
                     TotalConsumption:0,
                     TotalKWM3:0,
                     TotalAmount:0,
+                    SendDate:null,
+                    SendFlag:0,
             },
             breadCrumbsItems2:[],
             dialog:false,
@@ -416,6 +440,7 @@ export default {
             }else{
                 this.lesskwm3=10
             }
+           
             this.breadCrumbsItems2.push(
                 {text: data.BuildingDesc, disabled: false, href: '#'},
                 {text: data.FloorDesc, disabled: false, href: '#'},
@@ -423,12 +448,11 @@ export default {
             )
 
         },
-        computeConsumption(val){
-            
-            if (val.LatestReading>80) {
-                val.TotalConsumption=val.LatestReading - val.PrevReading
-                val.TotalKWM3=(val.TotalConsumption - this.lesskwm3) * this.amountperkwm3
-                val.TotalAmount=val.TotalKWM3 / val.TotalTenants
+        computeConsumption(val){ 
+            val.TotalConsumption=val.LatestReading - val.PrevReading           
+            if (val.TotalConsumption>80) {                
+                val.TotalKWM3=((val.TotalConsumption - this.lesskwm3) * this.amountperkwm3).toFixed(2)
+                val.TotalAmount=(val.TotalKWM3 / val.TotalTenants).toFixed(2)
                 this.$forceUpdate()
             }else{
                 val.TotalConsumption=0
@@ -453,7 +477,6 @@ export default {
                 1,
             ]
             }
-            console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
                 this.$emit('update:consumptiondetails',res.data)
                 console.log(res.data);
@@ -479,8 +502,7 @@ export default {
                 TotalTenants:0,
                 TotalConsumption:0,
                 TotalKWM3:0,
-                TotalAmount:0
-                    
+                TotalAmount:0                    
             }
             this.breadCrumbsItems2=[]
         }
