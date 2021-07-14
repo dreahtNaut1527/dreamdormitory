@@ -11,11 +11,11 @@
                 <v-row align="center" justify="center">
                     <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                         <v-card outlined>
-                            <v-overlay :value="item.CompanyCode != hrisUserInfo.COCODE && item.CompanyCode" :opacity="0.4" absolute>
+                            <!-- <v-overlay :value="item.CompanyCode != hrisUserInfo.COCODE && item.CompanyCode" :opacity="0.4" absolute>
                                 <v-row align="center" justify="center">
                                     <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
                                 </v-row>
-                            </v-overlay>
+                            </v-overlay> -->
                             <v-container>
                                 <v-subheader>
                                     Bed {{item.BedNo}}
@@ -167,7 +167,10 @@ export default {
     },
     created() {
         this.roomDetails = this.$route.query
-        this.clearVariables()
+        this.loadMasterMaintenance('availabletenants').then(res => {
+            this.availableTenants = this.hrisUserInfo.COCODE == '20' ? res.data : res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
+            this.loadOccupants()
+        })
     },
     computed: {
         filterCurrentOccupants() {
@@ -197,25 +200,12 @@ export default {
                 this.loadCurrentOccupants(this.filterOccupants)
             })
         },
-        loadCurrentOccupants(val) {
+        async loadCurrentOccupants(val) {
             let employee = []
+            let station = await this.handleSelectData()
             val.forEach((rec, index, array) => {
-                if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.COCODE) {
-                    this.handleSelectData().then(data => {
-                        let station = data.filter(item => item.EMPLCODE == rec.EmployeeCode)
-                        employee = station[0]
-                        Object.assign(rec, {
-                            EmployeeName: employee.EMPNAME || null,
-                            Department: employee.DEPTDESC || null,
-                            Section: employee.SECTIONDESC || null,
-                            Team: employee.TEAMDESC || null,
-                            Designation: employee.DESIGDESC || null,
-                            Dialog: false
-                        })
-                        this.currentOccupants.unshift(rec)
-                        this.loading = false
-                    })
-                } else {
+                if(rec.EmployeeCode != undefined) {
+                    employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)[0]
                     Object.assign(rec, {
                         EmployeeName: employee.EMPNAME || null,
                         Department: employee.DEPTDESC || null,
@@ -224,7 +214,19 @@ export default {
                         Designation: employee.DESIGDESC || null,
                         Dialog: false
                     })
+                    this.currentOccupants.unshift(rec)
+                    this.loading = false
+                } else {
+                    Object.assign(rec, {
+                        EmployeeName: null,
+                        Department: null,
+                        Section: null,
+                        Team: null,
+                        Designation: null,
+                        Dialog: false
+                    })
                     this.currentOccupants.push(rec)
+                    this.loading = false
                 }
 
                 if(index == array.lenght) {
@@ -232,16 +234,30 @@ export default {
                 }
             })
         },
-        getAvailableTenants(code) {
-            return this.availableTenants.filter(rec => {
-                return rec.EmployeeCode == code
+        async getAvailableTenants(code) {
+            let newAssignedTenant = {}
+            let station = await this.handleSelectData()
+            this.availableTenants.forEach(rec => {
+                if(rec.EmployeeCode == code) {
+                    let employees = station.filter(item => item.EMPLCODE == code)[0]
+                    Object.assign(newAssignedTenant, {
+                        ...rec,
+                        EmployeeName: employees.EMPNAME || null,
+                        Department: employees.DEPTDESC || null,
+                        Section: employees.SECTIONDESC || null,
+                        Team: employees.TEAMDESC || null,
+                        Designation: employees.DESIGDESC || null
+                    })
+                    this.$forceUpdate()
+                }
             })
+            return newAssignedTenant
         },
         assignVacant(data) {
-            this.currentOccupants.forEach(rec => {
+            this.currentOccupants.forEach(async rec => {
                 if(rec.BedNo == data.BedNo && rec.EmployeeCode) {
-                    let tenant = this.getAvailableTenants(data.EmployeeCode)
-                    Object.assign(rec, tenant[0])
+                    let tenant = await this.getAvailableTenants(data.EmployeeCode)
+                    Object.assign(rec, tenant)
                     if(!rec.EmployeeName) {
                         this.alert = true
                         this.alertText = 'Employee does not registered as tenant'
@@ -275,7 +291,7 @@ export default {
                 ]
             }
             if(this.$refs.form[index].validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         setTimeout(() => {
@@ -295,27 +311,11 @@ export default {
             this.currentOccupants = []
             this.availableTenants = []
             this.loadMasterMaintenance('availabletenants').then(res => {
+                this.availableTenants = this.hrisUserInfo.COCODE == '20' ? res.data : res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
                 this.loadOccupants()
-                this.availableTenants = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
             })
         }
 
-    },
-    watch: {
-        availableTenants(val) {
-            val.forEach(rec => {
-                this.handleSelectData().then(res => {
-                    Object.assign(rec, {
-                        EmployeeName: res[0].EMPNAME || null,
-                        Department: res[0].DEPTDESC || null,
-                        Section: res[0].SECTIONDESC || null,
-                        Team: res[0].TEAMDESC || null,
-                        Designation: res[0].DESIGDESC || null
-                    })
-                    this.$forceUpdate()
-                })
-            })
-        }
     },
     components: {
         tenantdetails
