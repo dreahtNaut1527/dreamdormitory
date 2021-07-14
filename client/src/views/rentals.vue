@@ -363,7 +363,7 @@ export default {
     },
     methods: {
         async loadRentatTotal(){
-            let station=await this.handleSelectData(this.hrisUserInfo.ABBR)
+            let station=await this.handleSelectData()
              this.loadMasterMaintenance('rentalsTotal').then(res => {
                 this.rentalsTotal=res.data
                 if (this.rentalsTotal != []){

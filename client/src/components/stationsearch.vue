@@ -49,7 +49,7 @@ export default {
     methods: {
         loadStation() {
             this.loading = true
-            this.handleSelectData(this.hrisUserInfo.ABBR).then(res => {
+            this.handleSelectData().then(res => {
                 this.station = res
                 this.loading = false
             })

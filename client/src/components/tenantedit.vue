@@ -55,9 +55,23 @@
                         <v-form ref="form" v-model="valid" lazy-validation>
                             <v-container class="my-4" fluid>
                                 <v-row dense>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Employee:</v-subheader>
+                                    <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="3"><v-subheader>Company:</v-subheader></v-col>
+                                    <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="9">
+                                        <v-select
+                                            v-model="editTenantDetails.CompanyCode"
+                                            placeholder="Company"
+                                            :items="filterCompany"
+                                            item-value="COCODE"
+                                            item-text="SHORTNAME"
+                                            width="20"
+                                            hide-details
+                                            :clearable="!isEditMode"
+                                            :readonly="isEditMode"
+                                            outlined
+                                            dense
+                                        ></v-select>
                                     </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Employee:</v-subheader></v-col>
                                     <v-col cols="12" md="2" sm="2">
                                         <v-text-field
                                             v-model="editTenantDetails.EmployeeCode"
@@ -67,9 +81,8 @@
                                             :color="themeColor == '' ? '#1976d2' : themeColor"
                                             @click:clear="newRecord()"
                                             placeholder="Code"
-                                            type="number"
                                             :clearable="!isEditMode"
-                                            :readonly="isEditMode"
+                                            :readonly="isEditMode || !editTenantDetails.CompanyCode"
                                             hide-details
                                             outlined
                                             dense   
@@ -86,9 +99,7 @@
                                             dense
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Department:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Department:</v-subheader></v-col>
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Department"
@@ -100,9 +111,7 @@
                                             dense
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Section:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Section:</v-subheader></v-col>
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Section"
@@ -114,9 +123,7 @@
                                             dense
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Team:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Team:</v-subheader></v-col>
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.Team"
@@ -128,21 +135,15 @@
                                             dense
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>MoveIn:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>MoveIn:</v-subheader></v-col>
                                     <v-col cols="12" md="3" sm="9">
                                         <datepicker :menu="moveInDialog" :dateValue.sync=editTenantDetails.MoveInDate dateLabel="Move-In" />
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>MoveOut:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>MoveOut:</v-subheader></v-col>
                                     <v-col cols="12" md="3" sm="9">
                                         <datepicker :menu="moveOutDialog" :dateValue.sync=editTenantDetails.MoveOutDate dateLabel="Move-Out" />
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Rental Fee:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Rental Fee:</v-subheader></v-col>
                                     <v-col cols="12" md="9" sm="9">
                                         <v-text-field
                                             v-model="editTenantDetails.RentalFee"
@@ -153,9 +154,7 @@
                                             dense
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" sm="3">
-                                        <v-subheader>Remarks:</v-subheader>
-                                    </v-col>
+                                    <v-col cols="12" md="3" sm="3"><v-subheader>Remarks:</v-subheader> </v-col>
                                     <v-col cols="12" md="9" sm="9">
                                         <v-textarea
                                             v-model="editTenantDetails.Remarks"
@@ -205,8 +204,10 @@ export default {
             moveInDialog: false,
             moveOutDialog: false,
             stationSearchDialog: false,
+            cocode: '',
             alertText: '',
             tenantsLists: [],
+            companies: [],
             editTenantDetails: {},
             breadCrumbsItems: [ 
                 {text: 'Process', disabled: false, href: '#'},
@@ -218,6 +219,7 @@ export default {
     created() {
         this.emplcode = this.$route.query.code || null
         this.isEditMode = this.emplcode ? true : false
+        this.loadCompanies()
     },
     mounted() {
         this.loadMasterMaintenance('tenants').then(async res => {
@@ -225,14 +227,14 @@ export default {
             this.tenantsLists = res.data
             if(this.filterTenants[0] != undefined) {
                 let station = await this.handleSelectData()
-                let employee = station.filter(item => item.EMPLCODE == this.filterTenants[0].EmployeeCode)
+                let employee = station.filter(item => item.EMPLCODE == this.filterTenants[0].EmployeeCode)[0]
                 Object.assign(this.editTenantDetails, {
                     ...this.filterTenants[0],
-                    EmployeeName: employee[0].EMPNAME || null,
-                    Department: employee[0].DEPTDESC || null,
-                    Section: employee[0].SECTIONDESC || null,
-                    Team: employee[0].TEAMDESC || null,
-                    Designation: employee[0].DESIGDESC || null
+                    EmployeeName: employee.EMPNAME || null,
+                    Department: employee.DEPTDESC || null,
+                    Section: employee.SECTIONDESC || null,
+                    Team: employee.TEAMDESC || null,
+                    Designation: employee.DESIGDESC || null
                 })
                 this.loading = false
                 this.$forceUpdate()
@@ -246,9 +248,23 @@ export default {
             return this.tenantsLists.filter(rec => {
                 return rec.EmployeeCode.includes(this.emplcode)
             })
+        },
+        filterCompany() {
+            return this.companies.filter(rec => {
+                return rec.SHORTNAME
+            })
         }
     },
     methods: {
+        loadCompanies() {
+            if(this.hrisUserInfo.COCODE == '20') {
+                this.axios.post(`${this.api_HRIS}/ora_company.php`, {abbr: this.hrisUserInfo.ABBR}).then(res => {
+                    this.companies = res.data
+                })
+            } else {
+                this.cocode = this.hrisUserInfo.COCODE
+            }
+        },
         newRecord() {
             this.emplcode = null
             this.isEditMode = false
@@ -270,7 +286,7 @@ export default {
                 ]
             }
             if(this.$refs.form.validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         if(this.isEditMode) {
@@ -289,21 +305,28 @@ export default {
         },
         async getStationSearch(emplcode) {
             if(this.isEditMode || !emplcode) return;
+            this.loading = true
             let station = await this.handleSelectData()
-            let employee = station.filter(item => item.EMPLCODE == emplcode)
-            Object.assign(this.editTenantDetails, {
-                CompanyCode: employee[0].COCODE,
-                MoveInDate: null,
-                MoveOutDate: null,
-                Remarks: null,
-                EmployeeName: employee[0].EMPNAME || null,
-                Department: employee[0].DEPTDESC || null,
-                Section: employee[0].SECTIONDESC || null,
-                Team: employee[0].TEAMDESC || null,
-                Designation: employee[0].DESIGDESC || null,
-                RentalFee: 1500.00
-            })
-            this.$forceUpdate()
+            let company = this.filterCompany.filter(rec => rec.COCODE == this.editTenantDetails.CompanyCode)
+            let employee = station.filter(item => item.SHORTNAME == company[0].SHORTNAME)
+            let data = employee.filter(item => item.EMPLCODE == emplcode)[0]
+            if(data) {
+                Object.assign(this.editTenantDetails, {
+                    MoveInDate: null,
+                    MoveOutDate: null,
+                    Remarks: null,
+                    EmployeeName: data.EMPNAME || null,
+                    Department: data.DEPTDESC || null,
+                    Section: data.SECTIONDESC || null,
+                    Team: data.TEAMDESC || null,
+                    Designation: data.DESIGDESC || null,
+                    RentalFee: 1500.00
+                })
+                this.$forceUpdate()
+            } else {
+                this.handleConfimedMessage('', 'No record found', 'error')
+            }
+            this.loading = false
         }
     },
     components: {

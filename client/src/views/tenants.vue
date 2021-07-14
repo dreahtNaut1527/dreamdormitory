@@ -77,6 +77,7 @@
                             :search="searchTable"
                             :page.sync="page"
                             :loading="loading"
+                            :items-per-page="9"
                             loading-text=""
                             @page-count="pageCount = $event"
                             hide-default-footer
@@ -193,7 +194,7 @@ export default {
             })
         },
         departmentList() {
-            return this.tenants.map(rec => {
+            return this.filterTenants.map(rec => {
                 return rec.Department
             })
         },
@@ -215,14 +216,14 @@ export default {
                 this.tenants = res.data
                 if(this.tenants != []) {
                     this.tenants.forEach(rec => {
-                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                        let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)[0]
                         Object.assign(rec, {
-                            ShortName: employee[0].SHORTNAME || 'NONE',
-                            EmployeeName: employee[0].EMPNAME || 'NONE',
-                            Department: employee[0].DEPTDESC || 'NONE',
-                            Section: employee[0].SECTIONDESC || 'NONE',
-                            Team: employee[0].TEAMDESC || 'NONE',
-                            Designation: employee[0].DESIGDESC || 'NONE'
+                            ShortName: employee.SHORTNAME || 'NONE',
+                            EmployeeName: employee.EMPNAME || 'NONE',
+                            Department: employee.DEPTDESC || 'NONE',
+                            Section: employee.SECTIONDESC || 'NONE',
+                            Team: employee.TEAMDESC || 'NONE',
+                            Designation: employee.DESIGDESC || 'NONE'
                         })
                         this.$forceUpdate()
                     })

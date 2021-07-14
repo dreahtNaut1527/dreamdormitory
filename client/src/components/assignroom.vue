@@ -201,7 +201,7 @@ export default {
             let employee = []
             val.forEach((rec, index, array) => {
                 if(rec.EmployeeCode != undefined && rec.CompanyCode == this.hrisUserInfo.COCODE) {
-                    this.handleSelectData(this.hrisUserInfo.ABBR).then(data => {
+                    this.handleSelectData().then(data => {
                         let station = data.filter(item => item.EMPLCODE == rec.EmployeeCode)
                         employee = station[0]
                         Object.assign(rec, {
@@ -304,7 +304,7 @@ export default {
     watch: {
         availableTenants(val) {
             val.forEach(rec => {
-                this.handleSelectData(this.hrisUserInfo.ABBR).then(res => {
+                this.handleSelectData().then(res => {
                     Object.assign(rec, {
                         EmployeeName: res[0].EMPNAME || null,
                         Department: res[0].DEPTDESC || null,

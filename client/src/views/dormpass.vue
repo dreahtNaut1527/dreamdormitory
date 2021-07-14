@@ -215,7 +215,7 @@ export default {
         async loadData() {
             let stationData = []
             this.loading = true
-            stationData = await this.handleSelectData(this.hrisUserInfo.ABBR)
+            stationData = await this.handleSelectData()
             this.loadMasterMaintenance('dormpassheader').then(res => {
                 this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
                 this.dormitoryPassLists.forEach(rec => {
