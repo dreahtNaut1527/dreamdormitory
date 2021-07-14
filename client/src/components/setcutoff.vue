@@ -131,12 +131,12 @@ export default {
                                 this.handleConfimedMessage('', 'Cut-Off must be processed', 'error')
                             }
                         }
-                        this.dialog = !this.dialog
                     })
                 } else if(result.isDenied) {
                     this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
                     this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
                 }
+                this.dialog = !this.dialog
             })
         },
         processRental(lastPaydate, dtconsumptionstart, dtconsumptionend) {
