@@ -151,7 +151,7 @@
                     <v-list-item-subtitle>Set Cut-Off</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                    <v-btn @click="setNewCutOffDate()" :color="themeColor == '' ? '#1976d2' : themeColor" block small dark fab>
+                    <v-btn @click="cutOffDateDialog = !cutOffDateDialog" :color="themeColor == '' ? '#1976d2' : themeColor" block small dark fab>
                         <v-icon>mdi-calendar-range</v-icon>
                     </v-btn>
                 </v-list-item-action>
@@ -220,13 +220,6 @@ export default {
         this.loadNavDrawerLists()
     },
     methods: {
-        setNewCutOffDate() {
-            this.handleQuestionMessage('', 'Set new payroll date?', 'Proceed', 'question').then(result => {
-                if(result.isConfirmed) {
-                    this.cutOffDateDialog = !this.cutOffDateDialog
-                }
-            })
-        },
         changeTheme() {
             this.$vuetify.theme.dark = this.dark
             this.icon = this.dark ? 'mdi-weather-sunny' : 'mdi-weather-night'

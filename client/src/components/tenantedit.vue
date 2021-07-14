@@ -220,22 +220,22 @@ export default {
         this.isEditMode = this.emplcode ? true : false
     },
     mounted() {
-        this.loadMasterMaintenance('tenants').then(res => {
+        this.loadMasterMaintenance('tenants').then(async res => {
             this.loading = true
             this.tenantsLists = res.data
             if(this.filterTenants[0] != undefined) {
-                this.stationSearch(this.filterTenants[0].EmployeeCode).then(res => {
-                    Object.assign(this.editTenantDetails, {
-                        ...this.filterTenants[0],
-                        EmployeeName: res.data[0].EMPNAME || null,
-                        Department: res.data[0].DEPTDESC || null,
-                        Section: res.data[0].SECTIONDESC || null,
-                        Team: res.data[0].TEAMDESC || null,
-                        Designation: res.data[0].DESIGDESC || null
-                    })
-                    this.loading = false
-                    this.$forceUpdate()
+                let station = await this.handleSelectData()
+                let employee = station.filter(item => item.EMPLCODE == this.filterTenants[0].EmployeeCode)
+                Object.assign(this.editTenantDetails, {
+                    ...this.filterTenants[0],
+                    EmployeeName: employee[0].EMPNAME || null,
+                    Department: employee[0].DEPTDESC || null,
+                    Section: employee[0].SECTIONDESC || null,
+                    Team: employee[0].TEAMDESC || null,
+                    Designation: employee[0].DESIGDESC || null
                 })
+                this.loading = false
+                this.$forceUpdate()
             } else {
                 this.loading = false
             }
@@ -287,28 +287,25 @@ export default {
                 this.alertText = 'Employee Code is required'
             }
         },
-        getStationSearch(emplcode) {
+        async getStationSearch(emplcode) {
             if(this.isEditMode || !emplcode) return;
-            this.axios.post(`${this.api_HRIS}/ora_stationsearch.php`, {emplcode: emplcode}).then(res => {
-                    if(res.data[0]) {
-                        Object.assign(this.editTenantDetails, {
-                            CompanyCode: this.hrisUserInfo.CODE,
-                            MoveInDate: null,
-                            MoveOutDate: null,
-                            Remarks: null,
-                            EmployeeName: res.data[0].EMPNAME || null,
-                            Department: res.data[0].DEPTDESC || null,
-                            Section: res.data[0].SECTIONDESC || null,
-                            Team: res.data[0].TEAMDESC || null,
-                            Designation: res.data[0].DESIGDESC || null,
-                            RentalFee: 1500.00
-                        })
-                        this.$forceUpdate()
-                    } else {
-                        this.alert = true
-                        this.alertText = 'No record found'
-                    }
-            })
+            let station = await this.handleSelectData()
+            setTimeout(() => {
+                let employee = station.filter(item => item.EMPLCODE == emplcode)
+                Object.assign(this.editTenantDetails, {
+                    CompanyCode: '',
+                    MoveInDate: null,
+                    MoveOutDate: null,
+                    Remarks: null,
+                    EmployeeName: employee[0].EMPNAME || null,
+                    Department: employee[0].DEPTDESC || null,
+                    Section: employee[0].SECTIONDESC || null,
+                    Team: employee[0].TEAMDESC || null,
+                    Designation: employee[0].DESIGDESC || null,
+                    RentalFee: 1500.00
+                })
+                console.log(this.editTenantDetails);
+            }, 1500)
         }
     },
     components: {

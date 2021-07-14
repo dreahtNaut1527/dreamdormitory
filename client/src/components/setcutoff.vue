@@ -95,35 +95,45 @@ export default {
             this.disableprocess = !this.valid
         },
         processNewCutOffDate() {
-            let dtconsumptionstart = null
-            let dtconsumptionend = null
-            let lastPaydate = `${this.year}-${this.selectedmonth}-15`
-            
-            if (this.cutoff == 2) {
-                lastPaydate = this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
-                dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
-                dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-20`).format('YYYY-MM-DD')
-            } else {                
-                dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
-                dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
-            }  
+            this.handleQuestionMessage('', 'Set new payroll transaction?', 'Proceed', 'question').then(result => {
+                if(result.isConfirmed) {
+                    let dtconsumptionstart = null
+                    let dtconsumptionend = null
+                    let lastPaydate = `${this.year}-${this.selectedmonth}-15`
+                    
+                    if (this.cutoff == 2) {
+                        lastPaydate = this.moment(lastPaydate).endOf('month').format('YYYY-MM-DD')
+                        dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-06`).format('YYYY-MM-DD')
+                        dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-20`).format('YYYY-MM-DD')
+                    } else {                
+                        dtconsumptionstart = this.moment(`${this.year}-${this.selectedmonth}-21`).add(-1,'months').format('YYYY-MM-DD')
+                        dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
+                    }  
 
-            let body = {
-                procedureName: 'ProcSetNewPayrollDate',
-                values: [
-                    lastPaydate
-                ]
-            }
+                    let body = {
+                        procedureName: 'ProcSetNewPayrollDate',
+                        values: [
+                            lastPaydate
+                        ]
+                    }
 
-            this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
-                let result = res.data[0]
-                if(result.ErrCode =='201') {
-                    this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
-                    this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
-                    this.handleConfimedMessage('', 'Cut-Off already processed', 'info')
-                    this.dialog = !this.dialog
-                } else {
-                    this.processRental(lastPaydate, dtconsumptionstart, dtconsumptionend)
+                    this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
+                        let result = res.data[0]
+                        if(result.ErrCode == '203' || result.ErrCode == '200') {
+                            this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
+                            this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
+                            this.processRental(lastPaydate, dtconsumptionstart, dtconsumptionend)
+                        } else {
+                            if(result.ErrCode == '201') {
+                                this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
+                                this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
+                                this.handleConfimedMessage('', 'Cut-Off already processed', 'info')
+                            }else {
+                                this.handleConfimedMessage('', 'Cut-Off must be processed', 'error')
+                            }
+                        }
+                        this.dialog = !this.dialog
+                    })
                 }
             })
         },

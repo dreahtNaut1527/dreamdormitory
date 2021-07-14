@@ -168,7 +168,6 @@ export default {
         filterTenants() {
             return this.tenants.filter(rec => {
                 return (
-                    rec.CompanyCode.includes(this.hrisUserInfo.COCODE || '') && 
                     rec.Department.includes(this.department || '') &&
                     rec.Section.includes(this.section || '') &&
                     rec.Team.includes(this.team || '')
@@ -192,9 +191,9 @@ export default {
         }
     },
     methods: {
-        async loadTenants() {
-            let station = await this.handleSelectData(this.hrisUserInfo.ABBR)
-            this.loadMasterMaintenance('tenants').then(res => {
+        loadTenants() {
+            this.loadMasterMaintenance('tenants').then(async res => {
+                let station = await this.handleSelectData()
                 this.tenants = res.data
                 if(this.tenants != []) {
                     this.tenants.forEach(rec => {

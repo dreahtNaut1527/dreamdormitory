@@ -57,7 +57,7 @@ export default {
      },
      methods: {
           loadEvents() {
-               this.axios.get(`${this.api_HRIS}/timeholidays.php`).then(res => {
+               this.axios.get(`${this.api_HRIS}/ora_timeholidays.php`, {abbr: this.hrisUserInfo.ABBR}).then(res => {
                     res.data.forEach(rec => {
                          this.events.push(this.moment(rec.HOLDATE).format('YYYY-MM-DD'))
                     })
