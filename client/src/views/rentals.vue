@@ -66,6 +66,7 @@
                         hide-default-footer
                         :page.sync='page'
                         @page-count="pageCount = $event"
+                        :items-per-page="9"
                         loading-text="Loading Data. Please Wait..."                        
                     >   
                         <template v-slot:[`item.Actions`] = '{ item }'>
@@ -215,7 +216,6 @@
             </v-card>
             
         </v-dialog>
-        {{sendFlag}}
         <v-fab-transition v-if="sendFlag.length == 0">
             <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
