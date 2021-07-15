@@ -28,9 +28,9 @@
                     <template v-slot:default="props">
                         <v-row dense>
                             <v-col cols="12" lg="3" md="4" sm="4" v-for="(room, i) in props.items" :key="i">
-                                <v-hover v-slot="{ hover }" open-delay="200">
-                                    <v-card class="rounded-lg" :elevation="hover ? 12 : 2" @click="assignRoom(room)" outlined>
-                                        <v-subheader class="font-weight-bold">
+                                <v-hover v-slot="{ hover }" open-delay="50">
+                                    <v-card class="rounded-xl transition-swing" :elevation="hover ? 16 : 3" @click="assignRoom(room)" outlined>
+                                        <v-subheader class="font-weight-black">
                                             {{ room.RoomDesc }}  
                                             <v-spacer></v-spacer>
                                             <v-sheet 
@@ -43,9 +43,9 @@
                                                 {{ getTotalOccupants(room.Beds) }}
                                             </v-sheet>
                                         </v-subheader>
-                                        <v-container>
+                                        <v-container fluid>
                                             <v-row justify="start" dense>
-                                                <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" cols="12" lg="2" md="3" sm="3">
+                                                <v-col v-for="(item, i) in sortOccupants(room.Beds)" :key="i" class="mr-n3" cols="12" lg="2" md="3" sm="3">
                                                     <v-avatar class="text-center" size="50">
                                                         <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
                                                     </v-avatar>
@@ -76,33 +76,6 @@
                     :total-visible="10"
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                 ></v-pagination>
-                <!-- <v-row v-for="(floor, i) in floors" :key="i" dense>
-                    <v-container class="mb-n2 overline">
-                        <v-chip outlined>Floor {{floor.FloorNo}}</v-chip>
-                    </v-container>
-                    <v-col cols="12" md="2" sm="4" v-for="(room, i) in listOfRoomsPerFloor(floor.FloorNo)" :key="i">
-                        <v-hover v-slot="{ hover }" open-delay="200">
-                            <v-card class="rounded-lg" @click="assignRoom(room)" :elevation="hover ? 8 : 2" v-if="room.FloorNo == floor.FloorNo" outlined>
-                                <v-subheader class="font-weight-bold">
-                                    {{ room.RoomDesc }}  
-                                    <v-spacer></v-spacer>
-                                    <v-sheet v-if="getTotalOccupants(room.Beds) < 4" class="text-center rounded-lg mt-n10" color="red" width="30" dark>
-                                        {{ getTotalOccupants(room.Beds) }}
-                                    </v-sheet>
-                                </v-subheader>
-                                <v-container>
-                                    <v-row justify="end" dense>
-                                        <v-col v-for="(item, i) in room.Beds" :key="i" cols="12" md="3" sm="3">
-                                            <v-avatar class="text-center" size="35">
-                                                <v-img :src="!item.EmployeeCode ? '' : `${photo}/${item.EmployeeCode}.jpg`" />
-                                            </v-avatar>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-card>
-                        </v-hover>
-                    </v-col>
-                </v-row> -->
             </v-container>
         </v-lazy>
         <v-dialog v-model="dialog" width="500" persistent>
@@ -192,6 +165,7 @@ export default {
         return {
             hover: false,
             dialog: false,
+            loading: false,
             tab: 0,
             page: 1,
             floor: 1,
@@ -281,9 +255,11 @@ export default {
             }).sort((a, b) => b.EmployeeCode - a.EmployeeCode)
         },
         loadMasters() {
+            this.loading = true
             this.loadMasterMaintenance('buildings').then(res => {
                 this.buildingMasters = res.data
                 this.getBuilding()
+                this.loading = false
             })
             this.loadMasterMaintenance('floors').then(res => this.floorMasters = res.data)
             this.loadMasterMaintenance('rooms').then(res => this.roomListMaster = res.data)

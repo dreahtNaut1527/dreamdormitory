@@ -18,7 +18,11 @@
                                     hide-details
                                     outlined
                                     dense
-                                ></v-text-field>
+                                >
+                                    <template v-slot:append-outer>
+                                        <v-btn @click="handleExportExcel" class="mt-n2" :color="themeColor == '' ? '#1976d2' : themeColor" fab small dark><v-icon>mdi-file-find</v-icon></v-btn>
+                                    </template>
+                                </v-text-field>
                             </v-col>
                         </v-row>
                         <v-divider class="mt-4" ></v-divider>
@@ -160,7 +164,7 @@ export default {
                 ]
             }
             if (this.$refs.form.validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         if(this.editMode) {
@@ -173,6 +177,21 @@ export default {
                     }
                 })
             }
+        },
+        handleExportExcel() {
+            let data = []
+            this.handleQuestionMessage('', 'Export to Excel?', 'Export', null, 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.floors.forEach(rec => {
+                        data.push({
+                            No: rec.FloorNo,
+                            Room: `Floor ${rec.FloorNo}`,
+                            Created: this.moment(rec.CreatedDate).format('YYYY-MM-DD')
+                        })
+                    })
+                    this.exportExcel(data, 'Floor')
+                }
+            })
         },
         clearVariables() {
             this.editMode = false

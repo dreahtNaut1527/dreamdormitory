@@ -234,7 +234,7 @@ export default {
         },
         saveRecord() {
             if(this.$refs.form.validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.saveDormitoryPassHDetails()
                         this.saveDormitoryPassHeader()

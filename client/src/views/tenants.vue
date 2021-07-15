@@ -67,7 +67,11 @@
                                     clearable
                                     outlined
                                     dense
-                                ></v-text-field>
+                                >
+                                    <template v-slot:append-outer>
+                                        <v-btn @click="handleExportExcel" class="mt-n2" :color="themeColor == '' ? '#1976d2' : themeColor" fab small dark><v-icon>mdi-file-find</v-icon></v-btn>
+                                    </template>
+                                </v-text-field>
                             </v-col>
                         </v-row>
                         <v-divider class="mt-4"></v-divider>
@@ -233,7 +237,28 @@ export default {
         },
         editRecord(data) {
             this.$router.push({name: 'tenantedit', query: {code: data.EmployeeCode}})
-        }
+        },
+        handleExportExcel() {
+            let data = []
+            this.handleQuestionMessage('', 'Export to Excel?', 'Export', null, 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.filterTenants.forEach(rec => {
+                        data.push({
+                            Company: rec.ShortName,
+                            EmployeeCode: rec.EmployeeCode,
+                            EmployeeName: rec.EmployeeName,
+                            Department: rec.Department,
+                            Section: rec.Section,
+                            Team: rec.Team,
+                            Designation: rec.Designation,
+                            MoveIn: this.moment(rec.MoveInDate).format('YYYY-MM-DD'),
+                            MoveOut: rec.MoveOutDate ? this.moment(rec.MoveInDate).format('YYYY-MM-DD') : 'N/A'
+                        })
+                    })
+                    this.exportExcel(data, 'List of Tenants')
+                }
+            })
+        },
     }
 }
 </script>

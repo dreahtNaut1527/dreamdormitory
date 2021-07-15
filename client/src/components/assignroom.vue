@@ -10,7 +10,7 @@
             <v-container fluid>
                 <v-row align="center" justify="center">
                     <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
-                        <v-card outlined>
+                        <v-card class="rounded-xl" outlined>
                             <!-- <v-overlay :value="item.CompanyCode != hrisUserInfo.COCODE && item.CompanyCode" :opacity="0.4" absolute>
                                 <v-row align="center" justify="center">
                                     <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
@@ -25,7 +25,7 @@
                                     </v-chip>
                                 </v-subheader>
                                 <v-row dense>
-                                    <v-col cols="12" md="2" sm="2">
+                                    <v-col class="text-center" cols="12" md="2" sm="2">
                                         <v-avatar class="mt-5" size="80">
                                             <img :src="item.EmployeeName ? `${photo}/${item.EmployeeCode}.jpg` : require('../assets/NoPic.jpg')" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
                                         </v-avatar>

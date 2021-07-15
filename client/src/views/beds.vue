@@ -10,7 +10,7 @@
                     </v-toolbar>
                     <v-container fluid>
                         <v-row align="center" justify="end">
-                            <v-col cols=12 md="6">
+                            <v-col cols=12 md="4">
                                 <v-text-field
                                     v-model="searchTable"
                                     hide-details
@@ -19,7 +19,11 @@
                                     :color="themeColor == '' ? '#1976d2' : themeColor"
                                     placeholder="Search Beds"
                                     append-icon="mdi-magnify"
-                                ></v-text-field>
+                                >
+                                    <template v-slot:append-outer>
+                                        <v-btn @click="handleExportExcel" class="mt-n2" :color="themeColor == '' ? '#1976d2' : themeColor" fab small dark><v-icon>mdi-file-find</v-icon></v-btn>
+                                    </template>
+                                </v-text-field>
                             </v-col>
                         </v-row>    
                         <v-divider class="mt-4"></v-divider> 
@@ -155,7 +159,7 @@ export default {
                 ]
             }
             if (this.$refs.form.validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         if(this.editMode) {
@@ -168,6 +172,21 @@ export default {
                     }
                 }) 
             }
+        },
+        handleExportExcel() {
+            let data = []
+            this.handleQuestionMessage('', 'Export to Excel?', 'Export', null, 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.beds.forEach(rec => {
+                        data.push({
+                            No: rec.BedNo,
+                            Bed: rec.BedDesc,
+                            Created: this.moment(rec.CreatedDate).format('YYYY-MM-DD')
+                        })
+                    })
+                    this.exportExcel(data, 'Beds')
+                }
+            })
         },
         clearVariables() {
             this.editMode = false

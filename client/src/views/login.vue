@@ -102,7 +102,7 @@ export default {
             this.axios.post(`${this.api_HRIS}/ora_getusercontrol.php`, body).then(async res => {
                 this.userInfo = res.data[0]
                 if(this.userInfo != {}) {
-                    if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
+                    if(this.md5(this.password) == this.md5(this.userInfo.PASSWORD)) {
                         Object.assign(this.userInfo, {
                             PROCCODE: this.userInfo.PROCCODE.split(","),
                             PROCDESC: this.userInfo.PROCDESC.split(",")

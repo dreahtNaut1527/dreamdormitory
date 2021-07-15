@@ -13,6 +13,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import mixins from './plugins/mixins'
 import indexDB from './plugins/indexDB'
+import exportExcel from './print/exportexcel'
 
 // Vue socket from server side
 const url = process.env.NODE_ENV == 'production' ? process.env.VUE_APP_SERVER : process.env.VUE_APP_LOCAL_SERVER
@@ -27,6 +28,7 @@ Vue.prototype.axios = axios
 Vue.prototype.md5 = md5
 Vue.prototype.moment = moment
 Vue.prototype.Swal = Swal
+Vue.prototype.exportExcel = exportExcel
 
 // Vue Use
 // Vue.use(Swal)

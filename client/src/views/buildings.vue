@@ -8,7 +8,7 @@
                         <v-toolbar-title>Buildings</v-toolbar-title>
                     </v-toolbar>
                     <v-container fluid>
-                        <v-row align="center" justify="end">
+                        <v-row align="center" justify="end" no-gutters>
                             <v-col cols="12" md="4">
                                 <v-text-field
                                     v-model="searchTable"
@@ -18,12 +18,16 @@
                                     hide-details
                                     outlined
                                     dense
-                                ></v-text-field>
+                                >
+                                    <template v-slot:append-outer>
+                                        <v-btn @click="handleExportExcel" class="mt-n2" :color="themeColor == '' ? '#1976d2' : themeColor" fab small dark><v-icon>mdi-file-find</v-icon></v-btn>
+                                    </template>
+                                </v-text-field> 
                             </v-col>
                         </v-row>
                         <v-divider class="mt-4"></v-divider>
                         <v-data-table
-                            :headers="headers" 
+                            :headers="headers"  
                             :items="buildings"
                             :loading="loading"
                             :search="searchTable"
@@ -179,7 +183,7 @@ export default {
                 ]
             }
             if(this.$refs.form.validate()) {
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         if(this.isEditMode) {
@@ -193,6 +197,21 @@ export default {
                     }
                 }) 
             }
+        },
+        handleExportExcel() {
+            let data = []
+            this.handleQuestionMessage('', 'Export to Excel?', 'Export', null, 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.buildings.forEach(rec => {
+                        data.push({
+                            Building: rec.BuildingDesc,
+                            Address: rec.BuildingAddress,
+                            Created: this.moment(rec.CreatedDate).format('YYYY-MM-DD')
+                        })
+                    })
+                    this.exportExcel(data, 'Buildings')
+                }
+            })
         },
         clearVariables() {
             this.editMode = false

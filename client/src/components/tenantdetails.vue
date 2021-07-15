@@ -2,7 +2,7 @@
     <v-dialog v-model="detailsDialog" width="400" persistent>
         <v-card>
             <v-toolbar flat>
-                <v-toolbar-title class="caption">Details</v-toolbar-title>
+                <v-toolbar-title class="overline">Details</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
@@ -14,9 +14,16 @@
             <v-container fluid>
                 <v-row align="center" justify="center">
                     <v-col class="text-center" cols="12" md="12" sm="12">
-                        <v-avatar size="156">
-                            <v-img :src="`${photo}/${details.EmployeeCode}.jpg`"></v-img>
-                        </v-avatar>
+                        <v-badge :color="themeColor == '' ? '#1976d2' : themeColor" offset-x="50" offset-y="20" bottom>
+                            <v-avatar size="156" :color="themeColor == '' ? '#1976d2' : themeColor">
+                                <v-avatar size="148">
+                                    <v-img :src="`${photo}/${details.EmployeeCode}.jpg`"></v-img>
+                                </v-avatar>
+                            </v-avatar>
+                            <template v-slot:badge>
+                                <v-icon x-large>mdi-star-circle</v-icon>
+                            </template>
+                        </v-badge>
                     </v-col>
                 </v-row>
                 <v-card class="mt-5" outlined>

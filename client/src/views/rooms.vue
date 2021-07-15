@@ -18,7 +18,11 @@
                                     hide-details
                                     outlined
                                     dense
-                                ></v-text-field>
+                                >
+                                    <template v-slot:append-outer>
+                                        <v-btn @click="handleExportExcel" class="mt-n2" :color="themeColor == '' ? '#1976d2' : themeColor" fab small dark><v-icon>mdi-file-find</v-icon></v-btn>
+                                    </template>
+                                </v-text-field>
                             </v-col>
                         </v-row>
                         <v-divider class="mt-4"></v-divider>
@@ -157,7 +161,7 @@ export default {
                 }
             if (this.$refs.form.validate()){
                 // console.log(body);
-                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', 'question').then(result => {
+                this.handleQuestionMessage('', 'Do you want to save data?', 'Save', null, 'question').then(result => {
                     if(result.isConfirmed) {
                         this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
                         if(this.editMode) {
@@ -170,6 +174,21 @@ export default {
                     }
                 })
             }
+        },
+        handleExportExcel() {
+            let data = []
+            this.handleQuestionMessage('', 'Export to Excel?', 'Export', null, 'question').then(result => {
+                if(result.isConfirmed) {
+                    this.rooms.forEach(rec => {
+                        data.push({
+                            No: rec.RoomNo,
+                            Room: `Room ${rec.RoomNo}`,
+                            Created: this.moment(rec.CreatedDate).format('YYYY-MM-DD')
+                        })
+                    })
+                    this.exportExcel(data, 'Rooms')
+                }
+            })
         },
         clearVariables(){
             this.editRooms={
