@@ -169,10 +169,15 @@ export default {
         }
     },
     sockets: {
+        connect() {
+            setTimeout(() => {
+                this.loadTenants()
+            }, 1200);
+        },
         showNotifications() {
             setTimeout(() => {
                 this.loadTenants()
-            }, 1500);
+            }, 1200);
         }
     },
     async created() {
@@ -214,9 +219,10 @@ export default {
         }
     },
     methods: {
-        loadTenants() {
-            this.loadMasterMaintenance('tenants').then(async res => {
-                let station = await this.handleSelectData()
+        async loadTenants() {
+            this.loading = true
+            let station = await this.handleSelectData()
+            this.loadMasterMaintenance('tenants').then(res => {
                 this.tenants = res.data
                 if(this.tenants != []) {
                     this.tenants.forEach(rec => {

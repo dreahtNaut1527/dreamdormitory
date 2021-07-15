@@ -9,6 +9,18 @@
                     </v-toolbar>
                     <v-container fluid>
                         <v-row class="mb-2" align="center" justify="center" dense>
+                            <v-col cols="12" md="2" sm="2">
+                                <v-autocomplete
+                                    v-model="company"
+                                    :items="companyList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    placeholder="Company"
+                                    hide-details
+                                    clearable
+                                    outlined
+                                    dense
+                                ></v-autocomplete>
+                            </v-col>
                             <v-col cols="12" md="3" sm="3">
                                 <v-select
                                     v-model="building"
@@ -34,7 +46,7 @@
                                     dense
                                 ></v-select>
                             </v-col>
-                            <v-col cols="12" md="3" sm="3">
+                            <v-col cols="12" md="2" sm="2">
                                 <v-select
                                     v-model="room"
                                     :items="roomLists"
@@ -48,7 +60,7 @@
                                     dense
                                 ></v-select>
                             </v-col>
-                            <v-col cols="12" md="3" sm="3">
+                            <v-col cols="12" md="2" sm="2">
                                 <v-select
                                     v-model="category"
                                     :items="categoryList"
@@ -144,6 +156,7 @@ export default {
             loading: false,
             searchTable: '',
             building: '',
+            company: '',
             floor: '',
             room: '',
             category: 0,
@@ -183,12 +196,17 @@ export default {
         filterDormitoryPass() {
             return this.dormitoryPassLists.filter(rec => {
                 return (
-                    rec.CompanyCode.includes(this.hrisUserInfo.COCODE) && 
+                    rec.ShortName.includes(this.company || '') && 
                     rec.BuildingDesc.toLowerCase().includes(this.building.toLowerCase() || '') && 
                     rec.FloorDesc.includes(this.floor || '') && 
                     rec.RoomDesc.includes(this.room || '') &&
                     rec.Category == this.category
                 )
+            })
+        },
+        companyList() {
+            return this.dormitoryPassLists.map(rec => {
+                return rec.ShortName
             })
         },
         buildingLists() {
@@ -217,16 +235,17 @@ export default {
             this.loading = true
             stationData = await this.handleSelectData()
             this.loadMasterMaintenance('dormpassheader').then(res => {
-                this.dormitoryPassLists = res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
+                this.dormitoryPassLists = res.data
                 this.dormitoryPassLists.forEach(rec => {
-                    let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)
+                    let employee = stationData.filter(item => item.EMPLCODE == rec.EmployeeCode)[0]
                     Object.assign(rec, {
                         EncodedDate: !rec.EncodedDate ? this.moment().format('YYYY-MM-DD') : rec.EncodedDate,
-                        EmployeeName: employee[0].EMPNAME || null,
-                        Department: employee[0].DEPTDESC || null,
-                        Section: employee[0].SECTIONDESC || null,
-                        Team: employee[0].TEAMDESC || null,
-                        Designation: employee[0].DESIGDESC || null
+                        ShortName: employee.SHORTNAME || 'NONE',
+                        EmployeeName: employee.EMPNAME || 'NONE',
+                        Department: employee.DEPTDESC || 'NONE',
+                        Section: employee.SECTIONDESC || 'NONE',
+                        Team: employee.TEAMDESC || 'NONE',
+                        Designation: employee.DESIGDESC || 'NONE'
                     })
                     this.$forceUpdate()
                 })

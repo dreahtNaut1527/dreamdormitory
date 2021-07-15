@@ -48,11 +48,10 @@ new Vue({
        connect() {
             store.commit('CHANGE_CONNECTION', true)
        },
-       // disconnect() {
-       //      this.checkAppVersion()
-       //      // store.commit('CHANGE_CONNECTION', false)
-       //      // this.$router.push('*')
-       // }
+       disconnect() {
+            store.commit('CHANGE_CONNECTION', false)
+            // this.$router.push('*')
+       }
   },
   render: h => h(App)
 }).$mount('#app')

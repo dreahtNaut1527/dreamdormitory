@@ -307,13 +307,14 @@ export default {
                     arrayVal.push(this.stationSearch(rec.SHORTNAME, null))
                 })
                 this.axios.all(arrayVal).then(this.axios.spread(async (...res) => {
+                    console.log(res);
                     res.forEach(rec => {
                         if(Array.isArray(rec.data)) {
                             this.handleInsertData(rec.data)
                         }
                     })
                     this.loading = false
-                    this.handleConfimedMessage('', 'Update successfull', 'success')
+                    this.handleConfimedMessage('', 'Update successful', 'success')
                 }))
             })
         }

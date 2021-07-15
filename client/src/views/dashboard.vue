@@ -162,6 +162,11 @@ export default {
         }
     },
     sockets: {
+        connect() {
+            setTimeout(() => {
+                this.loadTenants()
+            }, 1500);
+        },
         showNotifications() {
             setTimeout(() => {
                 this.loadTenants()
