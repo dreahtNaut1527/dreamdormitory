@@ -6,6 +6,12 @@ import Swal from 'sweetalert2'
 import socketio from 'socket.io-client'
 import VueSocketIO from 'vue-socket.io'
 import Vuemask from 'v-mask'
+
+// Print Modules
+import html2canvas from 'html2canvas'
+import printDormitoryID from './print/dormitoryId'
+
+// Vue JS Frameworks
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
@@ -18,6 +24,7 @@ import exportExcel from './print/exportexcel'
 // Vue socket from server side
 const url = process.env.NODE_ENV == 'production' ? process.env.VUE_APP_SERVER : process.env.VUE_APP_LOCAL_SERVER
 
+
 export const SocketInstance = socketio(url)
 
 // Vue config
@@ -29,6 +36,8 @@ Vue.prototype.md5 = md5
 Vue.prototype.moment = moment
 Vue.prototype.Swal = Swal
 Vue.prototype.exportExcel = exportExcel
+Vue.prototype.html2canvas = html2canvas
+Vue.prototype.printDormitoryID = printDormitoryID
 
 // Vue Use
 // Vue.use(Swal)

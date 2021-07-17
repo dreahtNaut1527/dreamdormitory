@@ -143,6 +143,11 @@ export default {
         }
     },
     sockets: {
+        connect() {
+            setTimeout(() => {
+                this.loadBuildings()
+            }, 1500);
+        },
         showNotifications() {
             setTimeout(() => {
                 this.loadBuildings()

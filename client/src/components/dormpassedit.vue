@@ -216,7 +216,7 @@ export default {
             this.loadMasterMaintenance('dormpassdetails').then(res => {
                 this.dormitoryPassDetails = res.data || []
                 this.loading = false
-                this.dormPassCode =  `RNTR-${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
+                this.dormPassCode =  `RNTR - ${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
                 this.dormData.DormitoryPassCode = this.dormPassCode
             })
         }

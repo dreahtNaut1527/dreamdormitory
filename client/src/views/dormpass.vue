@@ -129,10 +129,87 @@
                 </v-card>
             </v-lazy>
         </v-container>
+        <v-dialog v-model="dialog" width="1000">
+            <v-app-bar :color="themeColor == '' ? '#1976d2' : themeColor">
+                <v-pagination
+                    v-model="idPage"
+                    :length="idPageCount"
+                    :total-visible="0"
+                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                ></v-pagination>
+                <v-spacer></v-spacer>
+                <v-btn @click="printDormitoryID('dormID')" dark>Print ID</v-btn>
+            </v-app-bar>
+            <v-card tile>
+                <v-container id="dormID" fluid>
+                    <v-data-iterator 
+                        :items="selectedTenants"
+                        :items-per-page="3"
+                        :page.sync="idPage"
+                        @page-count="idPageCount = $event"
+                        hide-default-footer
+                    >
+                        <template v-slot:default="props">
+                            <v-row v-for="(item, i) in props.items" :key="i" cols="12" dense>
+                                <v-col cols="12" md="6">
+                                    <v-card height="100%" outlined light>
+                                        <v-card-text class="text-center">
+                                            <div class="font-weight-bold text-h6 mt-n3">DREAM DORMITORY PASS</div>
+                                            <div class="caption">General Trias, Cavite</div>
+                                        </v-card-text>
+                                        <v-list-item>
+                                            <v-list-item-content class="mt-n6">
+                                                <v-list-item-title class="font-weight-bold">{{ item.EmployeeName }}</v-list-item-title>
+                                                <v-list-item-subtitle class="mt-2">{{ item.Company }}</v-list-item-subtitle>
+                                                <v-list-item-subtitle class="mt-2">{{ item.Department }} Department</v-list-item-subtitle>
+                                                <v-list-item-subtitle class="mt-2">{{ item.BuildingDesc }} - Room {{ item.RoomNo }}</v-list-item-subtitle>
+                                            </v-list-item-content>
+                                            <v-list-item-action class="text-center mt-n2">
+                                                <v-avatar color="grey darken-4" size="110" tile>
+                                                    <v-avatar size="108" tile>
+                                                        <v-img :src="`${photo}/${item.EmployeeCode}.jpg`" />
+                                                    </v-avatar>
+                                                </v-avatar>
+                                                <v-list-item-action-text class="mr-3 font-weight-bold">{{dormitoryPassCode(item)}}</v-list-item-action-text>
+                                            </v-list-item-action>
+                                        </v-list-item>
+                                        <v-sheet class="text-center white--text mb-1" color="grey darken-1" width="100%" tile>
+                                            <div class="caption">Bed Space Rental Trial valid until {{moment(item.ValidDate).format('MMMM DD, YYYY')}}</div>
+                                        </v-sheet>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-card height="100%" outlined light>
+                                        <v-container class="fill-height">
+                                            <v-row class="text-center mt-12" align="center" justify="center">
+                                                <v-card-text>
+                                                    In case of loss, please surrender to HTI Administration
+                                                </v-card-text>
+                                                <v-card-text class="mt-n8">
+                                                    General Affairs section
+                                                </v-card-text>
+                                            </v-row>
+                                            <v-row>
+                                                <v-card-text class="text-center mt-5">
+                                                    <div class="font-weight-bold">{{ approver }}</div>
+                                                    <v-divider class="mx-12"></v-divider>
+                                                    Approving Authority
+                                                </v-card-text>
+                                            </v-row>
+                                        </v-container>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </template>
+                    </v-data-iterator>
+                </v-container>
+                <div class="text-center caption pb-2">- Page {{idPage}} -</div>
+            </v-card>
+        </v-dialog>
         <v-fab-transition>
             <v-btn
                 :color="themeColor == '' ? '#1976d2' : themeColor"
-                @click="printDormitoryID()"
+                @click="dialog = !dialog"
                 :disabled="selectedTenants.length == 0"
                 fixed
                 bottom
@@ -148,18 +225,21 @@
 </template>
 
 <script>
-import printDormID from '@/print/dormitoryId'
 
 export default {
     data() {
         return {
+            dialog: false,
             loading: false,
             searchTable: '',
             building: '',
             company: '',
             floor: '',
             room: '',
+            approver: process.env.VUE_APP_APPROVER,
             category: 0,
+            idPageCount: 0,
+            idPage: 1,
             pageCount: 0,
             page: 1,
             selectedTenants: [],
@@ -226,9 +306,9 @@ export default {
         }
     },
     methods: {
-        printDormitoryID() {
-            printDormID(this.selectedTenants, this.photo)
-            this.selectedTenants = []
+        dormitoryPassCode(data) {
+            let dormPassCode = `RNTR - ${this.rightString(data.BuildingDesc, 1)}${this.zeroPad(data.RoomNo, 3)}${this.zeroPad(data.BedNo, 2)}`
+            return dormPassCode
         },
         async loadData() {
             let stationData = []
@@ -241,7 +321,8 @@ export default {
                     Object.assign(rec, {
                         EncodedDate: !rec.EncodedDate ? this.moment().format('YYYY-MM-DD') : rec.EncodedDate,
                         ShortName: employee.SHORTNAME || 'NONE',
-                        EmployeeName: employee.EMPNAME || 'NONE',
+                        Company: employee.COMPANY || 'NONE',
+                        EmployeeName: `${employee.EMPLLNAME}, ${employee.EMPLFNAME} ${employee.EMPLMI}.` || 'NONE',
                         Department: employee.DEPTDESC || 'NONE',
                         Section: employee.SECTIONDESC || 'NONE',
                         Team: employee.TEAMDESC || 'NONE',

@@ -13,6 +13,8 @@
     "chart.js": "2.9.4",
     "core-js": "^3.6.5",
     "file-saver": "^2.0.5",
+    "html-pdf": "^3.0.1",
+    "html2canvas": "^1.1.4",
     "image-to-base64": "^2.2.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
