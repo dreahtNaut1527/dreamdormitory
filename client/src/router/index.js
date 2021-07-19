@@ -57,14 +57,24 @@ const routes = [
   },
   {
     path: '/dormpass',
-    name: 'dormpass',
-    component: () => import('@/views/dormpass'),
-  },
-  {
-    path: '/dormpassedit',
-    name: 'dormpassedit',
-    component: () => import('@/components/dormpassedit'),
-    props: true
+    component: () => import('@/views/dormpass'), // parent route
+    children: [
+      {
+        path: '',
+        name: 'dormpass',
+        component: () => import('@/components/dormpasslists'), // default child route
+      },
+      {
+        path: '/dormpass/dormpassedit',
+        name: 'dormpassedit',
+        component: () => import('@/components/dormpassedit'),
+      },
+      {
+        path: '/dormpass/dormpassidpreview',
+        name: 'dormpassidpreview',
+        component: () => import('@/components/dormpassidpreview'),
+      },
+    ]
   },
   {
     path: '/assignroom',

@@ -1,62 +1,59 @@
 <template>
-    <v-main>
-        <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
+    <div>
         <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
-            <v-container fluid>
-                <v-card outlined>
-                    <v-container fluid>
-                        <v-list>
-                            <v-list-item>
-                                <v-list-item-avatar size="84">
-                                    <v-img :src="`${photo}/${dormData.EmployeeCode}.jpg`" />
-                                </v-list-item-avatar>
-                                <v-list-item-content>
-                                    <v-list-item-title class="font-weight-bold title">{{ dormData.EmployeeCode }}</v-list-item-title>
-                                    <v-list-item-subtitle>{{ dormData.EmployeeName }}</v-list-item-subtitle>
-                                    <v-list-item-subtitle>{{ dormData.Department }} / {{ dormData.Section }}</v-list-item-subtitle>
-                                    <v-list-item-subtitle>{{ dormData.BuildingDesc }} - Room {{zeroPad(dormData.RoomNo, 3)}}</v-list-item-subtitle>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                        <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
-                            <v-toolbar-title>Materials / Appliances</v-toolbar-title>
-                            <v-spacer></v-spacer>
-                            <v-btn icon><v-icon large>mdi-file-find</v-icon></v-btn>
-                        </v-toolbar>
-                        <v-data-table
-                            :headers="headers" 
-                            :items="filterDormitoryPassDetails"
-                            :search="searchTable"
-                            :page.sync="page"
-                            @page-count="pageCount = $event"
-                            item-key="DetailNo"
-                            hide-default-footer
-                            show-select
-                        >
-                            <template v-slot:[`item.actions`]="{ item }">
-                                <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
-                            </template>
-                            <template v-slot:no-data>
-                                <v-row align="center" justify="center">
-                                    <v-col cols="12" md="12">
-                                        <v-sheet color="transparent" height="450">
-                                            <v-container class="fill-height" fluid>
-                                                <v-card-text class="font-weight-bold text-center grey--text display-1">No data found</v-card-text>
-                                            </v-container>
-                                        </v-sheet>
-                                    </v-col>
-                                </v-row>
-                            </template>
-                        </v-data-table>
-                        <v-pagination
-                            v-model="page"
-                            :length="pageCount"
-                            :total-visible="10"
-                            :color="themeColor == '' ? '#1976d2' : themeColor"
-                        ></v-pagination>
-                    </v-container>
-                </v-card>
-            </v-container>
+            <v-card outlined>
+                <v-container fluid>
+                    <v-list>
+                        <v-list-item>
+                            <v-list-item-avatar size="84">
+                                <v-img :src="`${photo}/${dormData.EmployeeCode}.jpg`" />
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title class="font-weight-bold title">{{ dormData.EmployeeCode }}</v-list-item-title>
+                                <v-list-item-subtitle>{{ dormData.EmployeeName }}</v-list-item-subtitle>
+                                <v-list-item-subtitle>{{ dormData.Department }} / {{ dormData.Section }}</v-list-item-subtitle>
+                                <v-list-item-subtitle>{{ dormData.BuildingDesc }} - Room {{zeroPad(dormData.RoomNo, 3)}}</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
+                        <v-toolbar-title>Materials / Appliances</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon><v-icon large>mdi-file-find</v-icon></v-btn>
+                    </v-toolbar>
+                    <v-data-table
+                        :headers="headers" 
+                        :items="filterDormitoryPassDetails"
+                        :search="searchTable"
+                        :page.sync="page"
+                        @page-count="pageCount = $event"
+                        item-key="DetailNo"
+                        hide-default-footer
+                        show-select
+                    >
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                        </template>
+                        <template v-slot:no-data>
+                            <v-row align="center" justify="center">
+                                <v-col cols="12" md="12">
+                                    <v-sheet color="transparent" height="450">
+                                        <v-container class="fill-height" fluid>
+                                            <v-card-text class="font-weight-bold text-center grey--text display-1">No data found</v-card-text>
+                                        </v-container>
+                                    </v-sheet>
+                                </v-col>
+                            </v-row>
+                        </template>
+                    </v-data-table>
+                    <v-pagination
+                        v-model="page"
+                        :length="pageCount"
+                        :total-visible="10"
+                        :color="themeColor == '' ? '#1976d2' : themeColor"
+                    ></v-pagination>
+                </v-container>
+            </v-card>
         </v-lazy>
         <v-dialog v-model="dialog" width="600" persistent>
             <v-card>
@@ -160,14 +157,13 @@
                 :color="themeColor == '' ? '#1976d2' : themeColor"
             ></v-progress-circular>
         </v-overlay>
-    </v-main>
+    </div>
 </template>
 
 <script>
 import datepicker from './datepicker'
 
 export default {
-    props: ['dormData'],
     data() {
         return {
             valid: true,
@@ -182,6 +178,7 @@ export default {
             pageCount: 0,
             page: 1,
             items: [],
+            dormData: [],
             dormitoryPassDetails: [],
             categoryList: [
                 {text: 'Incoming', value: false},
@@ -200,26 +197,18 @@ export default {
                 {text: 'Quantity', value:'Quantity'},
                 {text: 'Remarks', value:'Remarks'},
                 {text: 'Actions', value:'actions'}
-            ],
-            breadCrumbsItems: [ 
-                {text: 'Process', disabled: false, href: '#'},
-                {text: 'Dormitory Pass', disabled: false, href: '/dreamdormitory/dormpass'},
-                {text: 'Details', disabled: true, href: '#'}
             ]
         }
     },
     created() {
-        if(!this.dormData) {
-            this.$router.push('/dormpass')
-        } else {
-            this.loading = true
-            this.loadMasterMaintenance('dormpassdetails').then(res => {
-                this.dormitoryPassDetails = res.data || []
-                this.loading = false
-                this.dormPassCode =  `RNTR - ${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
-                this.dormData.DormitoryPassCode = this.dormPassCode
-            })
-        }
+        this.dormData = this.$route.query
+        this.loading = true
+        this.loadMasterMaintenance('dormpassdetails').then(res => {
+            this.dormitoryPassDetails = res.data || []
+            this.loading = false
+            this.dormPassCode =  `RNTR - ${this.rightString(this.dormData.BuildingDesc, 1)}${this.zeroPad(this.dormData.RoomNo, 3)}${this.zeroPad(this.dormData.BedNo, 2)}`
+            this.dormData.DormitoryPassCode = this.dormPassCode
+        })
     },
     computed: {
         filterDormitoryPassDetails() {

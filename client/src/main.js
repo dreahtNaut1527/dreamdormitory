@@ -9,7 +9,7 @@ import Vuemask from 'v-mask'
 
 // Print Modules
 import html2canvas from 'html2canvas'
-import printDormitoryID from './print/dormitoryId'
+import printDormitoryID from './reports/dormitoryId'
 
 // Vue JS Frameworks
 import App from './App.vue'
@@ -19,7 +19,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import mixins from './plugins/mixins'
 import indexDB from './plugins/indexDB'
-import exportExcel from './print/exportexcel'
+import exportExcel from './reports/exportexcel'
 
 // Vue socket from server side
 const url = process.env.NODE_ENV == 'production' ? process.env.VUE_APP_SERVER : process.env.VUE_APP_LOCAL_SERVER
