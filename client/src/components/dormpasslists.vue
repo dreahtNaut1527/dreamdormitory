@@ -103,14 +103,12 @@
                                 </v-container>
                             </v-sheet>
                         </template>
-                        <template v-slot:[`item.EmployeeCode`]="{ item }">
-                            <v-badge :color="themeColor == '' ? '#1976d2' : themeColor" v-if="!item.DormitoryPassCode" content="new">{{item.EmployeeCode}}</v-badge>
-                            <div v-else>{{item.EmployeeCode}}</div>
-                        </template>
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mx-3" @click="editDormPass(item)" v-on="on" v-bind="attrs" :color="themeColor == '' ? '#1976d2' : themeColor" small dark fab><v-icon>{{ item.DormitoryPassCode ? 'mdi-eye' : 'mdi-pencil' }}</v-icon></v-btn>
+                                    <v-btn class="mx-3" @click="editDormPass(item)" v-on="on" v-bind="attrs" :color="themeColor == '' ? '#1976d2' : themeColor" small dark fab>
+                                        <v-icon>mdi-eye</v-icon>
+                                    </v-btn>
                                 </template>
                                 <span>{{ item.DormitoryPassCode ? 'View Record' : 'Edit Record' }}</span>
                             </v-tooltip>
