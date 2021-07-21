@@ -78,6 +78,7 @@
                         loading-text="Loading Data. . .Please Wait"
                         @page-count="pagecount = $event"
                         hide-default-footer
+                        :items-per-page="9"
                     >
                         <template v-slot:[`item.RoomDesc`]='{ item }'>
                             <v-chip class="px-6">{{item.RoomDesc}} <v-icon right>mdi-bed-empty</v-icon> </v-chip>
