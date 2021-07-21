@@ -229,48 +229,69 @@ export default {
             this.$store.commit('CHANGE_THEMECOLOR', val)
         },
         loadNavDrawerLists() {
-            this.navDrawerLists = [
-                {
-                    title: 'Dashboard',
-                    icon: 'mdi-view-dashboard',
-                    items: [
-                        {text: 'Overview', icon: 'mdi-poll', to: '/dashboard'}
-                    ],
-                    active: false   
-                },
-                {
-                    title: 'Process',
-                    icon: 'mdi-pencil-box',
-                    items: [
-                        {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacancies'},
-                        {text: 'Tenants', icon: 'mdi-account-tie', to: '/tenants'},
-                        {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
-                        {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
-                        {text: 'Dorm Pass', icon: 'mdi-card-account-details', to: '/dormpass'},
-                        {text: 'History', icon: 'mdi-history', to: '/history'}
-                    ],
-                    active: false   
-                },
-                {
-                    title: 'Reports',
-                    icon: 'mdi-file',
-                    items: [
-                        {text: 'Print Reports', icon: 'mdi-file', to: '/reports'}
-                    ],
-                    active: false   
-                },
-                {
-                    title: 'Maintenance',
-                    icon: 'mdi-cogs',
-                    items: [
-                        {text: 'Building', icon: 'mdi-domain', to: '/buildings'},
-                        {text: 'Floors', icon: 'mdi-stairs', to: '/floors'},
-                        {text: 'Rooms', icon: 'mdi-map-marker', to: '/rooms'},
-                        {text: 'Beds' , icon: 'mdi-bed-empty', to: '/beds'},
-                    ],
-                    active: false   
-                },
-            ]
+            if(this.hrisUserInfo.COCODE == '20') {
+                this.navDrawerLists = [
+                    {
+                        title: 'Dashboard',
+                        icon: 'mdi-view-dashboard',
+                        items: [
+                            {text: 'Overview', icon: 'mdi-poll', to: '/dashboard'}
+                        ],
+                        active: false   
+                    },
+                    {
+                        title: 'Process',
+                        icon: 'mdi-pencil-box',
+                        items: [
+                            {text: 'Vacanies', icon: 'mdi-calendar-check', to: '/vacancies'},
+                            {text: 'Tenants', icon: 'mdi-account-tie', to: '/tenants'},
+                            {text: 'Consumptions', icon: 'mdi-water', to: '/consumptions'},
+                            {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
+                            {text: 'Dorm Pass', icon: 'mdi-card-account-details', to: '/dormpass'},
+                            {text: 'History', icon: 'mdi-history', to: '/history'}
+                        ],
+                        active: false   
+                    },
+                    {
+                        title: 'Reports',
+                        icon: 'mdi-file',
+                        items: [
+                            {text: 'Print Reports', icon: 'mdi-file', to: '/reports'}
+                        ],
+                        active: false   
+                    },
+                    {
+                        title: 'Maintenance',
+                        icon: 'mdi-cogs',
+                        items: [
+                            {text: 'Building', icon: 'mdi-domain', to: '/buildings'},
+                            {text: 'Floors', icon: 'mdi-stairs', to: '/floors'},
+                            {text: 'Rooms', icon: 'mdi-map-marker', to: '/rooms'},
+                            {text: 'Beds' , icon: 'mdi-bed-empty', to: '/beds'},
+                        ],
+                        active: false   
+                    },
+                ]
+            } else {
+                this.navDrawerLists = [
+                    {
+                        title: 'Dashboard',
+                        icon: 'mdi-view-dashboard',
+                        items: [
+                            {text: 'Overview', icon: 'mdi-poll', to: '/dashboard'}
+                        ],
+                        active: false   
+                    },
+                    {
+                        title: 'Process',
+                        icon: 'mdi-pencil-box',
+                        items: [
+                            {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
+                        ],
+                        active: false   
+                    },
+                ]
+            }
         },
         userLoggedOut() {
             this.$store.commit('CHANGE_USER_INFO', {})

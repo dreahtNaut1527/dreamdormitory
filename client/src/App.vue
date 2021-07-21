@@ -17,7 +17,7 @@ import navfooter from '@/components/navfooter'
 
 export default {
     created() {
-        
+        this.checkCurrentServer()
     },
     mounted() {
         setInterval(() => {

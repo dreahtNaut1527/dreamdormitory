@@ -279,7 +279,7 @@ export default {
             let body = {
                 procedureName: 'ProcTenants',
                 values: [
-                    data.CompanyCode,
+                    this.hrisUserInfo.COCODE == '20' ? data.CompanyCode : this.hrisUserInfo.COCODE,
                     data.EmployeeCode,
                     data.MoveInDate,
                     data.MoveOutDate,

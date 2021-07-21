@@ -223,7 +223,7 @@ export default {
             this.loading = true
             let station = await this.handleSelectData()
             this.loadMasterMaintenance('tenants').then(res => {
-                this.tenants = res.data
+                this.tenants = this.hrisUserInfo.COCODE == '20' ? res.data : res.data.filter(item => item.CompanyCode == this.hrisUserInfo.COCODE)
                 if(this.tenants != []) {
                     this.tenants.forEach(rec => {
                         let employee = station.filter(item => item.EMPLCODE == rec.EmployeeCode)[0]

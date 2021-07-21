@@ -119,6 +119,12 @@ const plugins = {
                         }
                     }
                 },
+                checkCurrentServer() {
+                    const file = 'P:\\Installer\\HRDEV\\HRSys.INI'
+                    this.axios.get(file).then(res => {
+                        console.log(res);
+                    })
+                },
                 handleToastMesaage() {
                     const Toast = this.Swal.mixin({
                         toast: true,
