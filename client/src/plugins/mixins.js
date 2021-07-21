@@ -7,7 +7,7 @@ const plugins = {
             data: () => ({
                 api: process.env.NODE_ENV ==='dreamdormitory' ? process.env.VUE_APP_URL : process.env.VUE_APP_LOCAL_URL,
                 server: 'http://localhost:8800', // process.env.VUE_APP_SERVER,
-                api_HRIS: 'http://localhost:8080/server/api',
+                api_HRIS: 'http://cpu-10666/server/api',
                 photo: process.env.VUE_APP_PHOTO,
                 staionData: []
             }),
@@ -118,12 +118,6 @@ const plugins = {
                             this.$router.push('/')
                         }
                     }
-                },
-                checkCurrentServer() {
-                    const file = 'P:\\Installer\\HRDEV\\HRSys.INI'
-                    this.axios.get(file).then(res => {
-                        console.log(res);
-                    })
                 },
                 handleToastMesaage() {
                     const Toast = this.Swal.mixin({
