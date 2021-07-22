@@ -100,7 +100,7 @@
             app   
         >
             <v-toolbar color="transparent" flat>
-                <v-toolbar-title>Settings</v-toolbar-title>
+                <v-toolbar-title class="font-weight-light">Customize</v-toolbar-title>
             </v-toolbar>
             <v-list-item>
                 <v-list-item-content>

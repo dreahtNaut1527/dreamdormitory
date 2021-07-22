@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="detailsDialog" width="400" persistent>
+    <modal :name="`'${details.EmployeeCode}'`" :adaptive="true" :draggable="true" :reset="true" :width="400" height="auto">
         <v-card>
             <v-toolbar flat>
                 <v-toolbar-title class="overline">Details</v-toolbar-title>
@@ -82,10 +82,10 @@
             </v-container>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn class="caption" @click="detailsDialog = !detailsDialog" text>Close</v-btn>
+                <v-btn class="caption" @click="clearVariables()" text>Close</v-btn>
             </v-card-actions>
         </v-card>
-    </v-dialog>
+    </modal>
 </template>
 
 <script>
@@ -99,10 +99,15 @@ export default {
     methods: {
         editRecord() {
             this.$router.push({name: 'tenantedit', query: {code: this.details.EmployeeCode}})
+        },
+        clearVariables() {
+            this.$modal.hide(`'${this.details.EmployeeCode}'`)
+            this.detailsDialog = !this.detailsDialog
         }
     },
     watch: {
         dialog() {
+            this.$modal.show(`'${this.details.EmployeeCode}'`)
             this.detailsDialog = true
         }
     }

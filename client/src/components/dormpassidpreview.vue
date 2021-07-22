@@ -15,7 +15,7 @@
                     <v-col v-for="(item, i) in tenants" :key="i" cols="12" lg="6" md="12">
                         <v-row :id="`dormID${i + 1}`" dense>
                             <v-col cols="12" md="6">
-                                <v-card height="100%" outlined light>
+                                <v-card class="dorm-border" height="100%" outlined light>
                                     <v-card-text class="text-center">
                                         <div class="font-weight-bold text-h6 mt-n3">DREAM DORMITORY PASS</div>
                                         <div class="caption">General Trias, Cavite</div>
@@ -42,7 +42,7 @@
                                 </v-card>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-card height="100%" outlined light>
+                                <v-card class="dorm-border" height="100%" outlined light>
                                     <v-container class="fill-height">
                                         <v-row class="text-center mt-12" align="center" justify="center">
                                             <v-card-text>
@@ -102,3 +102,9 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    .dorm-border {
+        border: 2px solid black;
+    }
+</style>

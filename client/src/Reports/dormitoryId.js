@@ -14,14 +14,14 @@ function printDormitoryID(elementID) {
             let data = canvas.toDataURL()
             docContents.push({
                 image: data,
-                width: 600
+                width: 550
             })
         })
 
         if(index == array.length - 1) {
             // define document properties
             let docDefinition = {
-                pageMargins: [0, 5, 5, 0],
+                pageMargins: [0, 5, 0, 0],
                 pageSize: 'A4',
                 pageOrientation: 'portrait',   
                 content: docContents

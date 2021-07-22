@@ -55,7 +55,7 @@
                 </v-container>
             </v-card>
         </v-lazy>
-        <v-dialog v-model="dialog" width="600" persistent>
+        <modal name="materials" :adaptive="true" :draggable="true" :focusTrap="true" :reset="true" height="auto" @before-close="clearVariables()">
             <v-card>
                 <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                     <v-toolbar-title>{{ editMode ? 'Edit Material' : 'New Material' }}</v-toolbar-title>
@@ -140,11 +140,11 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="clearVariables()" class="mx-3 px-5" text>Cancel</v-btn>
+                    <v-btn @click="$modal.hide('materials')" class="mx-1 px-5" text>Cancel</v-btn>
                     <v-btn class="px-5" @click="saveRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-dialog>
+        </modal>
         <v-fab-transition>
             <v-btn @click="newRecord()" :color="themeColor == '' ? '#1976d2' : themeColor" fixed bottom right large dark fab>
                 <v-icon>mdi-plus</v-icon>
@@ -218,8 +218,11 @@ export default {
         }
     },
     methods: {
+        handleDrag({ target, transform}) {
+            target.style.transform = transform
+        },
         newRecord() {
-            this.dialog = true
+            this.$modal.show('materials')
         },
         saveRecord() {
             if(this.$refs.form.validate()) {
@@ -242,6 +245,7 @@ export default {
             this.editMode = true
             Object.assign(this.itemDetails, data)
             this.dialog = true
+            this.$modal.show('materials')
         },
         saveDormitoryPassHeader() {
             let data = this.dormData

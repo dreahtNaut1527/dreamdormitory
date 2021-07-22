@@ -71,12 +71,25 @@
                                 dense
                             ></v-select>
                         </v-col>
+                        <v-col cols="12" md="12">
+                            <v-text-field
+                                v-model="searchTable"
+                                :color="themeColor == '' ? '#1976d2' : themeColor"
+                                placeholder="Search Code or Name"
+                                append-icon="mdi-magnify"
+                                hide-details
+                                clearable
+                                outlined
+                                dense
+                            ></v-text-field>
+                        </v-col>
                     </v-row>
                     <v-divider></v-divider>
                     <v-data-table
                         v-model="selectedTenants"
                         :headers="headers" 
                         :items="filterDormitoryPass"
+                        :items-per-page="8"
                         :search="searchTable"
                         :page.sync="page"
                         :loading="loading"

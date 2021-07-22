@@ -101,7 +101,7 @@ export default {
             }
             this.axios.post(`${this.api_HRIS}/ora_getusercontrol.php`, body).then(async res => {
                 this.userInfo = res.data[0]
-                if(this.userInfo != {}) {
+                if(this.userInfo != undefined) {
                     if(this.md5(this.password.toLowerCase()) == this.md5(this.userInfo.PASSWORD.toLowerCase())) {
                         Object.assign(this.userInfo, {
                             PROCCODE: this.userInfo.PROCCODE.split(","),
@@ -142,7 +142,7 @@ export default {
                     }
                 } else {
                     this.alert = true
-                    this.alertText = 'Account does not exists'
+                    this.alertText = `${this.username}: No rights for Dream Dormitory`
                     this.username = ''
                     this.password = ''
                 }

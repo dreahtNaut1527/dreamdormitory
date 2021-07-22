@@ -56,7 +56,7 @@
                 </v-card>
             </v-lazy>
         </v-container>
-        <v-dialog v-model="dialog" width="500" persistent>
+        <modal name="bed" :adaptive="true" :draggable="true" :focusTrap="true" :reset="true" height="auto" @before-close="clearVariables()">
             <v-card>
                 <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
                     <v-toolbar-title>
@@ -81,15 +81,15 @@
                 </v-form>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn class="px-5" @click="clearVariables()" text>Cancel</v-btn>
+                    <v-btn class="px-5" @click="$modal.hide('bed')" text>Cancel</v-btn>
                     <v-btn class="px-5" @click="saveRecord(editBeds)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-dialog>
+        </modal>
         <v-fab-transition>
             <v-btn
                 :color="themeColor == '' ? '#1976d2' : themeColor"
-                @click="dialog = !dialog"
+                @click="$modal.show('bed')"
                 fixed
                 bottom
                 right
@@ -146,6 +146,7 @@ export default {
         editRecord(data){
             this.editMode=true       
             this.dialog= true 
+            this.$modal.show('bed')
             Object.assign(this.editBeds,data)
         },
         saveRecord(data) {

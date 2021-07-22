@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500"  heigth="800" persistent>
+    <modal name="cutoff" :adaptive="true" :draggable="true" :focusTrap="true" :reset="true" height="auto">
         <v-card>
             <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark dense hide-details>
                 <span>Set Payroll Cut-off</span>
@@ -53,7 +53,7 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn class="px-5" @click="dialog = !dialog" text>Cancel</v-btn>
+                <v-btn class="px-5" @click="clearVariables()" text>Cancel</v-btn>
                 <v-btn 
                     :color="themeColor == '' ? '#1976d2' : themeColor"
                     :disabled="disableprocess"
@@ -65,8 +65,7 @@
                 </v-btn>
             </v-card-actions>
         </v-card>
-    </v-dialog>
-
+    </modal>
 </template>
 <script>
 
@@ -183,12 +182,14 @@ export default {
             this.year = this.moment().format('YYYY')
             this.cutoff = ""
             this.disableprocess = true
+            this.$modal.hide('cutoff')
         }
         
     },
     watch: {
         setcutoffdialog() {
             this.dialog = true
+            this.$modal.show('cutoff')
         }
     }
 
