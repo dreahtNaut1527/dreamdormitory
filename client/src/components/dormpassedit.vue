@@ -18,8 +18,6 @@
                     </v-list>
                     <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" flat dark>
                         <v-toolbar-title>Materials / Appliances</v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon><v-icon large>mdi-file-find</v-icon></v-btn>
                     </v-toolbar>
                     <v-data-table
                         :headers="headers" 
@@ -27,17 +25,20 @@
                         :search="searchTable"
                         :page.sync="page"
                         @page-count="pageCount = $event"
-                        item-key="DetailNo"
                         hide-default-footer
-                        show-select
                     >
                         <template v-slot:[`item.actions`]="{ item }">
-                            <v-btn @click="editRecord(item)" icon><v-icon>mdi-pencil</v-icon></v-btn>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn @click="editRecord(item)" :color="themeColor == '' ? '#1976d2' : themeColor" v-on="on" v-bind="attrs" small dark fab><v-icon>mdi-pencil</v-icon></v-btn>
+                                </template>
+                                <span>Edit Record</span>
+                            </v-tooltip>
                         </template>
                         <template v-slot:no-data>
                             <v-row align="center" justify="center">
                                 <v-col cols="12" md="12">
-                                    <v-sheet color="transparent" height="450">
+                                    <v-sheet color="transparent" height="400">
                                         <v-container class="fill-height" fluid>
                                             <v-card-text class="font-weight-bold text-center grey--text display-1">No data found</v-card-text>
                                         </v-container>
@@ -53,6 +54,13 @@
                         :color="themeColor == '' ? '#1976d2' : themeColor"
                     ></v-pagination>
                 </v-container>
+                <v-card-actions>
+                    <v-subheader class="font-weight-bold">Total Record(s): {{ filterDormitoryPassDetails.length }}</v-subheader>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="printDormPassMaterials()" :color="themeColor == '' ? '#1976d2' : themeColor" :disabled="filterDormitoryPassDetails.length == 0" :dark="filterDormitoryPassDetails.length > 0">
+                        <v-icon left>mdi-printer-search</v-icon>Print
+                    </v-btn>
+                </v-card-actions>
             </v-card>
         </v-lazy>
         <modal name="materials" :adaptive="true" :draggable="true" :focusTrap="true" :reset="true" height="auto" @before-close="clearVariables()">
@@ -218,6 +226,21 @@ export default {
         }
     },
     methods: {
+        printDormPassMaterials() {
+            let data = this.dormData
+            let body = {
+                procedureName: 'ProcDormitoryMaterialsPrint',
+                values: [
+                    data.EmployeeCode,
+                    data.EmployeeName,
+                    data.Department,
+                    data.BuildingDesc,
+                    data.RoomNo
+                ]
+            }
+            this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+            this.axios.get(`${this.api}/crystalreport/Materials`)
+        },
         handleDrag({ target, transform}) {
             target.style.transform = transform
         },
@@ -236,6 +259,7 @@ export default {
                             this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new record`)
                         }
                         this.clearVariables()
+                        this.$modal.hide('materials')
                         this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
                     }
                 })

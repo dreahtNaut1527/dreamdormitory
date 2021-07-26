@@ -34,6 +34,13 @@ export default {
                         {text: 'Dormitory Gate Pass', disabled: true, href: '#'}
                     ]
                     break;
+                case 'dormappliances':
+                    this.breadCrumbsItems = [ 
+                        {text: 'Process', disabled: false, href: '#'},
+                        {text: 'Dormitory Pass', disabled: false, href: '#'},
+                        {text: 'Dormitory Materials-Appliances', disabled: true, href: '#'}
+                    ]
+                    break;
                 default:
                     this.breadCrumbsItems = [ 
                         {text: 'Process', disabled: false, href: '#'},

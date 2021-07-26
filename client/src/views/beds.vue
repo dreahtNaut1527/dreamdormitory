@@ -170,6 +170,7 @@ export default {
                         }
                         this.clearVariables()
                         this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                        this.$modal.hide('bed')
                     }
                 }) 
             }

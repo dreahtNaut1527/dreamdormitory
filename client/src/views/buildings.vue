@@ -200,6 +200,7 @@ export default {
                         this.clearVariables()
                         this.loadBuildings()
                         this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                        this.$modal.hide('building')
                     }
                 }) 
             }

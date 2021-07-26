@@ -1,8 +1,10 @@
+const dotenv = require('dotenv')
 const express = require('express')
 const mssql = require('mssql')
 const readINI = require('read-ini-file')
 const config = require('../config/db.config')()
 
+dotenv.config()
 const router = express.Router()
 
 // get current version
@@ -74,14 +76,17 @@ router.post('/execute', (req, res) => {
      })
 })
 
-// router.get('/textCommand', (req, res) => {
-//      const exec = require('child_process').exec
-//      exec('cmd /c ""C:\\Program Files\\HRDev\\XPAApps\\ClinicHealth.lnk""', (err, stdout, stderr) => {
-//           if (err) {
-//                res.send(err)
-//           }
-//           res.send(stdout)
-//      })
-// })
+router.get('/crystalreport/:reportname', (req, res) => {
+     let reportname = req.params.reportname
+     let path = process.env.DRIVE_PATH
+
+     const exec = require('child_process').exec
+     exec(`cmd /c ""${path}${reportname}.lnk""`, (err, stdout, stderr) => {
+          if (err) {
+               res.send(err)
+          }
+          res.send(stdout)
+     })
+})
 
 module.exports = router       
