@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    appVersion: null,
+    versionNo: null,
     payrollDate: null,
     cutOffDate: [],
     hrisUserInfo: {},
@@ -36,7 +36,7 @@ export default new Vuex.Store({
       state.themeColor = data
     },
     CHANGE_APP_VERSION: (state, data) => {
-      state.appVersion = data
+      state.versionNo = data
     },
     CHANGE_PAYROLLDATE: (state, data) => {
       state.payrollDate = data

@@ -72,6 +72,7 @@
             <v-card outlined>
                 <v-container fluid>
                     <v-data-table 
+                        v-model="selectedConsumption"
                         :headers="headers"
                         :items="filterConsumptions"
                         :page.sync="page"
@@ -79,6 +80,8 @@
                         @page-count="pagecount = $event"
                         hide-default-footer
                         :items-per-page="9"
+                        item-key="SerialNo"
+                        show-select
                     >
                         <template v-slot:[`item.RoomDesc`]='{ item }'>
                             <v-chip class="px-6">{{item.RoomDesc}} <v-icon right>mdi-bed-empty</v-icon> </v-chip>
@@ -310,6 +313,20 @@
                 </v-card-actions>
             </v-card>      
         </v-dialog>    
+        <v-fab-transition>
+            <v-btn
+                :color="themeColor == '' ? '#1976d2' : themeColor"
+                @click="handlePrintBilling(selectedtype)"
+                fixed
+                bottom
+                right
+                large
+                dark
+                fab
+            >
+                <v-icon>mdi-printer</v-icon>
+            </v-btn>
+        </v-fab-transition>
     </v-main>
 </template>
 
@@ -361,6 +378,7 @@ export default {
             breadCrumbsItems2:[],
             dialog:false,
             consumptions:[],
+            selectedConsumption: [],
             selectedtype:0,            
             page:1,
             pagecount:0,
@@ -423,9 +441,9 @@ export default {
                 0,
             ]
             }
-            console.log(body);
+            // console.log(body);
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 this.consumptions=res.data
             })
         }, 
@@ -451,7 +469,7 @@ export default {
         },
         computeConsumption(val){ 
             val.TotalConsumption=val.LatestReading - val.PrevReading           
-            if (val.TotalConsumption>80) {                
+            if (val.TotalConsumption > this.lesskwm3) {                
                 val.TotalKWM3=((val.TotalConsumption - this.lesskwm3) * this.amountperkwm3).toFixed(2)
                 val.TotalAmount=(val.TotalKWM3 / val.TotalTenants).toFixed(2)
                 this.$forceUpdate()
@@ -480,10 +498,10 @@ export default {
             }
             this.axios.post(`${this.api}/executeselect`,{data: JSON.stringify(body)}).then(res => {
                 this.$emit('update:consumptiondetails',res.data)
-                console.log(res.data);
+                // console.log(res.data);
                 this.consumptions=[]
                 this.consumptions=res.data
-                console.log(this.consumptions);
+                // console.log(this.consumptions);
                 this.clearVariables()
                
             })
@@ -506,8 +524,46 @@ export default {
                 TotalAmount:0                    
             }
             this.breadCrumbsItems2=[]
+        },
+        handlePrintBilling(type) {
+            let data = this.selectedConsumption
+            if(data.length == 0) {
+                this.handleConfimedMessage('', 'No record found', 'error')
+            } else {
+                data.forEach((rec, index, array) => {
+                    let body = {
+                        procedureName: 'ProcConsumptionPrint',
+                        values: [
+                            rec.SerialNo,
+                            this.hrisUserInfo.USERACCT,
+                            this.hrisUserInfo.FULLNAME,
+                        ]
+                    }
+                    if(rec.TotalAmount  > 0) {
+                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
+                    }
+
+                    if(index == array.length - 1) {
+                        if(type == 0) {
+                            this.axios.get(`${this.api}/crystalreport/Electricity`).then(res => {
+                                if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
+                            })
+                        } else {
+                            this.axios.get(`${this.api}/crystalreport/Water`).then(res => {
+                                if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
+                            })
+                        }
+                    }
+                })
+                
+            }
         }
     },
+    watch: {
+        selectedtype() {
+            this.selectedConsumption = []
+        }
+    }
 
 }
 </script>

@@ -82,9 +82,7 @@ router.get('/crystalreport/:reportname', (req, res) => {
 
      const exec = require('child_process').exec
      exec(`cmd /c ""${path}${reportname}.lnk""`, (err, stdout, stderr) => {
-          if (err) {
-               res.send(err)
-          }
+          if(stderr) return res.send(stderr)
           res.send(stdout)
      })
 })

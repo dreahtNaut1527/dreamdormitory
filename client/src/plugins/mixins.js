@@ -21,7 +21,7 @@ const plugins = {
                     'isLoggedIn',
                     'themeColor',
                     'darkMode',
-                    'appVersion',
+                    'versionNo',
                     'payrollDate',
                     'cutOffDate',
                     'hrsys'
@@ -107,7 +107,7 @@ const plugins = {
                 },
                 checkAppVersion() {
                     let version = process.env.VUE_APP_VERSION
-                    if(version != this.appVersion) {
+                    if(version != this.versionNo) {
                         store.commit('CHANGE_APP_VERSION', process.env.VUE_APP_VERSION)
                         store.commit('CHANGE_CONNECTION', true)
                         store.commit('CHANGE_USER_INFO', {})

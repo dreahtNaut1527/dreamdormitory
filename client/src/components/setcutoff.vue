@@ -107,36 +107,46 @@ export default {
                 dtconsumptionend = this.moment(`${this.year}-${this.selectedmonth}-05`).format('YYYY-MM-DD')
             }  
 
-            let body = {
-                procedureName: 'ProcSetNewPayrollDate',
-                values: [
-                    lastPaydate
-                ]
-            }
             this.handleQuestionMessage('', 'Set new payroll transaction?', 'Yes', 'No', 'question').then(result => {
                 if(result.isConfirmed) {
+                    let body = {
+                        procedureName: 'ProcSetNewPayrollDate',
+                        values: [
+                            lastPaydate,
+                            'new'
+                        ]
+                    }
                     this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
                         let result = res.data[0]
-                        if(result.ErrCode == '203' || result.ErrCode == '200') {
+                        if(result.ErrCode == '201') {
+                            this.handleConfimedMessage('', 'Data not yet send', 'warning')
+                        }else {
                             this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
                             this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
                             this.processRental(lastPaydate, dtconsumptionstart, dtconsumptionend)
-                        } else {
-                            if(result.ErrCode == '201') {
-                                this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
-                                this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
-                                this.handleConfimedMessage('', 'Cut-Off already processed', 'info')
-                            }else {
-                                this.handleConfimedMessage('', 'Cut-Off must be processed', 'error')
-                            }
+                            window.location.reload()
                         }
                     })
                 } else if(result.isDenied) {
-                    this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
-                    this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
+                    let body = {
+                        procedureName: 'ProcSetNewPayrollDate',
+                        values: [
+                            lastPaydate,
+                            'old'
+                        ]
+                    }
+                    this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
+                        let result = res.data[0]
+                        if(result.ErrCode == '202') {
+                            this.$store.commit('CHANGE_PAYROLLDATE', lastPaydate)
+                            this.$store.commit('CHANGE_CUTOFFDATE', [dtconsumptionstart, dtconsumptionend])
+                            window.location.reload()
+                        }else {
+                            this.handleConfimedMessage('', 'No record found', 'error')
+                        }
+                        
+                    })
                 }
-                this.dialog = !this.dialog
-                window.location.reload()
             })
         },
         processRental(lastPaydate, dtconsumptionstart, dtconsumptionend) {
@@ -188,8 +198,8 @@ export default {
     },
     watch: {
         setcutoffdialog() {
-            this.dialog = true
             this.$modal.show('cutoff')
+            this.dialog = true
         }
     }
 
