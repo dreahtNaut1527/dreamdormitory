@@ -14,14 +14,14 @@
                         <v-row dense justify="center">
                                 <v-col cols="12" md="3" sm="3">
                                     <v-select    
-                                    v-model="selectedtype"                                 
-                                    :items="itemstype"
-                                    :color="themeColor == '' ? '#1976d2' : themeColor"
-                                    label="Type"
-                                    outlined
-                                    dense
-                                    hide-details
-                                    @change="consumptiontype()"
+                                        v-model="selectedtype"                                 
+                                        :items="itemstype"
+                                        :color="themeColor == '' ? '#1976d2' : themeColor"
+                                        label="Type"
+                                        outlined
+                                        dense
+                                        hide-details
+                                        @change="consumptiontype()"
                                     ></v-select>
                                 </v-col>
                                 <v-col cols="12" md="3" sm="3">

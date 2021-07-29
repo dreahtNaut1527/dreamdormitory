@@ -100,7 +100,7 @@
             app   
         >
             <v-toolbar color="transparent" flat>
-                <v-toolbar-title class="font-weight-light">Customize</v-toolbar-title>
+                <v-toolbar-title class="font-weight-light"><v-icon left>mdi-cog</v-icon>Settings</v-toolbar-title>
             </v-toolbar>
             <v-list-item>
                 <v-list-item-content>
@@ -249,14 +249,6 @@ export default {
                             {text: 'Rentals' , icon: 'mdi-key-chain-variant', to: '/rentals'},
                             {text: 'Dorm Pass', icon: 'mdi-card-account-details', to: '/dormpass'},
                             {text: 'History', icon: 'mdi-history', to: '/history'}
-                        ],
-                        active: false   
-                    },
-                    {
-                        title: 'Reports',
-                        icon: 'mdi-file',
-                        items: [
-                            {text: 'Print Reports', icon: 'mdi-file', to: '/reports'}
                         ],
                         active: false   
                     },

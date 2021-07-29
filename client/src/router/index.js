@@ -77,6 +77,11 @@ const routes = [
     ]
   },
   {
+    path: '/history',
+    name: 'history',
+    component: () => import('@/views/history'),
+  },
+  {
     path: '/assignroom',
     name: 'assignroom',
     component: () => import('@/components/assignroom'),
