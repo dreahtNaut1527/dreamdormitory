@@ -52,6 +52,7 @@
                             :color="themeColor == '' ? '#1976d2' : themeColor"
                         ></v-pagination>
                     </v-container>
+                    <v-subheader class="font-weight-bold">Total Record(s): {{ buildings.length }}</v-subheader>
                 </v-card>
             </v-lazy>
         </v-container>

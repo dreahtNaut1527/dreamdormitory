@@ -69,13 +69,13 @@
                         </v-row>
                     </template>
                 </v-data-iterator>
-                <v-pagination
+                <!-- <v-pagination
                     class="mt-4"
                     v-model="page"
                     :length="pageCount"
                     :total-visible="10"
                     :color="themeColor == '' ? '#1976d2' : themeColor"
-                ></v-pagination>
+                ></v-pagination> -->
             </v-container>
         </v-lazy>
         <v-dialog v-model="dialog" width="500" persistent>

@@ -51,7 +51,8 @@
                             :length="pageCount"
                             :total-visible="10"
                             :color="themeColor == '' ? '#1976d2' : themeColor"
-                        ></v-pagination>                 
+                        ></v-pagination>    
+                        <v-subheader class="font-weight-bold">Total Record(s): {{ beds.length }}</v-subheader>             
                     </v-container>
                 </v-card>
             </v-lazy>

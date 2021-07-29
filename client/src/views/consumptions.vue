@@ -121,6 +121,7 @@
                         :color="themeColor == '' ? '#1976d2' : themeColor"
                     ></v-pagination>
                 </v-container>
+                <v-subheader class="font-weight-bold">Total Record(s): {{ filterConsumptions.length }}</v-subheader>
             </v-card>
         </v-container>
         <v-dialog v-model="dialog" width="800" persistent>            
@@ -149,6 +150,7 @@
                                                 <v-text-field
                                                     v-model="editConsumption.PrevReading"
                                                     :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    type="number"
                                                     dense
                                                     small
                                                     outlined
@@ -468,15 +470,17 @@ export default {
 
         },
         computeConsumption(val){ 
-            val.TotalConsumption=val.LatestReading - val.PrevReading           
-            if (val.TotalConsumption > this.lesskwm3) {                
-                val.TotalKWM3=((val.TotalConsumption - this.lesskwm3) * this.amountperkwm3).toFixed(2)
-                val.TotalAmount=(val.TotalKWM3 / val.TotalTenants).toFixed(2)
+            let total = parseInt(val.LatestReading - val.PrevReading)
+            
+            if (total > this.lesskwm3) {   
+                val.TotalConsumption = total             
+                val.TotalKWM3 = ((val.TotalConsumption - this.lesskwm3) * this.amountperkwm3).toFixed(2)
+                val.TotalAmount = (val.TotalKWM3 / val.TotalTenants).toFixed(2)
                 this.$forceUpdate()
             }else{
                 val.TotalConsumption=0
                 val.TotalKWM3=0
-                val.TotalAmount=0
+                val.TotalAmount=0   
             }
         },
         saveConsumption(){
@@ -526,34 +530,29 @@ export default {
             this.breadCrumbsItems2=[]
         },
         handlePrintBilling(type) {
-            let data = this.selectedConsumption
-            if(data.length == 0) {
+            let data = []
+            if(this.selectedConsumption.length == 0) {
                 this.handleConfimedMessage('', 'No record found', 'error')
             } else {
-                data.forEach((rec, index, array) => {
-                    let body = {
-                        procedureName: 'ProcConsumptionPrint',
-                        values: [
-                            rec.SerialNo,
-                            this.hrisUserInfo.USERACCT,
-                            this.hrisUserInfo.FULLNAME,
-                        ]
+                this.selectedConsumption.forEach(rec => {
+                    data.push([rec.SerialNo, this.hrisUserInfo.USERACCT, this.hrisUserInfo.FULLNAME ])
+                })
+                let body = {
+                    procedureName: 'ProcConsumptionPrint',
+                    values: data
+                }
+                
+                this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)}).then(() => {
+                    if(type == 0) {
+                        this.axios.get(`${this.api}/crystalreport/Electricity`).then(res => {
+                            if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
+                        })
+                    } else {
+                        this.axios.get(`${this.api}/crystalreport/Water`).then(res => {
+                            if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
+                        })
                     }
-                    if(rec.TotalAmount  > 0) {
-                        this.axios.post(`${this.api}/execute`, {data: JSON.stringify(body)})
-                    }
-
-                    if(index == array.length - 1) {
-                        if(type == 0) {
-                            this.axios.get(`${this.api}/crystalreport/Electricity`).then(res => {
-                                if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
-                            })
-                        } else {
-                            this.axios.get(`${this.api}/crystalreport/Water`).then(res => {
-                                if(res.data != "") this.handleConfimedMessage('', 'Report not found', 'error')
-                            })
-                        }
-                    }
+                    this.selectedConsumption = []
                 })
                 
             }

@@ -1,186 +1,191 @@
 <template>
     <v-main>
         <v-breadcrumbs :items="breadCrumbsItems" divider="/"></v-breadcrumbs>
-        <v-toolbar color="transparent" flat>
-            <v-spacer></v-spacer>
-            <v-toolbar-title class="font-weight-bold display-1">
-                {{ isEditMode ? 'Edit' : 'New' }}<v-icon right>mdi-pencil</v-icon>
-            </v-toolbar-title>
-        </v-toolbar>
         <v-lazy :options="{ threshold: .5 }" min-height="200" transition="scroll-y-transition">
             <v-container fluid>
-                <v-row justify="center">
-                    <v-col class="text-center" cols="12" md="3">
-                        <v-avatar :color="themeColor == '' ? '#1976d2' : themeColor" size="132">
-                            <v-avatar size="126">
-                                <img :src="`${ isEditMode ? `${photo}/${emplcode}.jpg` : '../assets/NoPic'}`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
-                            </v-avatar>
-                        </v-avatar>
-                        <v-list color="transparent" dense>
-                            <v-list-item three-line>
-                                <v-list-item-content>
-                                    <v-list-item-title class="font-weight-bold subtitle-1">{{ !isEditMode ? 'N/A' : editTenantDetails.EmployeeCode }} </v-list-item-title>
-                                    <v-list-item-subtitle class="caption">{{ !isEditMode ? 'N/A' : editTenantDetails.EmployeeName }} </v-list-item-subtitle>
-                                    <v-list-item-subtitle class="caption">{{ !isEditMode ? 'N/A' : editTenantDetails.Designation }} </v-list-item-subtitle>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                        <v-divider></v-divider>
-                        <v-row align="center" no-gutters dense>
-                            <v-col cols="12" md="12">
-                                <v-card-text class="font-weight-bold">Building:</v-card-text>
-                            </v-col>
-                            <v-col class="mt-n3" cols="12" md="12">
-                                <v-card outlined>
-                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : editTenantDetails.BuildingDesc }}</v-card-text>
+                <v-card>
+                    <v-toolbar :color="themeColor == '' ? '#1976d2' : themeColor" dark>
+                        <v-toolbar-title class="font-weight-bold text-h5">{{ isEditMode ? 'Edit' : 'New' }}</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-toolbar>
+                    <v-container fluid>
+                        <v-row justify="center">
+                            <v-col class="text-center" cols="12" md="3">
+                                <v-card height="100%" outlined>
+                                    <v-container fluid>
+                                        <v-avatar :color="themeColor == '' ? '#1976d2' : themeColor" size="132">
+                                            <v-avatar size="126">
+                                                <img :src="`${ isEditMode ? `${photo}/${emplcode}.jpg` : '../assets/NoPic'}`" :onerror="`this.src = '${require('../assets/NoPic.jpg')}'`" />
+                                            </v-avatar>
+                                        </v-avatar>
+                                        <v-list color="transparent" dense>
+                                            <v-list-item three-line>
+                                                <v-list-item-content>
+                                                    <v-list-item-title class="font-weight-bold subtitle-1">{{ !isEditMode ? 'N/A' : editTenantDetails.EmployeeCode }} </v-list-item-title>
+                                                    <v-list-item-subtitle class="caption">{{ !isEditMode ? 'N/A' : editTenantDetails.EmployeeName }} </v-list-item-subtitle>
+                                                    <v-list-item-subtitle class="caption">{{ !isEditMode ? 'N/A' : editTenantDetails.Designation }} </v-list-item-subtitle>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list>
+                                        <v-divider></v-divider>
+                                        <v-row align="center" no-gutters dense>
+                                            <v-col cols="12" md="12">
+                                                <v-card-text class="font-weight-bold">Building:</v-card-text>
+                                            </v-col>
+                                            <v-col class="mt-n3" cols="12" md="12">
+                                                <v-card outlined>
+                                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : editTenantDetails.BuildingDesc }}</v-card-text>
+                                                </v-card>
+                                            </v-col>
+                                            <v-col cols="12" md="12">
+                                                <v-card-text class="font-weight-bold">Floor:</v-card-text>
+                                            </v-col>
+                                            <v-col class="mt-n3" cols="12" md="12">
+                                                <v-card outlined>
+                                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : editTenantDetails.FloorDesc }}</v-card-text>
+                                                </v-card>
+                                            </v-col>
+                                            <v-col cols="12" md="12">
+                                                <v-card-text class="font-weight-bold">Room:</v-card-text>
+                                            </v-col>
+                                            <v-col class="mt-n3" cols="12" md="12">
+                                                <v-card outlined>
+                                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : `Room ${zeroPad(editTenantDetails.RoomNo, 3)}` }}</v-card-text>
+                                                </v-card>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
                                 </v-card>
                             </v-col>
-                            <v-col cols="12" md="12">
-                                <v-card-text class="font-weight-bold">Floor:</v-card-text>
-                            </v-col>
-                            <v-col class="mt-n3" cols="12" md="12">
-                                <v-card outlined>
-                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : editTenantDetails.FloorDesc }}</v-card-text>
-                                </v-card>
-                            </v-col>
-                            <v-col cols="12" md="12">
-                                <v-card-text class="font-weight-bold">Room:</v-card-text>
-                            </v-col>
-                            <v-col class="mt-n3" cols="12" md="12">
-                                <v-card outlined>
-                                    <v-card-text class="my-n2">{{ !isEditMode ? 'N/A' : `Room ${zeroPad(editTenantDetails.RoomNo, 3)}` }}</v-card-text>
-                                </v-card>
+                            <v-col cols="12" md="9">
+                                <v-form ref="form" v-model="valid" lazy-validation>
+                                    <v-container class="my-4" fluid>
+                                        <v-row dense>
+                                            <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="2" sm="2"><v-subheader class="font-weight-bold">Company:</v-subheader></v-col>
+                                            <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="10" sm="10">
+                                                <v-select
+                                                    v-model="editTenantDetails.CompanyCode"
+                                                    placeholder="Company"
+                                                    :items="filterCompany"
+                                                    item-value="COCODE"
+                                                    item-text="SHORTNAME"
+                                                    width="20"
+                                                    hide-details
+                                                    :clearable="!isEditMode"
+                                                    :readonly="isEditMode"
+                                                    outlined
+                                                    dense
+                                                ></v-select>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader  class="font-weight-bold">Employee:</v-subheader></v-col>
+                                            <v-col cols="12" md="2" sm="2">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.EmployeeCode"
+                                                    @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
+                                                    @blur="getStationSearch(editTenantDetails.EmployeeCode)"
+                                                    :rules="[v => !!v || 'field is required']"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    @click:clear="newRecord()"
+                                                    placeholder="Code"
+                                                    :clearable="!isEditMode"
+                                                    :readonly="isEditMode || !editTenantDetails.CompanyCode"
+                                                    hide-details
+                                                    outlined
+                                                    dense   
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="8" sm="8">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.EmployeeName"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Name"
+                                                    hide-details
+                                                    outlined
+                                                    readonly
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader  class="font-weight-bold">Department:</v-subheader></v-col>
+                                            <v-col cols="12" md="10" sm="10">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.Department"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Department"
+                                                    hide-details
+                                                    outlined
+                                                    readonly
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader  class="font-weight-bold">Section:</v-subheader></v-col>
+                                            <v-col cols="12" md="10" sm="10">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.Section"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Section"
+                                                    hide-details
+                                                    outlined
+                                                    readonly
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader  class="font-weight-bold">Team:</v-subheader></v-col>
+                                            <v-col cols="12" md="10" sm="10">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.Team"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Team"
+                                                    hide-details
+                                                    outlined
+                                                    readonly
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader class="font-weight-bold">MoveIn:</v-subheader></v-col>
+                                            <v-col cols="12" md="4" sm="4">
+                                                <datepicker :menu="moveInDialog" :dateValue.sync=editTenantDetails.MoveInDate dateLabel="Move-In" />
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader class="font-weight-bold">MoveOut:</v-subheader></v-col>
+                                            <v-col cols="12" md="4" sm="4">
+                                                <datepicker :menu="moveOutDialog" :dateValue.sync=editTenantDetails.MoveOutDate dateLabel="Move-Out" />
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader class="font-weight-bold">Rental Fee:</v-subheader></v-col>
+                                            <v-col cols="12" md="10" sm="10">
+                                                <v-text-field
+                                                    v-model="editTenantDetails.RentalFee"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Team"
+                                                    hide-details
+                                                    outlined
+                                                    dense
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="2" sm="2"><v-subheader class="font-weight-bold">Remarks:</v-subheader> </v-col>
+                                            <v-col cols="12" md="10" sm="10">
+                                                <v-textarea
+                                                    v-model="editTenantDetails.Remarks"
+                                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                    placeholder="Remarks"
+                                                    hide-details
+                                                    outlined
+                                                    dense
+                                                ></v-textarea>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-form>
                             </v-col>
                         </v-row>
-                    </v-col>
-                    <v-col cols="12" md="9">
-                        <v-card outlined>
-                            <v-form ref="form" v-model="valid" lazy-validation>
-                                <v-container class="my-4" fluid>
-                                    <v-row dense>
-                                        <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="3"><v-subheader>Company:</v-subheader></v-col>
-                                        <v-col v-if="hrisUserInfo.COCODE =='20'" cols="12" md="9">
-                                            <v-select
-                                                v-model="editTenantDetails.CompanyCode"
-                                                placeholder="Company"
-                                                :items="filterCompany"
-                                                item-value="COCODE"
-                                                item-text="SHORTNAME"
-                                                width="20"
-                                                hide-details
-                                                :clearable="!isEditMode"
-                                                :readonly="isEditMode"
-                                                outlined
-                                                dense
-                                            ></v-select>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Employee:</v-subheader></v-col>
-                                        <v-col cols="12" md="2" sm="2">
-                                            <v-text-field
-                                                v-model="editTenantDetails.EmployeeCode"
-                                                @keypress.enter="getStationSearch(editTenantDetails.EmployeeCode)"
-                                                @blur="getStationSearch(editTenantDetails.EmployeeCode)"
-                                                :rules="[v => !!v || 'field is required']"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                @click:clear="newRecord()"
-                                                placeholder="Code"
-                                                :clearable="!isEditMode"
-                                                :readonly="isEditMode || !editTenantDetails.CompanyCode"
-                                                hide-details
-                                                outlined
-                                                dense   
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="7" sm="7">
-                                            <v-text-field
-                                                v-model="editTenantDetails.EmployeeName"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Name"
-                                                hide-details
-                                                outlined
-                                                readonly
-                                                dense
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Department:</v-subheader></v-col>
-                                        <v-col cols="12" md="9" sm="9">
-                                            <v-text-field
-                                                v-model="editTenantDetails.Department"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Department"
-                                                hide-details
-                                                outlined
-                                                readonly
-                                                dense
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Section:</v-subheader></v-col>
-                                        <v-col cols="12" md="9" sm="9">
-                                            <v-text-field
-                                                v-model="editTenantDetails.Section"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Section"
-                                                hide-details
-                                                outlined
-                                                readonly
-                                                dense
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Team:</v-subheader></v-col>
-                                        <v-col cols="12" md="9" sm="9">
-                                            <v-text-field
-                                                v-model="editTenantDetails.Team"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Team"
-                                                hide-details
-                                                outlined
-                                                readonly
-                                                dense
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>MoveIn:</v-subheader></v-col>
-                                        <v-col cols="12" md="3" sm="9">
-                                            <datepicker :menu="moveInDialog" :dateValue.sync=editTenantDetails.MoveInDate dateLabel="Move-In" />
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>MoveOut:</v-subheader></v-col>
-                                        <v-col cols="12" md="3" sm="9">
-                                            <datepicker :menu="moveOutDialog" :dateValue.sync=editTenantDetails.MoveOutDate dateLabel="Move-Out" />
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Rental Fee:</v-subheader></v-col>
-                                        <v-col cols="12" md="9" sm="9">
-                                            <v-text-field
-                                                v-model="editTenantDetails.RentalFee"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Team"
-                                                hide-details
-                                                outlined
-                                                dense
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="3" sm="3"><v-subheader>Remarks:</v-subheader> </v-col>
-                                        <v-col cols="12" md="9" sm="9">
-                                            <v-textarea
-                                                v-model="editTenantDetails.Remarks"
-                                                :color="themeColor == '' ? '#1976d2' : themeColor"
-                                                placeholder="Remarks"
-                                                hide-details
-                                                outlined
-                                                dense
-                                            ></v-textarea>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-form>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                    </v-container>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn to="/tenants" class="mx-3 px-5" text>Cancel</v-btn>
+                        <v-btn class="px-5" @click="saveRecord(editTenantDetails)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
+                    </v-card-actions>
+                </v-card>
             </v-container>
         </v-lazy>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn to="/tenants" class="mx-3 px-5" text>Cancel</v-btn>
-            <v-btn class="px-5" @click="saveRecord(editTenantDetails)" :color="themeColor == '' ? '#1976d2' : themeColor" dark>Save</v-btn>
-        </v-card-actions>
         <v-overlay :value="loading">
             <v-progress-circular
                 indeterminate
