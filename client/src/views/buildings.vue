@@ -161,14 +161,9 @@ export default {
     methods: {
         loadBuildings() {
             this.loading = true
-            let body = {
-                procedureName: 'ProcSelectQuery',
-                values: ['buildings']
-            }
-            this.axios.post(`${this.api}/executeselect`, {data: JSON.stringify(body)}).then(res => {
-                if(res.data) {
-                    this.buildings = res.data
-                }
+            this.buildings = []
+            this.loadMasterMaintenance('buildings').then(res => {
+                this.buildings = res.data
                 this.loading = false
             })
         },

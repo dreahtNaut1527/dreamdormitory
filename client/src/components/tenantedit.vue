@@ -94,8 +94,9 @@
                                                     outlined
                                                     dense   
                                                 ></v-text-field>
+                                                <station :code.sync="editTenantDetails.EmployeeCode" :company="editTenantDetails.CompanyCode" :searchStation="getStationSearch" />
                                             </v-col>
-                                            <v-col cols="12" md="8" sm="8">
+                                            <v-col cols="12" md="7" sm="7">
                                                 <v-text-field
                                                     v-model="editTenantDetails.EmployeeName"
                                                     :color="themeColor == '' ? '#1976d2' : themeColor"
@@ -105,6 +106,24 @@
                                                     readonly
                                                     dense
                                                 ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="1" sm="1">
+                                                <v-tooltip bottom>
+                                                    <template v-slot:activator="{ on, attrs }">
+                                                        <v-btn 
+                                                            @click="editTenantDetails.CompanyCode && $modal.show('stationsearch')" 
+                                                            :color="themeColor == '' ? '#1976d2' : themeColor"
+                                                            v-on="on" 
+                                                            v-bind="attrs" 
+                                                            small 
+                                                            dark
+                                                            fab
+                                                        >
+                                                            <v-icon>mdi-magnify</v-icon>
+                                                        </v-btn>
+                                                    </template>
+                                                    <span>Search Employee</span>
+                                                </v-tooltip>
                                             </v-col>
                                             <v-col cols="12" md="2" sm="2"><v-subheader  class="font-weight-bold">Department:</v-subheader></v-col>
                                             <v-col cols="12" md="10" sm="10">
@@ -201,6 +220,7 @@
 
 <script>
 import datepicker from './datepicker'
+import station from './stationsearch.vue'
 
 export default {
     data() {
@@ -339,7 +359,8 @@ export default {
         }
     },
     components: {
-        datepicker
-    }
+        datepicker,
+        station
+    },
 }
 </script>

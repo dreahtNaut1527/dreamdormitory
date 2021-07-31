@@ -259,7 +259,7 @@ export default {
                             {text: 'Building', icon: 'mdi-domain', to: '/buildings'},
                             {text: 'Floors', icon: 'mdi-stairs', to: '/floors'},
                             {text: 'Rooms', icon: 'mdi-map-marker', to: '/rooms'},
-                            {text: 'Beds' , icon: 'mdi-bed-empty', to: '/beds'},
+                            // {text: 'Beds' , icon: 'mdi-bed-empty', to: '/beds'},
                         ],
                         active: false   
                     },

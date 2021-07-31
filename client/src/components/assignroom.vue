@@ -11,11 +11,6 @@
                 <v-row align="center" justify="center">
                     <v-col v-for="(item, i) in filterCurrentOccupants" :key="i" cols="12" md="6">
                         <v-card class="rounded-xl" outlined>
-                            <!-- <v-overlay :value="item.CompanyCode != hrisUserInfo.COCODE && item.CompanyCode" :opacity="0.4" absolute>
-                                <v-row align="center" justify="center">
-                                    <v-img :src="getCompanyLogo(item.CompanyCode)" max-width="250" />
-                                </v-row>
-                            </v-overlay> -->
                             <v-container>
                                 <v-subheader>
                                     Bed {{item.BedNo}}

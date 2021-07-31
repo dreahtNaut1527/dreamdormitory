@@ -12,45 +12,45 @@
                 <v-form>
                     <v-container fluid>
                         <v-row dense justify="center">
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-select    
-                                        v-model="selectedtype"                                 
-                                        :items="itemstype"
-                                        :color="themeColor == '' ? '#1976d2' : themeColor"
-                                        label="Type"
-                                        outlined
-                                        dense
-                                        hide-details
-                                        @change="consumptiontype()"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-autocomplete 
-                                        :items="buildingList"
-                                        :color="themeColor == '' ? '#1976d2' : themeColor"
-                                        v-model="building"
-                                        outlined
-                                        chip
-                                        small-chips
-                                        dense
-                                        label="Building"
-                                        hide-details 
-                                    ></v-autocomplete>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
-                                    <v-autocomplete 
-                                        :items="floorList"
-                                        :color="themeColor == '' ? '#1976d2' : themeColor"
-                                        v-model="floor"
-                                        outlined
-                                        chip
-                                        small-chips
-                                        dense
-                                        label="Floor"
-                                        hide-details
-                                    ></v-autocomplete>
-                                </v-col>
-                                <v-col cols="12" md="3" sm="3">
+                            <v-col cols="12" md="3" sm="3">
+                                <v-select    
+                                    v-model="selectedtype"                                 
+                                    :items="itemstype"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    label="Type"
+                                    outlined
+                                    dense
+                                    hide-details
+                                    @change="consumptiontype()"
+                                ></v-select>
+                            </v-col>
+                            <v-col cols="12" md="3" sm="3">
+                                <v-autocomplete 
+                                    :items="buildingList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    v-model="building"
+                                    outlined
+                                    chip
+                                    small-chips
+                                    dense
+                                    label="Building"
+                                    hide-details 
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" md="3" sm="3">
+                                <v-autocomplete 
+                                    :items="floorList"
+                                    :color="themeColor == '' ? '#1976d2' : themeColor"
+                                    v-model="floor"
+                                    outlined
+                                    chip
+                                    small-chips
+                                    dense
+                                    label="Floor"
+                                    hide-details
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" md="3" sm="3">
                                 <v-autocomplete 
                                     :items="roomList"
                                     :color="themeColor == '' ? '#1976d2' : themeColor"

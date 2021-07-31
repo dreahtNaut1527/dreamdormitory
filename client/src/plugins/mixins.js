@@ -59,23 +59,43 @@ const plugins = {
                 leftString(str, chr) {
                     return str.slice(0, chr - str.length);
                 },
-                getCompanyLogo(cocode) {
-                    let path = null
+                getCompanyInformation(cocode) {
+                    let path = {}
                     switch (cocode) {
                         case '00':
-                            path = require('../assets/PVlogo.png')
+                            path = {
+                                image: require('../assets/PVlogo.png'),
+                                name: 'PV Tech Pte., Ltd',
+                                shortname: 'PV'
+                            }
                             break;
                         case '10':
-                            path = require('../assets/SCADlogo.png')
+                            path = {
+                                image: require('../assets/SCADlogo.png'),
+                                name: 'SCAD Services (S) Pte., Ltd.',
+                                shortname: 'SCD'
+                            }
                             break;
                         case '20':
-                            path = require('../assets/HTIlogo.png')
+                            path = {
+                                image: require('../assets/HTIlogo.png'),
+                                name: 'House Technology Industries Pte., Ltd.',
+                                shortname: 'HTI'
+                            }
                             break;
                         case '40':
-                            path = require('../assets/WKNlogo.png')
+                            path = {
+                                image: require('../assets/WKNlogo.png'),
+                                name: 'WU KONG Pte., Ltd',
+                                shortname: 'WKN'
+                            }
                             break;
                         default:
-                            path = require('../assets/HRDlogo.png')
+                            path = {
+                                image: require('../assets/HRDlogo.png'),
+                                name: 'H.R.D Singapore Pte., Ltd.',
+                                shortname: 'HRD'
+                            }
                             break;
                     }
                     return path
