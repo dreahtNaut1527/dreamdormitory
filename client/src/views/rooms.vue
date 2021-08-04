@@ -172,7 +172,15 @@ export default {
                             this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} added a new room`)
                         }
                         this.clearVariables()
-                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                        this.$toast.success('Record saved!', {
+                            position: 'top-right',
+                            timeout: 3000,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            icon: true
+                        })
                         this.$modal.hide('room')
                     }
                 })

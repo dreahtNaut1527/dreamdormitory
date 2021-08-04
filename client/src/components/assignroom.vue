@@ -293,12 +293,27 @@ export default {
                             this.setNotifications(this.hrisUserInfo.USERACCT, `User: ${this.hrisUserInfo.USERACCT} assigned tenants to Room ${this.zeroPad(data.RoomNo, 3)}`)
                         }, 2000);
                         this.$refs.form[index].resetValidation()
-                        this.handleToastMesaage().fire({icon: 'success', title: 'Record saved'})
+                        this.$toast.success('Record saved!', {
+                            position: 'top-right',
+                            timeout: 3000,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            icon: true
+                        })
                     }
                 })
             } else {
-                this.alert = true
-                this.alertText = 'Employee Code is required'
+                this.$toast.error('Please input employee id', {
+                    position: 'top-right',
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    icon: true
+                })
             }
         },
         clearVariables() {
